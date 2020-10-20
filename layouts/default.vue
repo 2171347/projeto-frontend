@@ -6,7 +6,7 @@
       :clipped="clipped"
       fixed
       app
-      color="cyan darken-1"
+      color="grey lighten-1"
     >
       <v-list>
         <v-list-item
@@ -29,7 +29,7 @@
       :clipped-left="clipped"
       fixed
       app
-      color="cyan darken-1"
+      color="lime darken-1"
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn
@@ -41,6 +41,25 @@
 
       <v-toolbar-title v-text="title" />
       <v-spacer />
+
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item to="/perfil">
+           <v-icon>mdi-account</v-icon>Perfil
+          </v-list-item>
+          <v-list-item to="/">
+           <v-icon>mdi-logout</v-icon>Sair
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -58,11 +77,18 @@ export default {
       clipped: true,
       drawer: false,
       fixed: true,
+      items_dropdown:[
+        {
+          icon: 'mdi-account',
+          title: 'Perfil',
+          to:'/perfil'
+        }
+      ],
       items: [
         {
           icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
+          title: 'Consultar Projetos',
+          to: '/cliente/lista_projetos'
         },
         {
           icon: 'mdi-chart-bubble',

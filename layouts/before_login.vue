@@ -5,12 +5,21 @@
       :clipped-left="clipped"
       fixed
       app
-      color="cyan darken-1"
+      color="lime darken-1"
     >
+       <v-btn icon to="/">
+          <v-icon>mdi-{{ `home` }}</v-icon>
+       </v-btn>
 
       <v-spacer />
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title v-text="title" to="/"/>
       <v-spacer />
+      <v-btn small color="lime lighten-3" to="/registar">
+         Registar
+      </v-btn>
+      <v-btn small color="light-green lighten-3" to="/login">
+         Entrar
+      </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
