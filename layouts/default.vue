@@ -9,12 +9,14 @@
       color="grey lighten-1"
     >
       <v-list>
+        <v-subheader>Criar</v-subheader>
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
           :to="item.to"
           router
           exact
+          :disabled="item.active"
         >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -66,6 +68,15 @@
         <nuxt />
       </v-container>
     </v-main>
+    <v-footer
+      :fixed="fixed"
+      app>
+      <v-btn id="btn_admin" @click="setUser('A')">Administrador</v-btn>
+      <v-btn @click="setUser('C')">Cliente</v-btn>
+      <v-btn @click="setUser('P')">Projetista</v-btn>
+      <v-btn @click="setUser('F')">Fornecedor</v-btn>
+      Utilizador: {{this.active_user}}
+    </v-footer>
 
   </v-app>
 </template>
@@ -77,30 +88,82 @@ export default {
       clipped: true,
       drawer: false,
       fixed: true,
-      items_dropdown:[
+      active_user: 'A',
+      items:[],
+
+      items_cliente: [
         {
-          icon: 'mdi-account',
-          title: 'Perfil',
-          to:'/perfil'
-        }
+          icon: 'mdi-apps',
+          title: 'Consultar Projetos',
+          to: '/cliente/lista_projetos',
+        },
+
       ],
-      items: [
+      items_projetista: [
         {
           icon: 'mdi-apps',
           title: 'Consultar Projetos',
           to: '/cliente/lista_projetos'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: 'mdi-plus-circle',
+          title: 'Criar Projeto',
+          to: '/projetista/criar_projeto'
+        },
+        {
+          icon: 'mdi-puzzle',
+          title: 'Simulador',
+          to: ''
         }
+      ],
+      items_fornecedor: [
+        {
+          icon: 'mdi-plus-circle',
+          title: 'Criar Produto',
+          to: ''
+        },
+      ],
+      items_admin: [
+        {
+          icon: 'mdi-apps',
+          title: 'Listar Projetos',
+          to: ''
+        },
+        {
+          icon: 'mdi-apps',
+          title: 'Listar Utilizadores',
+          to: ''
+        },
+        {
+          icon: 'mdi-apps',
+          title: 'Listar Produtos',
+          to: ''
+        },
+
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'Project+'
     }
+  },
+  methods:{
+    setUser(letra){
+      this.active_user = letra;
+      console.log("letra:" + letra)
+      if (letra == 'C'){
+        this.items = this.items_cliente;
+      }if (letra == 'A'){
+        this.items = this.items_admin;
+      }if (letra == 'P'){
+        this.items = this.items_projetista;
+      }if (letra == 'F'){
+        this.items = this.items_fornecedor;
+      }
+    },
+  },
+  created() {
+    this.setUser('C')
   }
 }
 </script>

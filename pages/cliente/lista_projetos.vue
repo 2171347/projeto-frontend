@@ -1,10 +1,15 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
+    :items="projetos"
     :items-per-page="5"
     class="elevation-1"
-  ></v-data-table>
+  >
+    <template v-slot:item.actions="{ item }">
+      <v-btn x-small>Detalhes</v-btn>
+    </template>
+
+  </v-data-table>
 </template>
 
 <script>
@@ -12,18 +17,21 @@ export default {
   name: "lista_projetos",
   data () {
     return {
+      projetos:[],
+      projetistas:[],
+      person:'',
+
       headers: [
-        {
+       {
           text: 'Nome Projeto',
           align: 'start',
           sortable: true,
-          value: 'name',
+          value: 'nome',
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Iron (%)', value: 'iron' },
+       { text: 'Nome Projetista', value: 'proj_nome' },
+       { text: 'Ações', value: 'actions'},
+
+
       ],
       desserts: [
         {
@@ -33,82 +41,37 @@ export default {
           carbs: 24,
           protein: 4.0,
           iron: '1%',
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          iron: '1%',
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: '7%',
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: '8%',
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: '16%',
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: '0%',
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: '2%',
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: '45%',
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: '22%',
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: '6%',
-        },
+        }
       ],
     }
   },
+  methods:{
+    getProjetos (){
+
+      this.$axios.$get('/api/projetos/all')
+        .then((response) => {
+          this.projetos = response;
+        })
+        .then((response) => {
+          for (let i = 0; i < this.projetos.length; i++){
+            console.log("ciclo for: " + this.projetos[i].emailProjetista);
+            this.$axios.$get('/api/projetistas/'+this.projetos[i].emailProjetista).
+            then((user) => {
+
+              console.log("user:" + user.nome)
+              this.person = user;
+            }).then((user)=> {
+              console.log("person:" + this.person)
+
+              this.projetistas.push(this.person);
+            })
+          }
+        })
+    },
+  },
+  created() {
+    this.getProjetos()
+  }
 }
 </script>
 
