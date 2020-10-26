@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app light>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -9,7 +9,6 @@
       color="grey lighten-1"
     >
       <v-list>
-        <v-subheader>Criar</v-subheader>
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -82,6 +81,7 @@
 </template>
 
 <script>
+
 export default {
   data () {
     return {
@@ -90,6 +90,7 @@ export default {
       fixed: true,
       active_user: 'A',
       items:[],
+      email:'',
 
       items_cliente: [
         {
@@ -120,7 +121,7 @@ export default {
         {
           icon: 'mdi-plus-circle',
           title: 'Criar Produto',
-          to: ''
+          to: '/produtos/criar'
         },
       ],
       items_admin: [

@@ -1,15 +1,23 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="projetos"
-    :items-per-page="5"
-    class="elevation-1"
-  >
-    <template v-slot:item.actions="{ item }">
-      <v-btn x-small>Detalhes</v-btn>
-    </template>
 
-  </v-data-table>
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="projetos"
+      :items-per-page="5"
+      class="elevation-1"
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+      </template>
+      <template v-slot:item.proj_nome="{item}">
+        <div v-for="pessoa in projetistas">
+          <p v-if="pessoa.email == item.emailProjetista">{{ pessoa.nome }}</p>
+        </div>
+      </template>
+
+    </v-data-table>
+  </div>
 </template>
 
 <script>
@@ -33,19 +41,12 @@ export default {
 
 
       ],
-      desserts: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: '1%',
-        }
-      ],
     }
   },
   methods:{
+    toDetalhes (item){
+      this.$router.push('/projetos/'+ item.referencia+'/');
+    },
     getProjetos (){
 
       this.$axios.$get('/api/projetos/all')
