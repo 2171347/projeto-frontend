@@ -122,6 +122,10 @@ export default {
           icon: 'mdi-plus-circle',
           title: 'Criar Produto',
           to: '/produtos/criar'
+        },{
+          icon: 'mdi-plus-circle',
+          title: 'Criar Tipo de Material',
+          to: '/tipo_material/criar'
         },
       ],
       items_admin: [
