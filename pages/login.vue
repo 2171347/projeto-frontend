@@ -1,16 +1,13 @@
 <template>
-  <v-layout
-    align-center
-    justify-center
-  >
+  <v-layout align-center justify-center>
     <v-flex
       xs12
       sm8
       md4
     >
-      <v-card class="elevation-12">
+      <v-card class="elevation-12" style="margin-top: auto">
         <v-toolbar
-          color="primary"
+          color="cyan lighten-3"
           dark
           flat
         >
@@ -29,14 +26,15 @@
 
             <v-text-field
               id="password"
-              label="Password"
+              label="Palavra-Chave"
 
               prepend-icon='mdi-lock'
               type="password"
               v-model="password"
             ></v-text-field>
+            <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
 
-            <v-btn type="submit" color="primary" style="margin-left: 35%" to="/home">Submit</v-btn>
+            <v-btn type="submit" color="success" style="margin-left: 35%" to="/home">Entrar</v-btn>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -66,6 +64,9 @@ export default {
           this.projetos = response;
         })
     },
+    redirectEsqueciPassword(){
+      this.$router.push('/redirect_password');
+    }
   },
   created() {
 
@@ -74,5 +75,10 @@ export default {
 </script>
 
 <style scoped>
-
+#link:hover
+{
+  text-decoration: underline;
+  cursor: pointer;
+  color: #35495e;
+}
 </style>

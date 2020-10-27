@@ -37,38 +37,18 @@
         required
       ></v-text-field>
 
-
-
-
-      <v-btn
-        :disabled="!valid"
-        color="success"
-        class="mr-4"
-        @click="createProject"
-      >
+      <v-btn :disabled="!valid" class="mr-4" color="success" @click="createProject">
         Submeter
       </v-btn>
 
-      <v-btn
-        color="error"
-        class="mr-4"
-
-      >
+      <v-btn color="error" class="mr-4">
         Reset Formulário
       </v-btn>
 
-      <v-btn
-        color="warning"
-        class="mr-4"
-
-      >
+      <v-btn color="warning" class="mr-4">
         Reset Validação
       </v-btn>
-      <v-btn
-        color="error"
-        class="mr-4"
-
-      >
+      <v-btn color="error" class="mr-4">
         Cancelar
       </v-btn>
     </v-form>
