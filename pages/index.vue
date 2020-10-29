@@ -64,7 +64,7 @@ import Photo_fabricante from "@/components/photo_fabricante";
 
 
 export default {
-  layout: "before_login",
+  layout: "before",
   components: {
     Photo_fabricante,
     Photo_projetista,

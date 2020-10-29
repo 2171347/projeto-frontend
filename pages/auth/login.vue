@@ -22,6 +22,7 @@
               prepend-icon='mdi-lock'
               type="password"
               v-model="password"
+              required
             ></v-text-field>
             {{this.password}}
             <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
@@ -40,7 +41,7 @@
 <script>
 export default {
   name: "login",
-  layout: "before_login",
+  layout: "before",
   auth: false,
   data:function (){
     return {
@@ -60,15 +61,16 @@ export default {
         this.$toast.success('You are logged in!')
         // check if the user $auth.user object is set
         console.log(this.$auth.user)
-        // TODO redirect based on the user role
+        // TODO redirecionar o utilizador com base do tipo
         // eg:
         // if (this.$auth.user.groups.includes('Teacher')) {
         // this.$router.push('url-to-teacher-subjects')
         // } else if (...) {
         // ...
         // }
-      })
+      });
       promise.catch(() => {
+        //TODO alterar o toast para um mais agradavel em caso de erro
         this.$toast.error('Sorry, you cant login. Ensure your credentials are correct')
       })
     },

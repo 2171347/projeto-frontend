@@ -74,7 +74,7 @@
 <script>
 export default {
   name: "registar",
-  layout:"before_login",
+  layout:"before",
   data: () => ({
     valid: true,
 
