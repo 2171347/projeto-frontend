@@ -42,7 +42,7 @@ export default {
   ],
   auth: {
     redirect: {
-      login: '/',
+      login: '',
       logout: '/',
       home: '/home'
     },

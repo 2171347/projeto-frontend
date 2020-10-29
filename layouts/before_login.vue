@@ -17,7 +17,7 @@
       <v-btn small color="cyan lighten-4" to="/registar" style="margin-right: 10px">
          Registar
       </v-btn>
-      <v-btn small color="cyan lighten-4" to="/auth/login">
+      <v-btn small color="cyan lighten-4" to="/auth/loginl">
          Entrar
       </v-btn>
     </v-app-bar>

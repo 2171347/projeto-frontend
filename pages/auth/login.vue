@@ -12,7 +12,8 @@
               label="Email"
               prepend-icon='mdi-account-plus'
               type="email"
-              v-model="email"
+              v-model.trim="email"
+              required
             ></v-text-field>
             {{this.email}}
             <v-text-field
@@ -40,9 +41,9 @@
 export default {
   name: "login",
   layout: "before_login",
+  auth: false,
   data:function (){
     return {
-      auth: false,
       email: '',
       password: '',
     }
@@ -72,7 +73,7 @@ export default {
       })
     },
     onReset() {
-      this.username = null
+      this.email = null
       this.password = null
     },
     redirectEsqueciPassword(){
