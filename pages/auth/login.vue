@@ -14,6 +14,7 @@
               type="email"
               v-model="email"
             ></v-text-field>
+            {{this.email}}
             <v-text-field
               id="password"
               label="Palavra-Chave"
@@ -21,6 +22,7 @@
               type="password"
               v-model="password"
             ></v-text-field>
+            {{this.password}}
             <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
 
             <v-btn color="success" style="margin-left: 35%" @click="onSubmit">Entrar</v-btn>
@@ -40,15 +42,16 @@ export default {
   layout: "before_login",
   data:function (){
     return {
-      email: null,
-      password: null,
+      auth: false,
+      email: '',
+      password: '',
     }
   },
   methods:{
     onSubmit(){
       let promise = this.$auth.loginWith('local', {
         data: {
-          username: this.username,
+          email: this.email,
           password: this.password
         }
       })

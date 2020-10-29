@@ -1,6 +1,5 @@
 <template>
  <v-app dark>
-
     <v-app-bar
       :clipped-left="clipped"
       fixed
@@ -18,7 +17,7 @@
       <v-btn small color="cyan lighten-4" to="/registar" style="margin-right: 10px">
          Registar
       </v-btn>
-      <v-btn small color="cyan lighten-4" to="/login">
+      <v-btn small color="cyan lighten-4" to="/auth/login">
          Entrar
       </v-btn>
     </v-app-bar>

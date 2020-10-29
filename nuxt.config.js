@@ -54,7 +54,8 @@ export default {
             url: '/api/login/token',
             method: 'post',
             propertyName: 'token'
-          },logout: false,
+          },
+          logout: false,
           user: {
             url: '/api/login/claims',
             method: 'get',
