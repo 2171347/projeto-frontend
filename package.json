@@ -9,10 +9,12 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/toast": "^3.3.1",
+    "@vue/composition-api": "^1.0.0-beta.18",
     "core-js": "^3.6.5",
-    "nuxt": "^2.14.6",
-    "vuex": "^4.0.0-beta.4"
+    "nuxt": "^2.14.6"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.11.2"

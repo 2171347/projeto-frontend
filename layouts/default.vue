@@ -83,6 +83,7 @@
 <script>
 
 export default {
+
   data () {
     return {
       clipped: true,
@@ -96,7 +97,7 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Consultar Projetos',
-          to: '/cliente/lista_projetos',
+          to: '/projetos/',
         },
 
       ],
@@ -104,7 +105,7 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Consultar Projetos',
-          to: '/cliente/lista_projetos'
+          to: '/projetos/'
         },
         {
           icon: 'mdi-plus-circle',
@@ -132,7 +133,7 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Listar Projetos',
-          to: ''
+          to: '/admin/projetos/'
         },
         {
           icon: 'mdi-apps',

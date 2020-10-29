@@ -52,11 +52,38 @@ export default {
   layout: "before_login",
   data:function (){
     return {
-      email:'',
-      password:'',
+      email: null,
+      password: null,
     }
   },
   methods:{
+    onSubmit(){
+      let promise = this.$auth.loginWith('local', {
+        data: {
+          username: this.username,
+          password: this.password
+        }
+      })
+      promise.then(() => {
+        this.$toast.success('You are logged in!')
+        // check if the user $auth.user object is set
+        console.log(this.$auth.user)
+        // TODO redirect based on the user role
+        // eg:
+        // if (this.$auth.user.groups.includes('Teacher')) {
+        // this.$router.push('url-to-teacher-subjects')
+        // } else if (...) {
+        // ...
+        // }
+      })
+      promise.catch(() => {
+        this.$toast.error('Sorry, you cant login. Ensure your credentials are correct')
+      })
+    },
+    onReset() {
+      this.username = null
+      this.password = null
+    },
     getProjetos () {
 
       this.$axios.$get('/api/projetos/all')

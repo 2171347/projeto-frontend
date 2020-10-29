@@ -36,7 +36,41 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/toast',
+    '@nuxtjs/auth',
+
   ],
+  auth: {
+    redirect: {
+      login: '/auth/login',
+      logout: '/',
+      home: '/'
+    },
+    watchLoggedIn: true,
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/api/login/token',
+            method: 'post',
+            propertyName: 'token'
+          },logout: false,
+          user: {
+            url: '/api/login/claims',
+            method: 'get',
+            propertyName: ''
+          }
+        },
+        // tokenRequired: true, -> default
+        // tokenType: 'bearer' -> default
+      }
+    }
+  },
+  router: {
+    middleware: [
+      'auth'
+    ]
+  },
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {

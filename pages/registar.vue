@@ -46,15 +46,13 @@
       required
     ></v-text-field>
 
-
     <v-btn
       :disabled="!valid"
       color="success"
       class="mr-4"
       @click="validate"
     >
-      Submeter
-    </v-btn>
+      Submeter </v-btn>
 
     <v-btn
       color="error"
@@ -88,12 +86,6 @@ export default {
   data: () => ({
     valid: true,
 
-    date: new Date(),
-
-    valorQuotaAnual: 12,
-
-    showPicker: false,
-    selectedDate: '',
 
     // ---- SNACKBAR INFO -----
     color: '',
@@ -135,19 +127,12 @@ export default {
   }),
 
   methods: {
-    formatDate (date) {
-      return moment(date).format('DD-MM-YYYY')
-    },
+
     validate () {
       if (this.$refs.form.validate()) {
         this.$axios.$post('/api/inscricoes', {
           nome: this.nome,
           email: this.email,
-          code: "INSC_"+this.nif,
-          morada: this.morada,
-          numContribuinte: this.nif,
-          dataNascimento: this.selectedDate,
-          numIdentificacaoCivil: this.nic,
 
         })
           .then(() => {
@@ -179,7 +164,6 @@ export default {
   },
   created() {
   },
-
 
   }
 </script>

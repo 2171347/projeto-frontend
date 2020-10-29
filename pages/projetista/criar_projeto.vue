@@ -16,11 +16,7 @@
         Close
       </v-btn>
     </v-snackbar>
-  <v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
-  >
+  <v-form ref="form" v-model="valid" lazy-validation>
     <p class="subtitle-1 text-center">Criar um novo projeto</p>
     <v-text-field
       v-model="nome"
@@ -76,7 +72,7 @@
 </template>
 
 <script>
-import error from "~/layouts/error";
+
 
 export default {
   name: "criar_projeto",
