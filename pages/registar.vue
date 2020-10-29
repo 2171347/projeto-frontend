@@ -29,15 +29,7 @@
       required
     ></v-text-field>
 
-    <v-text-field
-      v-model="nic"
-      :rules="nicRules"
-      label="Nº Identificação Civil"
-      :counter="9"
-      type="number"
-      required
-    ></v-text-field>
-
+<!-- TODO Completar formulário de registo de utilizador   -->
     <v-text-field
       v-model="morada"
       :rules="moradaRules"
@@ -96,6 +88,8 @@ export default {
     x: null,
     y: 'top',
     // ------------------------
+
+    // TODO Fazer verificação dos valores de entrada para registo de utilizadores
 
     morada: '',
     moradaRules:[

@@ -8,6 +8,7 @@
           <v-btn x-small>Editar Perfil</v-btn>
           <v-btn x-small>Alterar Password</v-btn></v-card-title>
           <v-card-text>
+
           </v-card-text>
         </v-card>
       </v-col>
