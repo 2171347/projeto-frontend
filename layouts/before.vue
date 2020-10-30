@@ -1,5 +1,5 @@
 <template>
- <v-app dark>
+  <v-app dark>
     <v-app-bar
       :clipped-left="clipped"
       fixed
@@ -7,18 +7,18 @@
       color="cyan lighten-3"
       style="max-width: 100%"
     >
-       <v-btn icon to="/">
-          <v-icon>mdi-{{ `home` }}</v-icon>
-       </v-btn>
+      <v-btn icon to="/">
+        <v-icon>mdi-{{ `home` }}</v-icon>
+      </v-btn>
 
       <v-spacer />
       <v-toolbar-title v-text="title" to="/"/>
       <v-spacer />
       <v-btn small color="cyan lighten-4" to="/registar" style="margin-right: 10px">
-         Registar
+        Registar
       </v-btn>
-      <v-btn small color="cyan lighten-4" to="/auth/loginl">
-         Entrar
+      <v-btn small color="cyan lighten-4" to="/auth/login">
+        Entrar
       </v-btn>
     </v-app-bar>
     <v-main>
@@ -31,9 +31,12 @@
 </template>
 
 <script>
+
+
+
 export default {
-name: "before_login",
- data () {
+  name: "before",
+  data () {
     return {
       clipped: true,
       drawer: false,
@@ -59,3 +62,6 @@ name: "before_login",
 }
 </script>
 
+<style scoped>
+
+</style>

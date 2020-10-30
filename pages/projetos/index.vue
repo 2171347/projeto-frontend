@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <v-data-table
       :headers="headers"
@@ -49,25 +48,31 @@ export default {
     },
     getProjetos (){
 
-      this.$axios.$get('/api/projetos/all')
-        .then((response) => {
-          this.projetos = response;
-        })
-        .then((response) => {
-          for (let i = 0; i < this.projetos.length; i++){
-            console.log("ciclo for: " + this.projetos[i].emailProjetista);
-            this.$axios.$get('/api/projetistas/'+this.projetos[i].emailProjetista).
-            then((user) => {
+      //TODO rever rotas para cliente VS projetista
 
-              console.log("user:" + user.nome)
-              this.person = user;
-            }).then((user)=> {
-              console.log("person:" + this.person)
+      if (this.$auth.user.groups.includes('Cliente')){
+        // TODO falta rota para ter os projetos do cliente
+      }
+      if (this.$auth.user.groups.includes('Projetista')){
+        this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')
+          .then((response) => {
+            this.projetos = response;
+          })
+          .then((response) => {
+            for (let i = 0; i < this.projetos.length; i++){
+              console.log("ciclo for: " + this.projetos[i].emailProjetista);
+              this.$axios.$get('/api/projetistas/'+this.projetos[i].emailProjetista).
+              then((user) => {
 
-              this.projetistas.push(this.person);
-            })
-          }
-        })
+                console.log("user:" + user.nome)
+                this.person = user;
+              }).then((user)=> {
+                console.log("person:" + this.person)
+                this.projetistas.push(this.person);
+              })
+            }
+          })
+      }
     },
   },
   created() {

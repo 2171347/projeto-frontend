@@ -1,9 +1,5 @@
 <template>
-  <v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
-  >
+  <v-form ref="form" v-model="valid" lazy-validation>
     <p class="subtitle-1 text-center">Registo de novo utilizador</p>
     <v-text-field
       v-model="nome"
@@ -43,8 +39,7 @@
       color="success"
       class="mr-4"
       @click="validate"
-    >
-      Submeter </v-btn>
+    >Submeter </v-btn>
 
     <v-btn
       color="error"
@@ -61,11 +56,7 @@
     >
       Reset Validação
     </v-btn>
-    <v-btn
-      color="error"
-      class="mr-4"
-      @click="cancel"
-    >
+    <v-btn color="error" class="mr-4" @click="cancel">
       Cancelar
     </v-btn>
   </v-form>
@@ -95,16 +86,6 @@ export default {
     moradaRules:[
       v => !!v || 'Morada é um campo obrigatório',
       v => (v && v.length <= 80 ) || 'Morada deve ter menos de 80 caracteres.',],
-
-    nif: '',
-    nifRules:[
-      v => !!v || 'NIF é um campo obrigatório',
-      v => (v && v.length ===  9) || 'NIF deve ter 9 algarismos. ',],
-
-    nic: '',
-    nicRules:[
-      v => !!v || 'Nº Identificação Civil é um campo obrigatório',
-      v => (v && v.length ===  9) || 'Nº Identificação Civil deve ter 9 algarismos. ',],
 
     nome: '',
     nomeRules: [

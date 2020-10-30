@@ -42,13 +42,11 @@
 
       <v-toolbar-title v-text="title" />
       <v-spacer />
+  <!--      TODO: Adicionar icon para notificações-->
 
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-          >
+          <v-btn v-bind="attrs" v-on="on">
             <v-icon>mdi-account</v-icon>
           </v-btn>
         </template>
@@ -56,7 +54,7 @@
           <v-list-item to="/perfil">
            <v-icon>mdi-account</v-icon>Perfil
           </v-list-item>
-          <v-list-item to="/">
+          <v-list-item @click="logout">
            <v-icon>mdi-logout</v-icon>Sair
           </v-list-item>
         </v-list>
@@ -67,16 +65,6 @@
         <nuxt />
       </v-container>
     </v-main>
-    <v-footer
-      :fixed="fixed"
-      app>
-      <v-btn id="btn_admin" @click="setUser('A')">Administrador</v-btn>
-      <v-btn @click="setUser('C')">Cliente</v-btn>
-      <v-btn @click="setUser('P')">Projetista</v-btn>
-      <v-btn @click="setUser('F')">Fornecedor</v-btn>
-      Utilizador: {{this.active_user}}
-    </v-footer>
-
   </v-app>
 </template>
 
@@ -89,7 +77,6 @@ export default {
       clipped: true,
       drawer: false,
       fixed: true,
-      active_user: 'A',
       items:[],
       email:'',
 
@@ -154,22 +141,26 @@ export default {
     }
   },
   methods:{
-    setUser(letra){
-      this.active_user = letra;
-      console.log("letra:" + letra)
-      if (letra == 'C'){
-        this.items = this.items_cliente;
-      }if (letra == 'A'){
-        this.items = this.items_admin;
-      }if (letra == 'P'){
-        this.items = this.items_projetista;
-      }if (letra == 'F'){
-        this.items = this.items_fornecedor;
-      }
+    logout () {
+      this.$auth.logout('local')
     },
+    getUser(){
+      if (this.$auth.user.groups.includes('Cliente')){
+          this.items = this.items_cliente;
+      }
+      if (this.$auth.user.groups.includes('Projetista')){
+          this.items = this.items_projetista;
+      }
+      if (this.$auth.user.groups.includes('Fabricante')){
+          this.items = this.items_fornecedor;
+      }
+      if (this.$auth.user.groups.includes('Administrador')){
+          this.items = this.items_admin;
+      }
+    }
   },
   created() {
-    this.setUser('C')
+    this.getUser()
   }
 }
 </script>

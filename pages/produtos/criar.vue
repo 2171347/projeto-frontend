@@ -6,7 +6,6 @@
       :color="color"
       :left="x === 'left'"
       :multi-line="mode === 'multi-line'"
-
       :timeout="timeout"
       :top="y === 'top'"
       :vertical="mode === 'vertical'"
@@ -16,6 +15,9 @@
         Close
       </v-btn>
     </v-snackbar>
+
+    <!--TODO finalizar formulário com todos os dados do projeto -->
+
     <v-form
       ref="form"
       v-model="valid"
@@ -37,38 +39,18 @@
         required
       ></v-text-field>
 
-
-
-
-      <v-btn
-        :disabled="!valid"
-        color="success"
-        class="mr-4"
-        @click="createProject"
-      >
+      <v-btn :disabled="!valid" color="success" class="mr-4" @click="createProject">
         Submeter
       </v-btn>
 
-      <v-btn
-        color="error"
-        class="mr-4"
-
-      >
+      <v-btn color="error" class="mr-4">
         Reset Formulário
       </v-btn>
 
-      <v-btn
-        color="warning"
-        class="mr-4"
-
-      >
+      <v-btn color="warning" class="mr-4">
         Reset Validação
       </v-btn>
-      <v-btn
-        color="error"
-        class="mr-4"
-
-      >
+      <v-btn color="error" class="mr-4">
         Cancelar
       </v-btn>
     </v-form>
@@ -76,8 +58,6 @@
 </template>
 
 <script>
-
-
 export default {
   name: "criar",
   data: () =>{

@@ -32,6 +32,7 @@
           </v-card-title>
           <v-card-text>
             <photo_projetista class="d-block" style="margin: auto"/>
+<!--            TODO criar testo para projetistas-->
           </v-card-text>
           <v-card-actions>
 
@@ -44,6 +45,7 @@
           </v-card-title>
           <v-card-text>
             <photo_fabricante class="d-block" style="margin: auto"/>
+<!--            TODO criar texto para os fabricantes-->
           </v-card-text>
           <v-card-actions>
 
@@ -56,7 +58,6 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
 import VuetifyLogo from '@/components/logo_projeto.vue'
 import Photo_client from "@/components/photo_client";
 import Photo_projetista from "@/components/photo_projetista";
@@ -69,25 +70,18 @@ export default {
     Photo_fabricante,
     Photo_projetista,
     Photo_client,
-    Logo,
     VuetifyLogo
   },
   data:function (){
     return {
-      projetos: [],
+
     }
   },
   methods:{
-    getProjetos () {
 
-      this.$axios.$get('/api/projetos/all')
-        .then((response) => {
-          this.projetos = response;
-        })
-    },
   },
   created() {
-    this.getProjetos()
+
   }
 }
 </script>
