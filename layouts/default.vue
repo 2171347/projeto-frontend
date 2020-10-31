@@ -26,24 +26,16 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-      color="cyan lighten-3"
-    >
+    <v-app-bar :clipped-left="clipped" fixed app color="cyan lighten-3">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
+      <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
 
       <v-toolbar-title v-text="title" />
       <v-spacer />
   <!--      TODO: Adicionar icon para notificações-->
-
+  <!--      TODO: Adicionar nome do utilizador ao lado do botão "user"-->
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on">
@@ -79,6 +71,10 @@ export default {
       fixed: true,
       items:[],
       email:'',
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'Projeto+',
 
       items_cliente: [
         {
@@ -134,10 +130,7 @@ export default {
         },
 
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Project+'
+
     }
   },
   methods:{

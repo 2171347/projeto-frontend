@@ -8,23 +8,12 @@
       label="Nome"
       required
     ></v-text-field>
-
     <v-text-field
       v-model="email"
       :rules="emailRules"
       label="E-mail"
       required
     ></v-text-field>
-
-    <v-text-field
-      v-model="nif"
-      :rules="nifRules"
-      label="NIF"
-      :counter="9"
-      type="number"
-      required
-    ></v-text-field>
-
 <!-- TODO Completar formulário de registo de utilizador   -->
     <v-text-field
       v-model="morada"
@@ -33,7 +22,6 @@
       :counter="80"
       required
     ></v-text-field>
-
     <v-btn
       :disabled="!valid"
       color="success"
@@ -41,19 +29,10 @@
       @click="validate"
     >Submeter </v-btn>
 
-    <v-btn
-      color="error"
-      class="mr-4"
-      @click="reset"
-    >
+    <v-btn color="error" class="mr-4" @click="reset">
       Reset Formulário
     </v-btn>
-
-    <v-btn
-      color="warning"
-      class="mr-4"
-      @click="resetValidation"
-    >
+    <v-btn color="warning" class="mr-4" @click="resetValidation">
       Reset Validação
     </v-btn>
     <v-btn color="error" class="mr-4" @click="cancel">

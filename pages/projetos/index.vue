@@ -1,21 +1,36 @@
 <template>
   <div>
-    <v-data-table
-      :headers="headers"
-      :items="projetos"
-      :items-per-page="5"
-      class="elevation-1"
-    >
-      <template v-slot:item.actions="{ item }">
-        <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
-      </template>
-      <template v-slot:item.proj_nome="{item}">
-        <div v-for="pessoa in projetistas">
-          <p v-if="pessoa.email == item.emailProjetista">{{ pessoa.nome }}</p>
-        </div>
-      </template>
-
-    </v-data-table>
+    <div v-if="this.loading == 1">
+      <v-text-field color="success" loading disabled
+      ></v-text-field>
+    </div>
+    <div v-if="this.projetos.length == 0 && this.loading == 0" style="text-align: center">
+      <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
+      <div id="h2">Ainda não tem projetos!</div>
+    </div>
+    <div v-else>
+      <v-text-field
+        v-model="search"
+        label="Pesquisa"
+        hide-details
+      ></v-text-field>
+      <v-data-table
+        :headers="headers"
+        :items="projetos"
+        :search="search"
+        :items-per-page="5"
+        class="elevation-1"
+      >
+        <template v-slot:item.actions="{ item }">
+          <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+        </template>
+        <template v-slot:item.proj_nome="{item}">
+          <div v-for="pessoa in projetistas">
+            <p v-if="pessoa.email == item.emailProjetista">{{ pessoa.nome }}</p>
+          </div>
+        </template>
+      </v-data-table>
+    </div>
   </div>
 </template>
 
@@ -27,6 +42,8 @@ export default {
       projetos:[],
       projetistas:[],
       person:'',
+      search:'',
+      loading: 1,
 
       headers: [
        {
@@ -51,7 +68,25 @@ export default {
       //TODO rever rotas para cliente VS projetista
 
       if (this.$auth.user.groups.includes('Cliente')){
-        // TODO falta rota para ter os projetos do cliente
+        this.$axios.$get('/api/clientes/'+this.$auth.user.sub+'/projetos')
+          .then((response) => {
+            this.projetos = response;
+            this.loading = 0;
+          })
+          .then((response) => {
+            for (let i = 0; i < this.projetos.length; i++){
+              console.log("ciclo for: " + this.projetos[i].emailProjetista);
+              this.$axios.$get('/api/projetistas/'+this.projetos[i].emailProjetista).
+              then((user) => {
+
+                console.log("user:" + user.nome)
+                this.person = user;
+              }).then((user)=> {
+                console.log("person:" + this.person)
+                this.projetistas.push(this.person);
+              })
+            }
+          })
       }
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')

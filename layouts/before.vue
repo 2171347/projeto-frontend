@@ -1,16 +1,9 @@
 <template>
   <v-app dark>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-      color="cyan lighten-3"
-      style="max-width: 100%"
-    >
+    <v-app-bar :clipped-left="clipped" fixed app color="cyan lighten-3" style="max-width: 100%">
       <v-btn icon to="/">
         <v-icon>mdi-{{ `home` }}</v-icon>
       </v-btn>
-
       <v-spacer />
       <v-toolbar-title v-text="title" to="/"/>
       <v-spacer />
@@ -41,6 +34,10 @@ export default {
       clipped: true,
       drawer: false,
       fixed: true,
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'Projeto+',
       items: [
         {
           icon: 'mdi-apps',
@@ -53,10 +50,7 @@ export default {
           to: '/inspire'
         }
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Project+'
+
     }
   }
 }

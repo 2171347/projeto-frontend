@@ -16,7 +16,7 @@
       </v-btn>
     </v-snackbar>
 
-    <!--TODO finalizar formulário com todos os dados do projeto -->
+    <!--TODO finalizar formulário com todos os dados do produto -->
 
     <v-form
       ref="form"
