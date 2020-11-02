@@ -64,8 +64,8 @@ export default {
             propertyName: ''
           }
         },
-        // tokenRequired: true, -> default
-        // tokenType: 'bearer' -> default
+        //tokenRequired: true,
+        //tokenType: 'bearer'
       }
     }
   },

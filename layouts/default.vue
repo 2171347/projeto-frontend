@@ -138,9 +138,7 @@ export default {
       this.$auth.logout('local')
     },
     getUser(){
-      if (this.$auth == null){
-        this.$router.push('/projetos/'+ item.referencia+'/');
-      }
+
       if (this.$auth.user.groups.includes('Cliente')){
           this.items = this.items_cliente;
       }

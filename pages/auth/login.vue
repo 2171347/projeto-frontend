@@ -86,10 +86,7 @@ export default {
       promise.then(() => {
 
         this.$router.push('/home');
-        /*if (this.$auth.user.groups.includes('Cliente')){
-          console.log("cliente")
 
-        }*/
       });
       promise.catch(() => {
 
