@@ -62,6 +62,7 @@ export default {
       if (this.$auth.user.groups.includes('Cliente')){
         this.$axios.$get('/api/clientes/'+this.$auth.user.sub+'/projetos')
           .then((response) => {
+            // TODO - realizar verificação se o projeto está visivel
             this.projetos = response;
             this.loading = 0;
           })
