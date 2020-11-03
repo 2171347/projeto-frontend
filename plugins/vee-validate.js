@@ -29,7 +29,7 @@ extend('password', {
   validate(value, { target }) {
     return value === target;
   },
-  message: 'Password confirmation does not match'
+  message: 'As palavras-chave não são iguais.'
 });
 extend("length", {
   ...length,
