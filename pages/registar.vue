@@ -48,19 +48,20 @@
           label="Palavra-Chave:"
           v-model="password"
           :error-messages="errors"
+          :rules="passwordRules"
           type="password">
           required>
         </v-text-field>
       </validation-provider>
       <validation-provider
-        v-slot="{ errors }"
+        v-slot="{  errors}"
         name="confirm"
         rules="required"
       >
         <v-text-field
           label="Confirmação da Palavra-Chave:"
           v-model="passwordConfirmation"
-          :error-messages="errors"
+          :error-messages=" errors"
           required
           type="password">
         </v-text-field>
@@ -196,6 +197,9 @@ export default {
     codigoPostal:'',
     localidade:'',
     password:'',
+    passwordRules:[
+      v => !!v || 'Palavra-Chave é um campo obrigatório',
+    ],
     passwordConfirmation:'',
     tiposUtilizador:['Cliente', 'Fabricante', 'Projetista'],
     userType:'',
@@ -203,20 +207,15 @@ export default {
     errorsMorada:'',
     errorsEmail:'',
     errorsUserType:'',
+    errorsPassword:'',
     date:'',
     emailSistema:'noreply@projeto.com',
+    moradaSending:'',
 
   }),
 
   methods: {
-    checkTipoUtilizador(){
-      if (this.userType == ''){
-        this.errorsUserType = "Deve selecionar uma opção."
-      }else{
-        this.errorsUserType = '';
-      }
-    },
-    checkEmailDisponivel(){
+        checkEmailDisponivel(){
       this.$axios.get('/api/users/'+this.email).then((response) => {
           if (response.data.value == true){
             this.errorsEmail="Email já está registado da plataforma."
@@ -237,7 +236,6 @@ export default {
         this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
         return null;
       }
-
       if (this.codigoPostal !== '' && ( this.morada === ''|| this.localidade === '')){
         this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
         return null;
@@ -245,6 +243,11 @@ export default {
 
       this.errorsMorada = '';
     },
+    getDate(){
+      var currentDate = new Date();
+      return currentDate;
+    },
+
     sendEmail(){
       this.date = this.getDate();
 
@@ -261,31 +264,44 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         this.checkEmailDisponivel()
-        this.checkTipoUtilizador()
         this.checkValidacaoMorada()
 
+        // Verificar se o tipo de utilizador foi dado:
+        if (this.userType === ''){
+          this.errorsUserType = "Deve selecionar uma opção."
+          return null;
+        }else{
+          this.errorsUserType = '';
+        }
+
         // Definir a rota com base no tipo de utilizador
-        if (this.userType == 'Cliente'){
+        if (this.userType === 'Cliente'){
           this.url="/api/clientes/"
-        }if (this.userType == 'Fabricante'){
+        }if (this.userType === 'Fabricante'){
           this.url="/api/fabricantes/"
-        }if (this.userType == 'Projetista'){
+        }if (this.userType === 'Projetista'){
           this.url="/api/projetistas/"
         }
 
         // Definir os campos vazios a null
-
         if (this.morada === ''){
-          this.morada = null;
+          this.moradaSending = null;
         }else{
-          this.morada = this.morada + this.localidade + this.codigoPostal;
+          this.moradaSending = this.morada +' '+  this.codigoPostal +' '+ this.localidade;
+        }
+
+        if (this.contacto === ''){
+          this.contacto = null;
+        }
+        if (this.nif === ''){
+          this.nif = null
         }
 
         this.$axios.$post(this.url, {
           nome: this.nome,
           email: this.email,
           password: this.password,
-          morada: this.morada,
+          morada: this.moradaSending,
           contactoTelefonico: this.contacto,
           numContribuinte: this.nif,
         })
