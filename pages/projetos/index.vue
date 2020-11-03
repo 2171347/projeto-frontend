@@ -24,11 +24,6 @@
         <template v-slot:item.actions="{ item }">
           <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
         </template>
-        <template v-slot:item.proj_nome="{item}">
-          <div v-for="pessoa in projetistas">
-            <p v-if="pessoa.email == item.emailProjetista">{{ pessoa.nome }}</p>
-          </div>
-        </template>
       </v-data-table>
     </div>
   </div>
@@ -40,7 +35,6 @@ export default {
   data () {
     return {
       projetos:[],
-      projetistas:[],
       person:'',
       search:'',
       loading: 1,
@@ -52,10 +46,8 @@ export default {
           sortable: true,
           value: 'nome',
         },
-       { text: 'Nome Projetista', value: 'proj_nome' },
+       { text: 'Nome Projetista', value: 'nomeProjetista' },
        { text: 'Ações', value: 'actions'},
-
-
       ],
     }
   },
@@ -73,39 +65,11 @@ export default {
             this.projetos = response;
             this.loading = 0;
           })
-          .then((response) => {
-            for (let i = 0; i < this.projetos.length; i++){
-              console.log("ciclo for: " + this.projetos[i].emailProjetista);
-              this.$axios.$get('/api/projetistas/'+this.projetos[i].emailProjetista).
-              then((user) => {
-
-                console.log("user:" + user.nome)
-                this.person = user;
-              }).then((user)=> {
-                console.log("person:" + this.person)
-                this.projetistas.push(this.person);
-              })
-            }
-          })
       }
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')
           .then((response) => {
             this.projetos = response;
-          })
-          .then((response) => {
-            for (let i = 0; i < this.projetos.length; i++){
-              console.log("ciclo for: " + this.projetos[i].emailProjetista);
-              this.$axios.$get('/api/projetistas/'+this.projetos[i].emailProjetista).
-              then((user) => {
-
-                console.log("user:" + user.nome)
-                this.person = user;
-              }).then((user)=> {
-                console.log("person:" + this.person)
-                this.projetistas.push(this.person);
-              })
-            }
           })
       }
     },
