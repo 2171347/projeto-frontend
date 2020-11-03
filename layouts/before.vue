@@ -19,14 +19,10 @@
         <nuxt />
       </v-container>
     </v-main>
-
   </v-app>
 </template>
 
 <script>
-
-
-
 export default {
   name: "before",
   data () {
@@ -50,7 +46,6 @@ export default {
           to: '/inspire'
         }
       ],
-
     }
   }
 }

@@ -3,7 +3,6 @@
     <v-card>
       <v-card-title style="justify-content: center">Painel Geral do {{this.$auth.user.groups[0]}}</v-card-title>
       <v-card-text>
-        {{this.$auth.user}}
         {{this.$auth.user.sub}}
       </v-card-text>
     </v-card>

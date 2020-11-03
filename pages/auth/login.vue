@@ -85,8 +85,16 @@ export default {
       })
       promise.then(() => {
 
+        /*console.log(promise)
+        this.color = 'red lighten-1';
+        this.text = "ola" +  promise.data
+        this.snackbar = true;
+        this.$auth.setToken('local','Bearer ' + promise.data.token);
+       /!* this.$auth.setRefreshToken('local', promise.data.token)*!/
+        this.$axios.setHeader('Authorization', 'Bearer ' + promise.data.token);
+        this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + promise.data.token)
+        */
         this.$router.push('/home');
-
       });
       promise.catch(() => {
 

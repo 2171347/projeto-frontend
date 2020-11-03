@@ -35,6 +35,7 @@
         prepend-inner-icon="mdi-at"
         v-model="email"
         :rules="emailRules"
+        :error-messages="errorsEmail"
         label="E-mail"
         required
       ></v-text-field>
@@ -139,6 +140,7 @@
         <v-col md="6">
           <v-select
             :items="tiposUtilizador"
+            :error-messages="errorsUserType"
             v-model="userType"
             label="Vou utilizar esta aplicação no papel de:"
           ></v-select>
@@ -178,8 +180,6 @@ export default {
     y: 'top',
     // ------------------------
 
-    // TODO Fazer verificação dos valores de entrada para registo de utilizadores
-
     morada: '',
     nome: '',
     nomeRules: [
@@ -201,9 +201,32 @@ export default {
     userType:'',
     url:'',
     errorsMorada:'',
+    errorsEmail:'',
+    errorsUserType:'',
+    date:'',
+    emailSistema:'noreply@projeto.com',
+
   }),
 
   methods: {
+    checkTipoUtilizador(){
+      if (this.userType == ''){
+        this.errorsUserType = "Deve selecionar uma opção."
+      }else{
+        this.errorsUserType = '';
+      }
+    },
+    checkEmailDisponivel(){
+      this.$axios.get('/api/users/'+this.email).then((response) => {
+          if (response.data.value == true){
+            this.errorsEmail="Email já está registado da plataforma."
+            return null;
+          }else{
+            this.errorsEmail='';
+          }
+      })
+
+    },
     checkValidacaoMorada(){
 
       if (this.localidade !== '' &&  (this.morada === '' || this.localidade === '') ){
@@ -219,13 +242,26 @@ export default {
         this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
         return null;
       }
+
       this.errorsMorada = '';
-
-
     },
+    sendEmail(){
+      this.date = this.getDate();
+
+      this.$axios.post('/api/emails/'+this.emailSistema+'/sendto/'+this.email,{
+        subject: '[Projeto +] [Registo] Bem-vindo ao Projeto+!',
+        message: '[Por favor não responda a este email] \n Bem-vindo ao Projeto +\n O seu registo na aplicação foi feito com sucesso. \n['+this.date+']'
+      }).then((response) => {
+
+      }).catch(error =>{
+        console.log(error)
+      })
+    },
+
     submit () {
       if (this.$refs.form.validate()) {
-
+        this.checkEmailDisponivel()
+        this.checkTipoUtilizador()
         this.checkValidacaoMorada()
 
         // Definir a rota com base no tipo de utilizador
@@ -257,6 +293,8 @@ export default {
             this.color = 'green';
             this.text = 'O seu registo foi feito com sucesso.';
             this.snackbar = true;
+
+            this.sendEmail()
             setTimeout(() => {
               this.$router.push('/');
             }, 3000);

@@ -4,7 +4,6 @@
       <v-col>
         <div class="text-center" >
           <vuetify-logo/>
-
           <div class="text-h2 font-weight-light">O melhor de 3 mundos</div>
           <div id="h2">A plataforma nº 1 para a construção do seu projeto</div>
         </div>
@@ -23,7 +22,6 @@
             </p>
           </v-card-text>
           <v-card-actions>
-
           </v-card-actions>
         </v-card>
       </v-col><v-col>
