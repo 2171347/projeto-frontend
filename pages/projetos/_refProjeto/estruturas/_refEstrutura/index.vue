@@ -24,7 +24,7 @@ export default {
   },
   methods:{
     getEstrutura(){
-      this.$axios.$get('/api/estruturas/'+this.$route.params.referencia).then((struct) => {
+      this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura).then((struct) => {
         this.estrutura = struct;
       })
     },

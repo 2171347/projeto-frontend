@@ -69,6 +69,7 @@
           <v-card-text>
             <p><b>Referencia Projeto:</b> {{ projeto.referencia }}</p>
             <p><b>Nome Projeto:</b> {{ projeto.nome }}</p>
+            <p><b>Estado:</b> {{ projeto.estado }}</p>
           </v-card-text>
         </v-card>
       </v-col>
@@ -99,8 +100,10 @@
         <v-card v-if="this.$auth.user.groups.includes('Projetista')">
           <v-card-title>Ações</v-card-title>
           <v-card-text >
-            <!--TODO criar botões para a vista do projetista-->
-
+            <!--TODO rever formatação dos botões-->
+            <v-btn x-small color="primary" @click="editarProjeto()">Editar</v-btn>
+            <v-btn x-small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
+            <v-btn x-small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -108,11 +111,18 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-card-title>Estruturas</v-card-title>
+          <v-card-title>
+            Estruturas
+            <v-spacer></v-spacer>
+            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">
+              <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>
+            </div>
+          </v-card-title>
           <v-card-text>
             <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
               <template v-slot:item.actions="{ item }">
                 <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+                <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
               </template>
             </v-data-table>
           </v-card-text>
@@ -155,14 +165,14 @@ export default {
       email_assunto:'[Projeto +]',
       dialog_observacao: false,
       dialog_email: false,
-      projeto:[],
+      projeto:'',
       estruturas:[],
       subject:'',
       message:'',
       observacao:'',
       date:'',
       cabecalhos_estruturas:[{
-        text: 'Nome Projeto',
+        text: 'Nome Estrutura',
         align: 'start',
         sortable: true,
         value: 'nome',
@@ -172,6 +182,11 @@ export default {
         sortable: true,
         value: 'tipoMaterial',
       },{
+        text: 'Estado',
+        align: 'start',
+        sortable: true,
+        value: 'estado',
+      },{
         text: 'Ações',
         value: 'actions',
       },
@@ -180,9 +195,10 @@ export default {
   },
   methods:{
     getProjeto(){
-      this.$axios.$get('/api/projetos/'+this.$route.params.referencia).then((projeto) => {
-        this.projeto = projeto;
-        this.estruturas = projeto.estruturas;
+      this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
+        .then((projeto) => {
+          this.projeto = projeto;
+          this.estruturas = projeto.estruturas;
       })
     },
     editarObservacao(){
@@ -200,9 +216,41 @@ export default {
     perfilProjetista(){
       //TODO redirecionar para o perfil do cliente
     },
+  //#############################################Funções para o projetista
+    disponibilizar(){
+      this.$axios.put('/api/projetos/provide/'+this.projeto.referencia+'/')
+        .then((response) => {
+          this.color = 'green';
+          this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
+          this.snackbar = true;
+        })
+    },
+    editarProjeto(){
+      //TODO redirecionar para a página de atualizar projeto
+    },
+    eliminarProjeto(){
+      this.$axios.delete('/api/projetos/'+this.projeto.referencia+'/')
+      .then((response) => {
+        this.color = 'green';
+        this.text = 'O projeto foi eliminado com sucesso.';
+        this.snackbar = true;
+
+        setTimeout(() => {
+          this.$router.push("/projetos");
+        }, 2000);
+      })
+    },
+    eliminarEstrutura(item){
+      this.$axios.delete('/api/estruturas/'+item.referencia+'/')
+        .then((response) => {
+          this.color = 'green';
+          this.text = 'A Estrutura foi eliminada com sucesso.';
+          this.snackbar = true;
+          this.getProjeto();
+        })
+    },
     sendEmail(){
       this.date = this.getDate();
-
       this.$axios.post('/api/emails/'+this.projeto.emailProjetista+'/sendto/'+this.$auth.user.sub,{
         subject: '[Projeto +] ['+this.projeto.referencia+'] '+this.subject,
         message: '[Mensagem do cliente] \n '+this.message + '\n ['+this.date+']'
@@ -222,6 +270,9 @@ export default {
     },
     toDetalhes (item){
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+item.referencia);
+    },
+    criarEstrutura(){
+      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/criar');
     },
     getDate(){
       var currentDate = new Date();

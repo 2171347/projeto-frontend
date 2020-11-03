@@ -46,14 +46,16 @@ export default {
           sortable: true,
           value: 'nome',
         },
-       { text: 'Nome Projetista', value: 'nomeProjetista' },
-       { text: 'Ações', value: 'actions'},
+        { text: 'Nome Projetista', value: 'nomeProjetista' },
+        { text: 'Nome Cliente', value: 'nomeCliente' },
+        { text: 'Ações', value: 'actions'},
       ],
     }
   },
   methods:{
     toDetalhes (item){
-      this.$router.push('/projetos/'+ item.referencia+'/');
+      console.log(item.refProjeto)
+      this.$router.push('/projetos/'+item.referencia+'/');
     },
     getProjetos (){
 
