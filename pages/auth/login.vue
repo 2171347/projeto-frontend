@@ -62,8 +62,8 @@ export default {
   auth: false,
   data:function (){
     return {
-      email: '',
-      password: '',
+      email: null,
+      password: null,
       // ---- SNACKBAR INFO -----
       color: '',
       mode: '',
