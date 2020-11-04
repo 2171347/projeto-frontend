@@ -8,8 +8,7 @@
       :multi-line="mode === 'multi-line'"
       :timeout="timeout"
       :top="y === 'top'"
-      :vertical="mode === 'vertical'"
-    >
+      :vertical="mode === 'vertical'">
       {{ text }}
       <v-btn dark text @click="snackbar = false">
         Close
@@ -40,7 +39,7 @@
                 v-model="password"
                 required
               ></v-text-field>
-
+              <!--TODO fazer a funcionalidade "esqueciPassword"-->
               <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
 
               <v-btn color="success" style="margin-left: 35%" @click="onSubmit">Entrar</v-btn>

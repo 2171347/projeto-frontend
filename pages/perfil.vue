@@ -20,9 +20,9 @@
           Alterar a Palavra-Chave
         </v-card-title>
         <v-card-text>
-          <v-text-field label="Palavra-Chave antiga" v-model="old_password" type="password"></v-text-field>
-          <v-text-field label="Nova Palavra-Chave" :rules="passwordRules"  v-model="new_password" type="password"></v-text-field>
-          <v-text-field label="Confirmação da nova Palavra-Chave"  :rules="passwordRules"  v-model="confirmation_password" type="password"></v-text-field>
+          <v-text-field label="Palavra-Chave antiga" :error-messages="error_old" v-model="old_password" type="password"></v-text-field>
+          <v-text-field label="Nova Palavra-Chave" :error-messages="error_new" :rules="passwordRules"  v-model="new_password" type="password"></v-text-field>
+          <v-text-field label="Confirmação da nova Palavra-Chave" :error-messages="error_confirmation" :rules="passwordRules"  v-model="confirmation_password" type="password"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -45,6 +45,9 @@
           <v-card-text>
             <p><b>Nome:</b> {{this.user.nome}}</p>
             <p><b>Email:</b> {{this.user.email}}</p>
+            <p><b>Morada:</b> {{this.user.morada}}</p>
+            <p><b>NIF:</b> {{this.user.numContribuinte}}</p>
+            <p><b>Telefone/Telemóvel:</b> {{this.user.contactoTelefonico}}</p>
             {{this.user}}
           </v-card-text>
         </v-card>
@@ -63,6 +66,9 @@ export default {
       old_password:'',
       new_password:'',
       confirmation_password:'',
+      error_old:'',
+      error_new:'',
+      error_confirmation:'',
 
       // ---- SNACKBAR INFO -----
       color: '',
@@ -104,15 +110,44 @@ export default {
         })
       }
     },
+    cleanFields(){
+      this.new_password = '';
+      this.old_password = '';
+      this.confirmation_password = '';
+    },
     updatePassword(){
-      if (this.new_password != this.confirmation_password){
-        this.snackbar = true;
-        this.text = "Palavras-Chave não coincidem."
-        this.color = 'red darken-1';
+
+      // Verificar se a nova password é igual à confirmação
+      if(this.new_password !== this.confirmation_password){
+        this.error_new = "Nova palavra-chave deve coincidir com a confirmação."
+      }else{
+        this.error_new = '';
       }
 
-      //TODO enviar pedido ao servidor para ver se a password velha coincide
-        // TODO dar mensagem de validação ao utilizador e fechar snackbar
+      // Verificar se a password velha é igual à do perfil do utilizador
+      this.$axios.$post('/api/users/'+this.user.email+'/confirm_password',{
+        password : this.old_password
+      }).then((response) => {
+        this.$axios.$put('/api/users/'+this.user.email+'/change_password', {
+          password : this.new_password
+        }).then((response) => {
+          this.snackbar = true;
+          this.text = "Palavra-Chave alterada com sucesso."
+          this.color = 'success';
+
+          this.cleanFields();
+          this.dialog_password = false;
+
+        }).catch(error =>{
+          this.snackbar = true;
+          this.text = "Ocorreu um erro.Por favor tente novamente mais tarde.."
+          this.color = 'error';
+        })
+      }).catch(error =>{
+        this.error_old = "A palavra-chave introduzida não coincide com a palavra-chave atual."
+        console.log(error)
+      })
+
     }
   },
   mounted() {
