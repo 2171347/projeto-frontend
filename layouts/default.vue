@@ -37,6 +37,17 @@
 
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      <v-badge
+        overlap
+        offset-x="28"
+        offset-y="20"
+        v-if="this.num_notificacoes !== 0"
+      >
+        <span slot="badge">{{this.num_notificacoes}}</span>
+      <v-btn icon style="margin-right: 10px">
+        <v-icon>mdi-email</v-icon>
+      </v-btn>
+      </v-badge>
   <!--      TODO: Adicionar icon para notificações-->
   <!--      TODO: Adicionar nome do utilizador ao lado do botão "user"-->
       <v-menu offset-y>
@@ -66,7 +77,6 @@
 <script>
 const Cookie = process.client ? require('js-cookie') : undefined
 
-
 export default {
 
   data () {
@@ -80,6 +90,8 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'Projeto+',
+      notificacoes:'',
+      num_notificacoes:0,
 
       items_cliente: [
         {
@@ -141,27 +153,36 @@ export default {
   methods:{
     logout () {
       this.$auth.logout('local')
-      Cookie.remove('auth')
+      Cookie.remove('authentication')
       this.$store.commit('setAuth', null)
     },
     getUser(){
 
-      if (this.$store.$auth.$state.user.groups.includes('Cliente')){
+      if (this.$auth.user.groups.includes('Cliente')){
           this.items = this.items_cliente;
       }
-      if (this.$store.$auth.$state.user.groups.includes('Projetista')){
+      if (this.$auth.user.groups.includes('Projetista')){
           this.items = this.items_projetista;
       }
-      if (this.$store.$auth.$state.user.groups.includes('Fabricante')){
+      if (this.$auth.user.groups.includes('Fabricante')){
           this.items = this.items_fornecedor;
       }
-      if (this.$store.$auth.$state.user.groups.includes('Administrador')){
+      if (this.$auth.user.groups.includes('Administrador')){
           this.items = this.items_admin;
       }
+    },
+    getNotificacoes(){
+      this.$axios.get('/api/notificacoes/'+ this.$auth.user.sub).then((notificacoes) => {
+        this.notificacoes = notificacoes.data;
+        this.num_notificacoes = notificacoes.data.length;
+        console.log(notificacoes.data.length)
+        //console.log(this.notificacoes)
+      })
     }
   },
   created() {
     this.getUser()
+    this.getNotificacoes()
   }
 }
 </script>
