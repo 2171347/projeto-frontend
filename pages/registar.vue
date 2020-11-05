@@ -14,7 +14,7 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="form" v-model="valid" lazy-validation >
       <p class="subtitle-1 text-center">Registo de novo utilizador</p>
       <validation-provider
         v-slot="{ errors }"
@@ -100,6 +100,7 @@
               v-model="localidade"
               :error-messages="errors"
               label="Localidade:"
+              @input="checkValidacaoMorada"
             >
             </v-text-field>
           </validation-provider>
@@ -227,20 +228,13 @@ export default {
 
     },
     checkValidacaoMorada(){
+          console.log("OLA")
 
-      if (this.localidade !== '' &&  (this.morada === '' || this.localidade === '') ){
+      if (!this.localidade.trim(" ")  ||  !this.morada.trim(' ') || !this.codigoPostal.trim(" ") ){
         this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
         return null;
       }
-      if (this.morada !== '' && (this.localidade === '' || this.codigoPostal === '')){
-        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-        return null;
-      }
-      if (this.codigoPostal !== '' && ( this.morada === ''|| this.localidade === '')){
-        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-        return null;
-      }
-
+      
       this.errorsMorada = '';
     },
     getDate(){
@@ -337,9 +331,9 @@ export default {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider
   },
-  updated() {
+  /*updated() {
     this.checkValidacaoMorada()
-  }
+   }*/
 
 }
 </script>

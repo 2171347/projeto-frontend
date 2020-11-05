@@ -17,12 +17,17 @@
     </v-snackbar>
     <v-card style="margin-top: 10px">
       <v-card-text>
-        <v-text-field label="Nome:" v-model="this.user.nome"></v-text-field>
+        <validation-provider v-slot="{ errors }" name="Name" rules="required|alpha_spaces">
+          <v-text-field :error-messages="errors" label="Nome:" v-model="this.user.nome"></v-text-field>
+        </validation-provider>
         <v-text-field label="Email:" v-model="this.user.email"></v-text-field>
-        <v-text-field label="Telemóvel/Telefone:" v-model="this.user.contactoTelefonico"></v-text-field>
-        <v-text-field label="NIF:" v-model="this.user.nif"></v-text-field>
-        <v-text-field label="Morada:" v-model="this.user.morada"></v-text-field>
-        <v-text-field label="Rua:" v-model="this.rua"></v-text-field>
+        <validation-provider v-slot="{ errors }" name="Name" rules="length:9">
+          <v-text-field :error-messages="errors" label="Telemóvel/Telefone:" v-model="this.user.contactoTelefonico"></v-text-field>
+        </validation-provider>
+        <validation-provider v-slot="{ errors }" name="Name" rules="length:9">
+          <v-text-field label="NIF:" error-messages="errors" v-model="this.user.nif"></v-text-field>
+        </validation-provider>
+        <v-text-field label="Rua:" :error-messages="errorsMorada" v-model="this.rua"></v-text-field>
         <v-text-field label="Código-Postal:" v-model="this.codigoPostal"></v-text-field>
         <v-text-field label="Localidade:" v-model="this.localidade"></v-text-field>
         <v-btn color="success">Guardar alterações</v-btn>
@@ -33,6 +38,7 @@
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 export default {
 name: "editar",
   data: () => {
@@ -43,6 +49,7 @@ name: "editar",
       codigoPostal:'',
       localidade:'',
       auxiliarMorada:'',
+      errorsMorada:'',
 
 
       // ---- SNACKBAR INFO -----
@@ -78,23 +85,35 @@ name: "editar",
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.user_dados_originais = utilizador;
+          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.user_dados_originais = utilizador;
+          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.user_dados_originais = utilizador;
+          this.splitMorada();
         })
       }
-      //this.splitMorada()
+
     },
     updateUser(){
+
+      //Validar os campos
+      if (!this.localidade.trim(" ")  ||  !this.rua.trim(' ') || !this.codigoPostal.trim(" ") ){
+        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
+        return null;
+      }
+
+
+      //Enviar os dados para o update do utilizador
 
 
     }

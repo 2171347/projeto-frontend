@@ -38,11 +38,11 @@
                 type="password"
                 v-model="password"
                 required
+                v-on:keyup.enter="this.onSubmit"
               ></v-text-field>
               <!--TODO fazer a funcionalidade "esqueciPassword"-->
               <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
               <v-btn color="success" style="margin-left: 35%" @click="onSubmit">Entrar</v-btn>
-              <!--TODO fazer a funcionalidade: botão enter para fazer login-->
             </v-form>
           </v-card-text>
           <v-card-actions>
