@@ -12,7 +12,7 @@
     >
       {{ text }}
       <v-btn dark text @click="snackbar = false">
-        Close
+        <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
 

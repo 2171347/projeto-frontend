@@ -34,34 +34,13 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog> <v-dialog v-model="dialog_edit" max-width="490">
-      <v-card>
-        <v-card-title class="headline">
-          Editar os dados do utilizador
-        </v-card-title>
-        <v-card-text>
-          <v-text-field label="Palavra-Chave antiga" :error-messages="error_old" v-model="user.nome" type="text"></v-text-field>
-          <v-text-field label="Nova Palavra-Chave" :error-messages="error_new" :rules="passwordRules"  v-model="new_password" type="password"></v-text-field>
-          <v-text-field label="Confirmação da nova Palavra-Chave" :error-messages="error_confirmation" :rules="passwordRules"  v-model="confirmation_password" type="password"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          {{user.nome}}
-          <v-btn color="green darken-1" text @click="dialog_edit = false">
-            Cancelar
-          </v-btn>
-          <v-btn color="green darken-1" text  @click="updatePassword">
-            Guardar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
     </v-dialog>
     <v-row>
       <v-col>
         <v-card>
           <v-card-title>Dados do Utilizador
           <v-spacer></v-spacer>
-          <v-btn x-small @click.stop="dialog_edit = true">Editar Perfil</v-btn>
+          <v-btn x-small to="/user/perfil/editar">Editar Perfil</v-btn>
           <v-btn x-small @click.stop="dialog_password = true">Alterar Password</v-btn></v-card-title>
           <v-card-text>
             <p><b>Nome:</b> {{this.user.nome}}</p>
@@ -69,7 +48,6 @@
             <p><b>Morada:</b> {{this.user.morada}}</p>
             <p><b>NIF:</b> {{this.user.numContribuinte}}</p>
             <p><b>Telefone/Telemóvel:</b> {{this.user.contactoTelefonico}}</p>
-            {{this.user}}
           </v-card-text>
         </v-card>
       </v-col>
@@ -91,11 +69,6 @@ export default {
       error_old:'',
       error_new:'',
       error_confirmation:'',
-
-      // Dados para editar os dados do utilizador:
-      dialog_edit: false,
-
-
 
 
       // ---- SNACKBAR INFO -----

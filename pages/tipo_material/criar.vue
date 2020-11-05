@@ -6,14 +6,13 @@
       :color="color"
       :left="x === 'left'"
       :multi-line="mode === 'multi-line'"
-
       :timeout="timeout"
       :top="y === 'top'"
       :vertical="mode === 'vertical'"
     >
       {{ text }}
       <v-btn dark text @click="snackbar = false">
-        Close
+        <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
     <v-form

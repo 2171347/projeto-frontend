@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :color="color"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'">
-      {{ text }}
+    v-model="snackbar"
+    :bottom="y === 'bottom'"
+    :color="color"
+    :left="x === 'left'"
+    :multi-line="mode === 'multi-line'"
+    :timeout="timeout"
+    :top="y === 'top'"
+    :vertical="mode === 'vertical'">
+    {{ text }}
       <v-btn dark text @click="snackbar = false">
-        Fechar
+        <v-icon>mdi-close</v-icon>
       </v-btn>
-    </v-snackbar>
+  </v-snackbar>
     <v-form ref="form" v-model="valid" lazy-validation>
       <p class="subtitle-1 text-center">Criar um novo projeto</p>
       <v-text-field

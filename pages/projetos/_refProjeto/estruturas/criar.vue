@@ -11,7 +11,7 @@
       :vertical="mode === 'vertical'">
       {{ text }}
       <v-btn dark text @click="snackbar = false">
-        Fechar
+        <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
 
