@@ -43,7 +43,7 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item to="/perfil">
+          <v-list-item to="/user/perfil/">
            <v-icon>mdi-account</v-icon>Perfil
           </v-list-item>
           <v-list-item @click="logout">
