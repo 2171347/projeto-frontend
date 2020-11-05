@@ -1,9 +1,10 @@
 <template>
   <div>
     <v-card>
-      <v-card-title style="justify-content: center">Painel Geral do {{this.$auth.user.groups[0]}}</v-card-title>
+      <v-card-title style="justify-content: center">Painel Geral do <!--{{this.$auth.user.groups[0]}}--></v-card-title>
       <v-card-text>
-        {{this.$auth.user.sub}}
+        <!--{{this.$auth.user.sub}}-->
+        {{this.$store.state.auth}}
       </v-card-text>
     </v-card>
   </div>
@@ -11,7 +12,8 @@
 
 <script>
 export default {
-name: "home"
+  //middleware: 'Authenticated',
+  name: "home"
 }
 </script>
 

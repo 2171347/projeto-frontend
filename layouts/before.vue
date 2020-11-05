@@ -19,6 +19,7 @@
         <nuxt />
       </v-container>
     </v-main>
+    <!--TODO criar um footer com ligação para uma página de contacto-->
   </v-app>
 </template>
 

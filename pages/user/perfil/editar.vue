@@ -12,16 +12,98 @@
       :vertical="mode === 'vertical'">
       {{ text }}
       <v-btn dark text @click="snackbar = false">
-        Fechar
+        <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
+    <v-card style="margin-top: 10px">
+      <v-card-text>
+        <v-text-field label="Nome:" v-model="this.user.nome"></v-text-field>
+        <v-text-field label="Email:" v-model="this.user.email"></v-text-field>
+        <v-text-field label="Telemóvel/Telefone:" v-model="this.user.contactoTelefonico"></v-text-field>
+        <v-text-field label="NIF:" v-model="this.user.nif"></v-text-field>
+        <v-text-field label="Morada:" v-model="this.user.morada"></v-text-field>
+        <v-text-field label="Rua:" v-model="this.rua"></v-text-field>
+        <v-text-field label="Código-Postal:" v-model="this.codigoPostal"></v-text-field>
+        <v-text-field label="Localidade:" v-model="this.localidade"></v-text-field>
+        <v-btn color="success">Guardar alterações</v-btn>
+        <v-btn color="error" @click="$router.go(-1)">Cancelar</v-btn>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
 <script>
 export default {
-name: "editar"
+name: "editar",
+  data: () => {
+    return {
+      user:'',
+      user_dados_originais:'',
+      rua:'',
+      codigoPostal:'',
+      localidade:'',
+      auxiliarMorada:'',
+
+
+      // ---- SNACKBAR INFO -----
+      color: '',
+      mode: '',
+      snackbar: false,
+      text: '',
+      timeout: 4000,
+      x: null,
+      y: 'top',
+      // ------------------------
+
+    }
+  },
+  methods:{
+    splitMorada(){
+      this.auxiliarMorada = this.user.morada.split('|');
+      this.rua = this.auxiliarMorada[0];
+      this.codigoPostal = this.auxiliarMorada[1];
+      this.localidade = this.auxiliarMorada[2];
+      console.log(this.auxiliarMorada);
+
+    },
+    getUser(){
+      if (this.$auth.user.groups.includes('Cliente')){
+        this.$axios.$get('/api/clientes/'+this.$auth.user.sub).then((utilizador) => {
+          this.user = utilizador;
+          this.user_dados_originais = utilizador;
+          this.splitMorada();
+        })
+      }
+      if (this.$auth.user.groups.includes('Projetista')){
+        this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
+          this.user = utilizador;
+          this.user_dados_originais = utilizador;
+        })
+      }
+      if (this.$auth.user.groups.includes('Fabricante')){
+        this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
+          this.user = utilizador;
+          this.user_dados_originais = utilizador;
+        })
+      }
+      if (this.$auth.user.groups.includes('Administrador')){
+        this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
+          this.user = utilizador;
+          this.user_dados_originais = utilizador;
+        })
+      }
+      //this.splitMorada()
+    },
+    updateUser(){
+
+
+    }
+  },
+  mounted() {
+    this.getUser()
+  }
 }
+
 </script>
 
 <style scoped>

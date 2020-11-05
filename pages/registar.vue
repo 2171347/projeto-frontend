@@ -287,7 +287,7 @@ export default {
         if (this.morada === ''){
           this.moradaSending = null;
         }else{
-          this.moradaSending = this.morada +' '+  this.codigoPostal +' '+ this.localidade;
+          this.moradaSending = this.morada +' | '+  this.codigoPostal +' | '+ this.localidade;
         }
 
         if (this.contacto === ''){

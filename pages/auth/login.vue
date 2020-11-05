@@ -41,8 +41,8 @@
               ></v-text-field>
               <!--TODO fazer a funcionalidade "esqueciPassword"-->
               <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
-
               <v-btn color="success" style="margin-left: 35%" @click="onSubmit">Entrar</v-btn>
+              <!--TODO fazer a funcionalidade: botão enter para fazer login-->
             </v-form>
           </v-card-text>
           <v-card-actions>
@@ -55,14 +55,18 @@
 </template>
 
 <script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
 export default {
   name: "login",
   layout: "before",
   auth: false,
+  //middleware: 'notAuthenticated',
   data:function (){
     return {
       email: null,
       password: null,
+      token:'',
       // ---- SNACKBAR INFO -----
       color: '',
       mode: '',
@@ -75,6 +79,12 @@ export default {
     }
   },
   methods:{
+    getToken(){
+      this.$axios.get('/api/login/token').then((response) => {
+        this.token = response;
+        console.log("Token:" +this.token);
+      })
+    },
     onSubmit(){
       let promise = this.$auth.loginWith('local', {
         data: {
@@ -82,11 +92,20 @@ export default {
           password: this.password
         }
       })
-      promise.then(() => {
+      promise.then((response) => {
+        //this.getToken()
+        console.log(promise);
+        console.log(response.data.token);
+        const auth = {
+          accessToken: response.data.token
+        }
+        this.$store.commit('setAuth', auth) // mutating to store for client rendering
+        Cookie.set('auth', auth)
+        console.log(this.$store)
 
         /*console.log(promise)
         this.color = 'red lighten-1';
-        this.text = "ola" +  promise.data
+        this.text = promise.data
         this.snackbar = true;
         this.$auth.setToken('local','Bearer ' + promise.data.token);
        /!* this.$auth.setRefreshToken('local', promise.data.token)*!/
@@ -96,7 +115,6 @@ export default {
         this.$router.push('/home');
       });
       promise.catch(() => {
-
         this.color = 'red lighten-1';
         this.text = 'Dados de acesso inválidos. Por favor, tente novamente.';
         this.snackbar = true;

@@ -31,6 +31,9 @@
       <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
+      <v-btn icon to="/home">
+        <v-icon>mdi-home</v-icon>
+      </v-btn>
 
       <v-toolbar-title v-text="title" />
       <v-spacer />
@@ -61,6 +64,8 @@
 </template>
 
 <script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
 
 export default {
 
@@ -136,19 +141,21 @@ export default {
   methods:{
     logout () {
       this.$auth.logout('local')
+      Cookie.remove('auth')
+      this.$store.commit('setAuth', null)
     },
     getUser(){
 
-      if (this.$auth.user.groups.includes('Cliente')){
+      if (this.$store.$auth.$state.user.groups.includes('Cliente')){
           this.items = this.items_cliente;
       }
-      if (this.$auth.user.groups.includes('Projetista')){
+      if (this.$store.$auth.$state.user.groups.includes('Projetista')){
           this.items = this.items_projetista;
       }
-      if (this.$auth.user.groups.includes('Fabricante')){
+      if (this.$store.$auth.$state.user.groups.includes('Fabricante')){
           this.items = this.items_fornecedor;
       }
-      if (this.$auth.user.groups.includes('Administrador')){
+      if (this.$store.$auth.$state.user.groups.includes('Administrador')){
           this.items = this.items_admin;
       }
     }

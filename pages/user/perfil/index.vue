@@ -58,6 +58,7 @@
 <script>
 export default {
   name: "perfil",
+  middleware: 'authenticated',
   data: () => {
     return {
       user:'',
