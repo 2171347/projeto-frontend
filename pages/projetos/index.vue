@@ -7,6 +7,7 @@
     <div v-if="this.projetos.length == 0 && this.loading == 0" style="text-align: center">
       <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
       <div id="h2">Ainda não tem projetos!</div>
+      <v-btn x-small to="/home">Página Inicial</v-btn>
     </div>
     <div v-else>
       <v-text-field
@@ -37,6 +38,7 @@ export default {
       projetos:[],
       person:'',
       search:'',
+      // TODO - rever loading
       loading: 1,
 
       headers: [
@@ -73,6 +75,7 @@ export default {
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')
           .then((response) => {
             this.projetos = response;
+            this.loading = 0;
           })
       }
     },

@@ -70,6 +70,7 @@
             <p><b>Referencia Projeto:</b> {{ projeto.referencia }}</p>
             <p><b>Nome Projeto:</b> {{ projeto.nome }}</p>
             <p><b>Estado:</b> {{ projeto.estado }}</p>
+            <p v-if="this.projeto.visivelCliente === true" ><b>Disponivel ao Cliente</b></p>
           </v-card-text>
         </v-card>
       </v-col>
@@ -103,7 +104,12 @@
             <!--TODO rever formatação dos botões-->
             <v-btn x-small color="primary" @click="editarProjeto()">Editar</v-btn>
             <v-btn x-small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
-            <v-btn x-small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
+            <template v-if="this.projeto.visivelCliente === false">
+              <v-btn x-small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
+            </template>
+            <template v-if="this.projeto.visivelCliente === true">
+              <v-btn x-small color="accent" @click="indisponibilizar()">Indisponibilizar</v-btn>
+            </template>
           </v-card-text>
         </v-card>
       </v-col>
@@ -141,6 +147,7 @@
             </div>
           </v-card-title>
           <v-card-text>
+            {{ projeto.observacoes}}
           </v-card-text>
         </v-card>
       </v-col>
@@ -223,6 +230,16 @@ export default {
           this.color = 'green';
           this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
           this.snackbar = true;
+          this.getProjeto();
+        })
+    },
+    indisponibilizar(){
+      this.$axios.put('/api/projetos/unavailable/'+this.projeto.referencia+'/')
+        .then((response) => {
+          this.color = 'green';
+          this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
+          this.snackbar = true;
+          this.getProjeto();
         })
     },
     editarProjeto(){

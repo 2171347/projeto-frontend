@@ -114,8 +114,8 @@
           <v-card-title>Dados Geométricos Estrutura</v-card-title>
           <v-card-text>
             <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
-            <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }}</p>
-            <p><b>Espaço entre Vigas:</b> {{ estrutura.espacoVigas }}</p>
+            <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} metros</p>
+            <p><b>Espaço entre Vigas:</b> {{ estrutura.espacoVigas }} metros</p>
           </v-card-text>
         </v-card>
       </v-col>
