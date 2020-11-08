@@ -5,6 +5,7 @@
       <v-card-text>
         Email: {{this.$auth.user.sub}}
         <!--{{this.$store.state.auth}}-->
+
       </v-card-text>
     </v-card>
   </div>

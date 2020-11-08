@@ -38,7 +38,7 @@
                 type="password"
                 v-model="password"
                 required
-                v-on:keyup.enter="this.onSubmit"
+                v-on:keyup.enter="onSubmit"
               ></v-text-field>
               <!--TODO fazer a funcionalidade "esqueciPassword"-->
               <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
@@ -93,7 +93,7 @@ export default {
         }
       })
       promise.then((response) => {
-        //this.getToken()
+        /*//this.getToken()
         console.log(promise);
         console.log(response.data.token);
         const auth = {
@@ -101,7 +101,15 @@ export default {
         }
         this.$store.commit('setAuth', auth) // mutating to store for client rendering
         Cookie.set('auth', auth)
-        console.log(this.$store)
+        console.log(this.$store)*//*//this.getToken()
+        console.log(promise);
+        console.log(response.data.token);
+        const auth = {
+          accessToken: response.data.token
+        }
+        this.$store.commit('setAuth', auth) // mutating to store for client rendering
+        Cookie.set('auth', auth)
+        console.log(this.$store)*/
 
         /*console.log(promise)
         this.color = 'red lighten-1';
@@ -125,7 +133,7 @@ export default {
       this.password = null
     },
     redirectEsqueciPassword(){
-      this.$router.push('/redirect_password');
+      this.$router.push('/auth/redirect_password');
     }
   },
 }

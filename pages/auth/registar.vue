@@ -16,11 +16,7 @@
     </v-snackbar>
     <v-form ref="form" v-model="valid" lazy-validation >
       <p class="subtitle-1 text-center">Registo de novo utilizador</p>
-      <validation-provider
-        v-slot="{ errors }"
-        name="Name"
-        rules="alpha_spaces|required"
-      >
+      <validation-provider v-slot="{ errors }" name="Name" rules="alpha_spaces|required">
         <v-text-field
           prepend-inner-icon="mdi-account"
           v-model="nome"
@@ -39,11 +35,7 @@
         label="E-mail"
         required
       ></v-text-field>
-      <validation-provider
-        v-slot="{ errors }"
-        name="Password"
-        rules="required|password:@confirm"
-      >
+      <validation-provider v-slot="{ errors }" name="Password" rules="required|password:@confirm" >
         <v-text-field
           label="Palavra-Chave:"
           v-model="password"
@@ -53,11 +45,7 @@
           required>
         </v-text-field>
       </validation-provider>
-      <validation-provider
-        v-slot="{  errors}"
-        name="confirm"
-        rules="required"
-      >
+      <validation-provider v-slot="{  errors}" name="confirm" rules="required">
         <v-text-field
           label="Confirmação da Palavra-Chave:"
           v-model="passwordConfirmation"
@@ -77,16 +65,8 @@
       ></v-text-field>
       <v-row>
         <v-col>
-          <validation-provider
-            v-slot="{ errors }"
-            name="CodigoPostal"
-            rules="codigoPostal"
-          >
-            <v-text-field
-              v-model="codigoPostal"
-              :error-messages="errors"
-              label="Código Postal:"
-            >
+          <validation-provider v-slot="{ errors }" name="CodigoPostal" rules="codigoPostal">
+            <v-text-field v-model="codigoPostal" :error-messages="errors" label="Código Postal:">
             </v-text-field>
           </validation-provider>
         </v-col>
@@ -108,11 +88,7 @@
       </v-row>
       <v-row>
         <v-col md="5">
-          <validation-provider
-            v-slot="{ errors }"
-            name="Nif"
-            rules="length:9"
-          >
+          <validation-provider v-slot="{ errors }" name="Nif" rules="length:9">
             <v-text-field
               v-model="nif"
               :error-messages="errors"
@@ -123,11 +99,7 @@
           </validation-provider>
         </v-col>
         <v-col>
-          <validation-provider
-            v-slot="{ errors }"
-            name="Contacto"
-            rules="length:9"
-          >
+          <validation-provider v-slot="{ errors }" name="Contacto" rules="length:9">
             <v-text-field
               v-model="contacto"
               :error-messages="errors"
@@ -185,7 +157,7 @@ export default {
     morada: '',
     nome: '',
     nomeRules: [
-      v => !!v || 'Name é um campo obrigatório',
+      v => !!v || 'Nome é um campo obrigatório',
       v => (v && v.length <= 30) || 'Nome deve ter até 30 caracteres',
     ],
     email: '',
@@ -216,7 +188,7 @@ export default {
   }),
 
   methods: {
-        checkEmailDisponivel(){
+    checkEmailDisponivel(){
       this.$axios.get('/api/users/'+this.email).then((response) => {
           if (response.data.value == true){
             this.errorsEmail="Email já está registado da plataforma."
@@ -228,13 +200,12 @@ export default {
 
     },
     checkValidacaoMorada(){
-          console.log("OLA")
 
       if (!this.localidade.trim(" ")  ||  !this.morada.trim(' ') || !this.codigoPostal.trim(" ") ){
         this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
         return null;
       }
-      
+
       this.errorsMorada = '';
     },
     getDate(){

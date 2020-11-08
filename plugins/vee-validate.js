@@ -2,6 +2,9 @@ import { extend } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
 import { alpha_spaces} from "vee-validate/dist/rules";
 import {length} from "vee-validate/dist/rules";
+import {numeric} from "vee-validate/dist/rules";
+import {max} from "vee-validate/dist/rules";
+import {email} from "vee-validate/dist/rules";
 
 extend("required", {
   ...required,
@@ -34,4 +37,16 @@ extend('password', {
 extend("length", {
   ...length,
   message: 'O campo não é válido'
+});
+extend("numeric", {
+  ...numeric,
+  message: 'O campo deve conter apenas algarismos'
+});
+extend('max', {
+  ...max,
+  message: '{_field_} deve ter no máximo {length} caracteres',
+});
+extend('email', {
+  ...email,
+  message: 'Email deve ser válido',
 });

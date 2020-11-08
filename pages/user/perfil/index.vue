@@ -45,6 +45,7 @@
           <v-card-text>
             <p><b>Nome:</b> {{this.user.nome}}</p>
             <p><b>Email:</b> {{this.user.email}}</p>
+            <!--TODO alterar a morada e dividir nos 3 campos -->
             <p><b>Morada:</b> {{this.user.morada}}</p>
             <p><b>NIF:</b> {{this.user.numContribuinte}}</p>
             <p><b>Telefone/Telemóvel:</b> {{this.user.contactoTelefonico}}</p>

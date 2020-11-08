@@ -1,5 +1,94 @@
 <template>
   <v-app light>
+    <v-dialog v-model="dialog_notificacoes" max-width="490">
+      <!--<v-card>
+        <v-card-title class="headline">
+          Notificações
+        </v-card-title>
+        <v-card-text>
+          &lt;!&ndash;TODO Apresentar lista de notificações ao utilizador&ndash;&gt;
+          {{this.notificacoes}}
+          <v-data-table
+          :items="notificacoes"
+          :headers="tab_notificacoes_headers">
+            <template v-slot:item.action="{ item }">
+              <v-btn x-small @click="setNotificacaoLida(item)">Lido</v-btn>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>-->
+      <!--https://vuetifyjs.com/en/components/lists/-->
+      <!--<v-card
+        class="mx-auto"
+        max-width="500"
+      >
+        <v-toolbar
+          color="pink"
+          dark
+        >
+          <v-toolbar-title>Notificações</v-toolbar-title>
+
+          <v-spacer></v-spacer>
+
+          <v-btn icon>
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
+
+          <v-btn icon>
+            <v-icon>mdi-checkbox-marked-circle</v-icon>
+          </v-btn>
+        </v-toolbar>
+        {{this.notificacoes}}
+
+        <v-list two-line>
+          <v-list-item-group
+            v-model="selected"
+            active-class="pink&#45;&#45;text"
+            multiple
+          >
+            <template v-for="(item, index) in notificacoes">
+              <v-list-item :key="item.texto">
+                <template v-slot:default="{ active }">
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.title"></v-list-item-title>
+
+                    <v-list-item-subtitle
+                      class="text&#45;&#45;primary"
+                      v-text="item.headline"
+                    ></v-list-item-subtitle>
+
+                    <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  <v-list-item-action>
+                    <v-list-item-action-text v-text="item.action"></v-list-item-action-text>
+
+                    <v-icon
+                      v-if="!active"
+                      color="grey lighten-1"
+                    >
+                      mdi-star-outline
+                    </v-icon>
+
+                    <v-icon
+                      v-else
+                      color="yellow darken-3"
+                    >
+                      mdi-star
+                    </v-icon>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+
+              <v-divider
+                v-if="index < items.length - 1"
+                :key="index"
+              ></v-divider>
+            </template>
+          </v-list-item-group>
+        </v-list>
+      </v-card>-->
+    </v-dialog>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -44,11 +133,10 @@
         v-if="this.num_notificacoes !== 0"
       >
         <span slot="badge">{{this.num_notificacoes}}</span>
-      <v-btn icon style="margin-right: 10px">
+      <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
         <v-icon>mdi-email</v-icon>
       </v-btn>
       </v-badge>
-  <!--      TODO: Adicionar icon para notificações-->
   <!--      TODO: Adicionar nome do utilizador ao lado do botão "user"-->
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -92,6 +180,23 @@ export default {
       title: 'Projeto+',
       notificacoes:'',
       num_notificacoes:0,
+      selected:'',
+
+      // ---- SNACKBAR INFO -----
+      dialog_notificacoes:false,
+      color: '',
+      mode: '',
+      snackbar: false,
+      text: '',
+      timeout: 4000,
+      x: null,
+      y: 'top',
+      // ------------------------
+
+      tab_notificacoes_headers:[
+        { text: 'Notificação', value: 'texto' },
+        { text: 'Ação', value: 'action' },
+      ],
 
       items_cliente: [
         {
@@ -175,10 +280,11 @@ export default {
       this.$axios.get('/api/notificacoes/'+ this.$auth.user.sub).then((notificacoes) => {
         this.notificacoes = notificacoes.data;
         this.num_notificacoes = notificacoes.data.length;
-        console.log(notificacoes.data.length)
-        //console.log(this.notificacoes)
       })
-    }
+    },
+    setNotificacaoLida(){
+
+    },
   },
   created() {
     this.getUser()
