@@ -3,6 +3,7 @@
     <v-app-bar :clipped-left="clipped" fixed app color="cyan lighten-3" style="max-width: 100%">
       <v-btn icon to="/">
         <v-icon>mdi-{{ `home` }}</v-icon>
+
       </v-btn>
       <v-spacer />
       <v-toolbar-title v-text="title" to="/"/>

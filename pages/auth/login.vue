@@ -64,6 +64,7 @@ export default {
   //middleware: 'notAuthenticated',
   data:function (){
     return {
+      auth:false,
       email: null,
       password: null,
       token:'',

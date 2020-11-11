@@ -250,30 +250,31 @@ export default {
           title: 'Listar Produtos',
           to: ''
         },
-
       ],
-
     }
   },
   methods:{
     logout () {
-      this.$auth.logout('local')
+      this.$auth.logout()
       Cookie.remove('authentication')
       this.$store.commit('setAuth', null)
     },
     getUser(){
 
-      if (this.$auth.user.groups.includes('Cliente')){
-          this.items = this.items_cliente;
-      }
-      if (this.$auth.user.groups.includes('Projetista')){
-          this.items = this.items_projetista;
-      }
-      if (this.$auth.user.groups.includes('Fabricante')){
-          this.items = this.items_fornecedor;
-      }
-      if (this.$auth.user.groups.includes('Administrador')){
-          this.items = this.items_admin;
+
+      if (this.$auth.loggedIn) {
+        if (this.$auth.user.groups.includes('Cliente')) {
+            this.items = this.items_cliente;
+        }
+        if (this.$auth.user.groups.includes('Projetista')) {
+            this.items = this.items_projetista;
+        }
+        if (this.$auth.user.groups.includes('Fabricante')) {
+            this.items = this.items_fornecedor;
+        }
+        if (this.$auth.user.groups.includes('Administrador')) {
+            this.items = this.items_admin;
+        }
       }
     },
     getNotificacoes(){

@@ -53,10 +53,10 @@
                 required
               ></v-text-field>
             </validation-provider>
-            <validation-provider v-slot="{ errors }" name="Contacto" rules="numeric|max:9" >
+            <validation-provider v-slot="{ errors }" name="Contacto" rules="numeric|length:9" >
               <v-text-field :error-messages="errors" label="Telemóvel/Telefone:" v-model="user.contactoTelefonico"></v-text-field>
             </validation-provider>
-            <validation-provider v-slot="{ errors }" name="NIF" rules="numeric|max:9">
+            <validation-provider v-slot="{ errors }" name="NIF" rules="numeric|length:9">
               <v-text-field label="NIF:" :error-messages="errors" v-model="user.nif"></v-text-field>
             </validation-provider>
             <v-text-field label="Rua:" :error-messages="errorsMorada" v-model="rua"></v-text-field>
@@ -92,6 +92,7 @@ name: "editar",
       errorsNif:'',
       errorsContacto:'',
       email:'',
+      moradaSending:'',
 
       // ---- SNACKBAR INFO -----
       color: '',
@@ -106,22 +107,80 @@ name: "editar",
     }
   },
   methods:{
+    checkEmailDisponivel(){
+      this.$axios.get('/api/users/'+this.email).then((response) => {
+        if (response.data.value === true){
+          this.text = "O email inserido já está a ser utilizado. Tente novamente."
+          this.snackbar = true;
+          this.color = "error"
+          this.email = this.user.email
+          return null;
+        }else{
+          this.errorsEmail='';
+        }
+      })
+    },
     submit () {
       if(this.$refs.observer.validate()){
         //Validar os campos
-        if (!this.localidade.trim(" ") || !this.rua.trim(' ') || !this.codigoPostal.trim(" ")) {
+
+        if (!this.localidade || !this.rua|| !this.codigoPostal) {
           this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
+          console.log(this.localidade);
+          console.log(this.rua);
+          console.log(this.codigoPostal);
           return null;
         }
+        if(this.errorsMorada !== ""){
+          this.errorsMorada = '';
+        }
+
         //Validar o email
         if(this.user.email != this.email){
-          this.snackbar = true;
-          this.text = "Email diferente."
-          //TODO verificação do email deve ser feita depois do conflito do login estar resolvido
+          this.checkEmailDisponivel();
         }
+
+        // Definir a rota com base no tipo de utilizador
+        if (this.$auth.user.groups.includes('Cliente')){
+          this.url="/api/clientes/"
+        }if (this.$auth.user.groups.includes('Fabricante')){
+          this.url="/api/fabricantes/"
+        }if (this.$auth.user.groups.includes('Projetista')){
+          this.url="/api/projetistas/"
+        }
+
+        //Concatenar a morada:
+        if (this.rua === ''){
+          this.moradaSending = null;
+        }else{
+          this.moradaSending = this.rua +' | '+  this.codigoPostal +' | '+ this.localidade;
+        }
+
         //Enviar os dados para o update do utilizador
-        /*this.snackbar = true;
-        this.text = "sucesso."*/
+        this.$axios.$put(this.url + this.user.email, {
+          nome: this.user.nome,
+          email: this.email,
+          password: this.user.password,
+          morada: this.moradaSending,
+          contactoTelefonico: this.user.contacto,
+          numContribuinte: this.user.nif,
+        })
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O seu registo foi feito com sucesso.';
+            this.snackbar = true;
+
+            setTimeout(() => {
+              this.$router.go(-1)
+            }, 1500);
+          })
+          .catch(error => {
+            console.log(error)
+            this.color = 'error';
+            this.text = 'Ocorreu um erro com o seu registo.';
+            this.snackbar = true;
+          })
+
       }
     },
 
@@ -161,17 +220,6 @@ name: "editar",
         })
       }
     },
-  },
-  checkEmailDisponivel(){
-    this.$axios.get('/api/users/'+this.email).then((response) => {
-      if (response.data.value == true){
-        this.errorsEmail="Email já está registado da plataforma."
-        return null;
-      }else{
-        this.errorsEmail='';
-      }
-    })
-
   },
   created() {
     this.getUser()

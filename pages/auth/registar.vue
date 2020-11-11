@@ -184,7 +184,6 @@ export default {
     date:'',
     emailSistema:'noreply@projeto.com',
     moradaSending:'',
-
   }),
 
   methods: {
@@ -197,15 +196,12 @@ export default {
             this.errorsEmail='';
           }
       })
-
     },
     checkValidacaoMorada(){
-
       if (!this.localidade.trim(" ")  ||  !this.morada.trim(' ') || !this.codigoPostal.trim(" ") ){
         this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
         return null;
       }
-
       this.errorsMorada = '';
     },
     getDate(){
