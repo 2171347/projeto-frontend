@@ -56,7 +56,6 @@ export default {
   },
   methods:{
     toDetalhes (item){
-      console.log(item.refProjeto)
       this.$router.push('/projetos/'+item.referencia+'/');
     },
     getProjetos (){
