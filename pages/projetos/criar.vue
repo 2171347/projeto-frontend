@@ -74,7 +74,7 @@ name: "novo",
     }
   },
   methods:{
-  /*TODO validar se o email do cliente é válido*/
+
     createProject(){
       // Verificar se o email do cliente existe na BD:
       this.$axios.get('/api/users/'+this.email).then((response) => {
@@ -86,7 +86,7 @@ name: "novo",
         }
       })
       // Verificar se o email do cliente corresponde a um cliente:
-
+      /*TODO validar se o email introduzido corresponde a um cliente*/
 
       // Criar o novo projeto:
       this.$axios.$post('/api/projetos', {
@@ -96,16 +96,15 @@ name: "novo",
         emailProjetista: this.$auth.user.sub
       }).then(()=>{
         this.color = 'green lighten-1';
-        this.text = 'Sucesso';
+        this.text = 'Projeto criado com sucesso.';
         this.snackbar = true;
         setTimeout(() => {
           this.$router.push('/home');
-        }, 3000);
-
+        }, 1500);
       }).catch(error =>{
         console.log(error)
         this.color = 'red';
-        this.text = 'ERRO';
+        this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
         this.snackbar = true;
       })
     }
