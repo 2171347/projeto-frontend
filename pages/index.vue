@@ -31,7 +31,7 @@
           </v-card-title>
           <v-card-text>
             <photo_projetista class="d-block" style="margin: auto"/>
-<!--            TODO criar testo para projetistas-->
+<!--            TODO criar texto para projetistas-->
           </v-card-text>
           <v-card-actions>
 

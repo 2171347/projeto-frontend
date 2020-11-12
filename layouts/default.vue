@@ -215,7 +215,7 @@ export default {
         {
           icon: 'mdi-plus-circle',
           title: 'Criar Projeto',
-          to: '/projetista/criar_projeto'
+          to: '/projetos/criar'
         },
         {
           icon: 'mdi-puzzle',
@@ -256,12 +256,8 @@ export default {
   methods:{
     logout () {
       this.$auth.logout()
-      Cookie.remove('authentication')
-      this.$store.commit('setAuth', null)
     },
     getUser(){
-
-
       if (this.$auth.loggedIn) {
         if (this.$auth.user.groups.includes('Cliente')) {
             this.items = this.items_cliente;

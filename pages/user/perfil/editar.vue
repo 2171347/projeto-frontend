@@ -17,22 +17,6 @@
     </v-snackbar>
 
     <v-card style="margin-top: 10px">
-      <!--<v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field label="Nome:" :rules="nomeRules" v-model="user.nome"></v-text-field>
-          <v-text-field label="Email:" :rules="emailRules" v-model="user.email"></v-text-field>
-
-          <validation-provider v-slot="{ errors }" name="Contacto" rules="required|length:9" >
-            <v-text-field :error-messages="errors" label="Telemóvel/Telefone:" v-model="user.contactoTelefonico"></v-text-field>
-          </validation-provider>
-
-
-
-
-        <v-btn color="success"  @click="updateUser">Guardar alterações</v-btn>
-        <v-btn color="error" @click="$router.go(-1)">Cancelar</v-btn>
-        </v-form>
-      </v-card-text>-->
       <v-card-text>
         <validation-observer ref="observer" v-slot="{ invalid }">
           <form @submit.prevent="submit">
@@ -103,7 +87,6 @@ name: "editar",
       x: null,
       y: 'top',
       // ------------------------
-
     }
   },
   methods:{
@@ -126,9 +109,6 @@ name: "editar",
 
         if (!this.localidade || !this.rua|| !this.codigoPostal) {
           this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-          console.log(this.localidade);
-          console.log(this.rua);
-          console.log(this.codigoPostal);
           return null;
         }
         if(this.errorsMorada !== ""){
@@ -175,12 +155,10 @@ name: "editar",
             }, 1500);
           })
           .catch(error => {
-            console.log(error)
             this.color = 'error';
             this.text = 'Ocorreu um erro com o seu registo.';
             this.snackbar = true;
           })
-
       }
     },
 
@@ -228,10 +206,6 @@ name: "editar",
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
   },
-  computed:{
-
-  },
-
 }
 
 </script>

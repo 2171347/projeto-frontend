@@ -30,15 +30,12 @@
         label="Email do cliente"
         required
       ></v-text-field>
-
       <v-btn :disabled="!valid" color="success" class="mr-4" @click="createProject">
         Submeter
       </v-btn>
-
       <v-btn color="error" class="mr-4">
         Reset Formulário
       </v-btn>
-
       <v-btn color="warning" class="mr-4">
         Reset Validação
       </v-btn>
@@ -77,12 +74,13 @@ name: "novo",
     }
   },
   methods:{
+  /*TODO altarar formulário para os novos formatos*/
     createProject(){
       this.$axios.$post('/api/projetos', {
         nome: this.nome,
         referencia: "PR_"+this.nome,
         emailCliente: this.emailCliente,
-        emailProjetista: "projetista1@projetista.com"
+        emailProjetista: this.$auth.user.sub
       }).then(()=>{
         this.color = 'green lighten-1';
         this.text = 'Sucesso';

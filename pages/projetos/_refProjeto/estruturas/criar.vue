@@ -17,25 +17,28 @@
 
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
 
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <p class="subtitle-1 text-center">Criar Nova Estrutura</p>
-      <v-text-field
-        v-model="nome"
-        :counter="30"
-        :rules="nomeRules"
-        label="Nome"
-        required
-      ></v-text-field>
-      <v-text-field
-        v-model="emailCliente"
-        :counter="30"
-        :rules="emailClienteRules"
-        label="Email do cliente"
-        required
-      ></v-text-field>
-      <v-btn :disabled="!valid" color="success" class="mr-4" @click="createEstrutura">
-        Submeter
-      </v-btn>
+    <validation-observer ref="observer" v-slot="{ invalid }">
+      <form @submit.prevent="submit">
+        <p class="subtitle-1 text-center">Criar Nova Estrutura</p>
+        <v-text-field
+          v-model="nome"
+          :counter="30"
+          :rules="nomeRules"
+          label="Nome"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="emailCliente"
+          :counter="30"
+          :rules="emailClienteRules"
+          label="Email do cliente"
+          required
+        ></v-text-field>
+        <v-btn :disabled="!valid" color="success" class="mr-4">
+          Submeter
+        </v-btn>
+      </form>
+    </validation-observer>
       <v-btn color="error" class="mr-4">
         Reset Formulário
       </v-btn>
@@ -45,11 +48,12 @@
       <v-btn color="error" class="mr-4">
         Cancelar
       </v-btn>
-    </v-form>
   </div>
 </template>
 
 <script>
+
+import {ValidationObserver, ValidationProvider} from "vee-validate";
 
 export default {
   data: () =>{
@@ -68,7 +72,7 @@ export default {
     }
   },
   methods:{
-    createEstrutura(){
+    submit(){
       this.$axios.$post('/api/estruturas', {
         nome: this.nome,
         referencia: "ES_"+this.nome,
@@ -88,7 +92,11 @@ export default {
         this.snackbar = true;
       })
     }
-  }
+  },
+  components: {
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
+  },
 }
 </script>
 

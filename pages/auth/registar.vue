@@ -121,7 +121,6 @@
         </v-col>
       </v-row>
       <v-btn  color="success" class="mr-4" @click="submit">Submeter</v-btn>
-
       <v-btn color="error" class="mr-4" @click="reset">
         Reset Formulário
       </v-btn>
