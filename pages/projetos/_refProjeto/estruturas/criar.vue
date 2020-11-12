@@ -20,20 +20,7 @@
     <validation-observer ref="observer" v-slot="{ invalid }">
       <form @submit.prevent="submit">
         <p class="subtitle-1 text-center">Criar Nova Estrutura</p>
-        <v-text-field
-          v-model="nome"
-          :counter="30"
-          :rules="nomeRules"
-          label="Nome"
-          required
-        ></v-text-field>
-        <v-text-field
-          v-model="emailCliente"
-          :counter="30"
-          :rules="emailClienteRules"
-          label="Email do cliente"
-          required
-        ></v-text-field>
+
         <v-btn :disabled="!valid" color="success" class="mr-4">
           Submeter
         </v-btn>
@@ -69,9 +56,18 @@ export default {
       y: 'top',
       // ------------------------
       valid:true,
+      tiposMaterial:'',
     }
   },
   methods:{
+    getTiposMaterial(){
+      this.$axios.$get('/api/tipo_material/all')
+        .then((response) => {
+          this.tiposMaterial = response
+          console.log(this.tiposMaterial)
+        })
+
+    },
     submit(){
       this.$axios.$post('/api/estruturas', {
         nome: this.nome,
@@ -92,6 +88,9 @@ export default {
         this.snackbar = true;
       })
     }
+  },
+  created() {
+    this.getTiposMaterial();
   },
   components: {
     ValidationObserver: ValidationObserver,

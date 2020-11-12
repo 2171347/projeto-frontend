@@ -74,8 +74,21 @@ name: "novo",
     }
   },
   methods:{
-  /*TODO altarar formulário para os novos formatos*/
+  /*TODO validar se o email do cliente é válido*/
     createProject(){
+      // Verificar se o email do cliente existe na BD:
+      this.$axios.get('/api/users/'+this.email).then((response) => {
+        if (response.data.value !== true) {
+          this.text = "O email inserido não corresponde a nenhum cliente registado."
+          this.snackbar = true;
+          this.color = "error"
+          return null;
+        }
+      })
+      // Verificar se o email do cliente corresponde a um cliente:
+
+
+      // Criar o novo projeto:
       this.$axios.$post('/api/projetos', {
         nome: this.nome,
         referencia: "PR_"+this.nome,
