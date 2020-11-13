@@ -54,13 +54,12 @@
 </template>
 
 <script>
-const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
   name: "login",
   layout: "before",
   auth: false,
-  //middleware: 'notAuthenticated',
+
   data:function (){
     return {
       auth:false,
@@ -79,12 +78,7 @@ export default {
     }
   },
   methods:{
-    getToken(){
-      this.$axios.get('/api/login/token').then((response) => {
-        this.token = response;
-        console.log("Token:" +this.token);
-      })
-    },
+
     onSubmit(){
       let promise = this.$auth.loginWith('local', {
         data: {

@@ -74,14 +74,11 @@ export default {
   },
   data:function (){
     return {
-
     }
   },
   methods:{
-
   },
   created() {
-
   }
 }
 </script>
