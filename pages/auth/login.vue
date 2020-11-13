@@ -40,7 +40,6 @@
                 required
                 v-on:keyup.enter="onSubmit"
               ></v-text-field>
-              <!--TODO fazer a funcionalidade "esqueciPassword"-->
               <p id="link" class="text-center link" @click="redirectEsqueciPassword">Esqueci a minha palavra-chave</p>
               <v-btn color="success" style="margin-left: 35%" @click="onSubmit">Entrar</v-btn>
             </v-form>

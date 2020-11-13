@@ -39,7 +39,7 @@
       <v-btn color="warning" class="mr-4">
         Reset Validação
       </v-btn>
-      <v-btn color="error" class="mr-4">
+      <v-btn color="error" class="mr-4" @click="$router.go(-1)" >
         Cancelar
       </v-btn>
     </v-form>

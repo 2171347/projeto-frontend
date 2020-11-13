@@ -31,7 +31,9 @@
           </v-card-title>
           <v-card-text>
             <photo_projetista class="d-block" style="margin: auto"/>
-<!--            TODO criar texto para projetistas-->
+            <p class="text-center" style="margin-top: 10px;">
+              Aqui os projetistas têm uma plataforma onde podem organizar todos os projetos que têm em desenvolvimento. O Projeto + permite também o acesso a uma base de dados onde podem encontrar uma enorme variedade de produtos, de fabricantes reais, que facilita o processo de decisão. Além disso, podem também contactar diretamente os fabricantes!
+            </p>
           </v-card-text>
           <v-card-actions>
 
@@ -44,11 +46,10 @@
           </v-card-title>
           <v-card-text>
             <photo_fabricante class="d-block" style="margin: auto"/>
-<!--            TODO criar texto para os fabricantes-->
+            <p class="text-center" style="margin-top: 10px;">
+              Aqui os fabricantes podem dar a conhecer os seus materiais. A facilidade de contacto com os projetistas leva a que mais rápidamente seja feito o processo de encomenda dos materiais escolhidos. Sempre que um material seja escolhido para um projeto aprovado, o fabricante é notificado e pode começar a preparar a sua encomenda!
+            </p>
           </v-card-text>
-          <v-card-actions>
-
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
