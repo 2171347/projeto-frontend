@@ -14,6 +14,7 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
+    <!--TODO refefinir as validações deste formulário-->
     <v-form ref="form" v-model="valid" lazy-validation >
       <p class="subtitle-1 text-center">Registo de novo utilizador</p>
       <validation-provider v-slot="{ errors }" name="Name" rules="alpha_spaces|required">

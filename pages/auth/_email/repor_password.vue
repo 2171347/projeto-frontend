@@ -1,5 +1,5 @@
 <template>
-
+<!--TODO implementar esta funcionalidade. Tem de ser redefinida no servidor primeiro-->
 </template>
 
 <script>

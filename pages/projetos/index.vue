@@ -38,19 +38,17 @@ export default {
       projetos:[],
       person:'',
       search:'',
-      // TODO - rever loading
       loading: 1,
 
       headers: [
-       {
-          text: 'Nome Projeto',
+       {  text: 'Nome Projeto',
           align: 'start',
           sortable: true,
           value: 'nome',
         },
-        { text: 'Nome Projetista', value: 'nomeProjetista' },
-        { text: 'Nome Cliente', value: 'nomeCliente' },
-        { text: 'Ações', value: 'actions'},
+        { text: 'Nome Projetista',sortable: true, value: 'nomeProjetista' },
+        { text: 'Nome Cliente',sortable: true, value: 'nomeCliente' },
+        { text: 'Ações',sortable: true, value: 'actions'},
       ],
     }
   },
@@ -59,13 +57,9 @@ export default {
       this.$router.push('/projetos/'+item.referencia+'/');
     },
     getProjetos (){
-
-      //TODO rever rotas para cliente VS projetista
-
       if (this.$auth.user.groups.includes('Cliente')){
         this.$axios.$get('/api/clientes/'+this.$auth.user.sub+'/projetos')
           .then((response) => {
-            // TODO - realizar verificação se o projeto está visivel
             this.projetos = response;
             this.loading = 0;
           })

@@ -39,7 +39,7 @@
       <v-btn color="warning" class="mr-4">
         Reset Validação
       </v-btn>
-      <v-btn color="error" class="mr-4">
+      <v-btn color="error" class="mr-4" @click="$router.go(-1)" >
         Cancelar
       </v-btn>
     </v-form>
@@ -74,8 +74,21 @@ name: "novo",
     }
   },
   methods:{
-  /*TODO altarar formulário para os novos formatos*/
+
     createProject(){
+      // Verificar se o email do cliente existe na BD:
+      this.$axios.get('/api/users/'+this.email).then((response) => {
+        if (response.data.value !== true) {
+          this.text = "O email inserido não corresponde a nenhum cliente registado."
+          this.snackbar = true;
+          this.color = "error"
+          return null;
+        }
+      })
+      // Verificar se o email do cliente corresponde a um cliente:
+      /*TODO validar se o email introduzido corresponde a um cliente*/
+
+      // Criar o novo projeto:
       this.$axios.$post('/api/projetos', {
         nome: this.nome,
         referencia: "PR_"+this.nome,
@@ -83,16 +96,15 @@ name: "novo",
         emailProjetista: this.$auth.user.sub
       }).then(()=>{
         this.color = 'green lighten-1';
-        this.text = 'Sucesso';
+        this.text = 'Projeto criado com sucesso.';
         this.snackbar = true;
         setTimeout(() => {
           this.$router.push('/home');
-        }, 3000);
-
+        }, 1500);
       }).catch(error =>{
         console.log(error)
         this.color = 'red';
-        this.text = 'ERRO';
+        this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
         this.snackbar = true;
       })
     }
