@@ -108,9 +108,9 @@
           <v-card-title>Ações</v-card-title>
           <v-card-text >
             <!--TODO rever formatação dos botões-->
-            <v-btn x-small color="primary" @click="">Editar</v-btn>
-            <v-btn x-small color="error" @click="">Eliminar</v-btn>
-            <v-btn x-small color="info" @click="">Simular</v-btn>
+            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>
+            <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
+            <v-btn x-small color="info" @click="simular">Simular</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -233,7 +233,7 @@ export default {
           this.auxVariantes = estrutura.variantes;
           if(this.auxVariantes.length !== 0){
             for (let aux in this.auxVariantes){
-              this.$axios.$get('/api/variantes/'+this.auxVariantes[aux].produtoID)
+              this.$axios.$get('/api/produtos/'+this.auxVariantes[aux].produtoID)
                 .then((produto) => {
                   this.auxVariantes[aux].produtoID = produto.nome;
                 })
@@ -258,6 +258,20 @@ export default {
     //detalhes do produto
     toDetalhes (item){
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/variantes/'+item.codigo);
+    },
+    editarEstrutura(){
+      this.$router.push("/projetos/"+this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/editar');
+    },
+    eliminarEstrutura(){
+      this.$axios.delete('api/estruturas/'+this.$route.params.refEstrutura).then((response) => {
+        this.color = 'green';
+        this.text = 'A Estrutura foi eliminada com sucesso.';
+        this.snackbar = true;
+
+        setTimeout(() => {
+          this.$router.push("/projetos/"+this.projeto.referencia);
+        }, 1000);
+      })
     },
     sendEmail(){
       this.date = this.getDate();
