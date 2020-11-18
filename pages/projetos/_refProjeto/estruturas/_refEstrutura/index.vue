@@ -68,9 +68,16 @@
         <v-card>
           <v-card-title>Dados da Estrutura</v-card-title>
           <v-card-text>
-            <p><b>Referencia:</b> {{ estrutura.referencia }}</p>
-            <p><b>Nome:</b> {{ estrutura.nome }}</p>
-            <p><b>Estado:</b> {{ estrutura.estado }}</p>
+            <v-row>
+              <v-col>
+                <p><b>Referencia:</b> {{ estrutura.referencia }}</p>
+                <p><b>Nome:</b> {{ estrutura.nome }}</p>
+              </v-col>
+              <v-col>
+                <p><b>Estado:</b> {{ estrutura.estado }}</p>
+                <p><b>Tipo Material:</b> {{ estrutura.nomeTipoMaterial }}</p>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
       </v-col>
@@ -104,6 +111,7 @@
             <!--TODO rever formatação dos botões-->
             <v-btn x-small color="primary" @click="">Editar</v-btn>
             <v-btn x-small color="error" @click="">Eliminar</v-btn>
+            <v-btn x-small color="info" @click="">Simular</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -114,8 +122,46 @@
           <v-card-title>Dados Geométricos Estrutura</v-card-title>
           <v-card-text>
             <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
-            <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} metros</p>
-            <p><b>Espaço entre Vigas:</b> {{ estrutura.espacoVigas }} metros</p>
+            <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} m</p>
+            <p><b>Sobrecarga:</b> {{ estrutura.sobrecarga }}</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-title>
+            Produtos
+<!--            <v-spacer></v-spacer>-->
+<!--            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">-->
+<!--              <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>-->
+<!--            </div>-->
+          </v-card-title>
+          <v-card-text v-if="variantes.length!=0">
+            <v-data-table :items="variantes" :headers="cabecalhos_variantes">
+              <template v-slot:item.actions="{ item }">
+                <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+                <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-title>
+            Observações
+            <v-spacer></v-spacer>
+            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
+              <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
+              <v-btn x-small>Limpar</v-btn>
+            </div>
+          </v-card-title>
+          <v-card-text v-if="estrutura.observacoes">
+            {{ estrutura.observacoes}}
           </v-card-text>
         </v-card>
       </v-col>
@@ -141,11 +187,31 @@ export default {
       dialog_email: false,
       projeto: "",
       estrutura:"",
-      produtos:[],
+      variantes:[],
       subject:'',
       message:'',
       observacao:'',
       date:'',
+      cabecalhos_variantes:[{
+        text: 'Nome Variante',
+        align: 'start',
+        sortable: true,
+        value: 'nome',
+      },{
+        text: 'Tipo Material',
+        align: 'start',
+        sortable: true,
+        value: 'nomeTipoMaterial',
+      },{
+        text: 'Estado',
+        align: 'start',
+        sortable: true,
+        value: 'estado',
+      },{
+        text: 'Ações',
+        value: 'actions',
+      },
+      ]
     }
   },
   methods:{
@@ -153,17 +219,27 @@ export default {
       this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
         .then((projeto) => {
           this.projeto = projeto;
-          this.estruturas = projeto.estruturas;
         })
     },
     getEstrutura(){
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
-        .then((struct) => {
-          this.estrutura = struct;
+        .then((estrutura) => {
+          this.estrutura = estrutura;
+          this.variantes = estrutura.variantes;
       })
     },
     editarObservacao(){
       //TODO criar rota para adicionar uma observação ao projeto
+    },
+    removerProdutos(item){
+
+    },
+    simular(){
+
+    },
+    //detalhes do produto
+    toDetalhes (item){
+      //this.$router.push();
     },
     sendEmail(){
       this.date = this.getDate();

@@ -146,7 +146,7 @@
               <v-btn x-small>Limpar</v-btn>
             </div>
           </v-card-title>
-          <v-card-text>
+          <v-card-text v-if="projeto.observacoes">
             {{ projeto.observacoes}}
           </v-card-text>
         </v-card>
@@ -187,7 +187,7 @@ export default {
         text: 'Tipo Material',
         align: 'start',
         sortable: true,
-        value: 'tipoMaterial',
+        value: 'nomeTipoMaterial',
       },{
         text: 'Estado',
         align: 'start',
