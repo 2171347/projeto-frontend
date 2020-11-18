@@ -15,27 +15,6 @@
       </v-btn>
     </v-snackbar>
 
-    <!--    DIALOG para adicionar uma observação à estrutura           -->
-    <v-dialog v-model="dialog_observacao" max-width="490">
-      <v-card>
-        <v-card-title class="headline">
-          Adicionar uma observação
-        </v-card-title>
-        <v-card-text>
-          <v-textarea solo v-model="observacao"></v-textarea>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog_observacao = false">
-            Cancelar
-          </v-btn>
-          <v-btn color="green darken-1" text @click="editarObservacao">
-            Guardar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!--    DIALOG para enviar um email ao projetista         -->
     <v-dialog v-model="dialog_email" max-width="490">
       <v-card>
@@ -60,21 +39,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-<!--    -->
+    <!--    -->
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
-    {{this.estrutura}}
+
+    <p>Variante {{ this.variante }}</p>
+    <p>Produto {{ this.produto }}</p>
     <v-row>
       <v-col md="6">
         <v-card>
-          <v-card-title>Dados da Estrutura</v-card-title>
+          <v-card-title>Dados do Produto</v-card-title>
           <v-card-text>
             <v-row>
               <v-col>
-                <p><b>Referencia:</b> {{ estrutura.referencia }}</p>
-                <p><b>Nome:</b> {{ estrutura.nome }}</p>
+                <p><b>Nome:</b> {{ produto.nome }}</p>
+                <p><b>Referencia:</b> {{ produto.refere }}</p>
               </v-col>
               <v-col>
-                <p><b>Estado:</b> {{ estrutura.estado }}</p>
+                <p><b>Fabricante:</b> {{ produto.emailFabricante }}</p>
                 <p><b>Tipo Material:</b> {{ estrutura.nomeTipoMaterial }}</p>
               </v-col>
             </v-row>
@@ -111,7 +92,6 @@
             <!--TODO rever formatação dos botões-->
             <v-btn x-small color="primary" @click="">Editar</v-btn>
             <v-btn x-small color="error" @click="">Eliminar</v-btn>
-            <v-btn x-small color="info" @click="">Simular</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -124,52 +104,6 @@
             <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
             <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} m</p>
             <p><b>Sobrecarga:</b> {{ estrutura.sobrecarga }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            Produtos
-<!--            <v-spacer></v-spacer>-->
-<!--            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">-->
-<!--              <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>-->
-<!--            </div>-->
-          </v-card-title>
-          <v-card-text v-if="loading_produtos === true">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </v-card-text>
-          <template v-if="loading_produtos === false">
-            <v-card-text v-if="variantes.length!==0">
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes">
-                <template v-slot:item.actions="{ item }">
-                  <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
-                  <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
-                </template>
-              </v-data-table>
-            </v-card-text>
-          </template>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            Observações
-            <v-spacer></v-spacer>
-            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
-              <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
-              <v-btn x-small>Limpar</v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text v-if="estrutura.observacoes">
-            {{ estrutura.observacoes}}
           </v-card-text>
         </v-card>
       </v-col>
@@ -193,77 +127,43 @@ export default {
       email_assunto:'[Projeto +]',
       dialog_observacao: false,
       dialog_email: false,
-      projeto: "",
+      produto: "",
       estrutura:"",
-      variantes:[],
-      auxVariantes: [],
+      variante:"",
+      fabricante:"",
       subject:'',
       message:'',
       observacao:'',
       date:'',
-      loading_produtos: true,
-      cabecalhos_variantes:[{
-        text: 'Produto',
-        align: 'start',
-        sortable: true,
-        value: 'produtoID',
-      },{
-        text: 'Variante',
-        align: 'start',
-        sortable: true,
-        value: 'nome',
-      },{
-        text: 'Estado',
-        align: 'start',
-        sortable: true,
-        value: 'estado',
-      },{
-        text: 'Ações',
-        value: 'actions',
-      },
-      ]
     }
   },
   methods:{
-    getProjeto(){
-      this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
-        .then((projeto) => {
-          this.projeto = projeto;
+    getProduto(id){
+      this.$axios.$get('/api/produtos/'+id)
+        .then((produto) => {
+          this.produto = produto;
+          this.getFabricante(produto.emailFabricante);
+        })
+    },
+    getVariante(){
+      this.$axios.$get('/api/variantes/'+this.$route.params.codigo)
+        .then((variante) => {
+          this.variante = variante;
+          this.getProduto(variante.produtoID);
         })
     },
     getEstrutura(){
-      //TODO - JOANA verificar assincrono
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
         .then((estrutura) => {
           this.estrutura = estrutura;
-          this.auxVariantes = estrutura.variantes;
-          if(this.auxVariantes.length !== 0){
-            for (let aux in this.auxVariantes){
-              this.$axios.$get('/api/variantes/'+this.auxVariantes[aux].produtoID)
-                .then((produto) => {
-                  this.auxVariantes[aux].produtoID = produto.nome;
-                })
-            }
-          }else{
-            this.loading_produtos = false;
-          }
-      }).finally(() =>{
-        this.variantes = this.auxVariantes;
-        this.loading_produtos = false;
-      })
+        })
     },
-    editarObservacao(){
-      //TODO criar rota para adicionar uma observação ao projeto
-    },
-    removerProdutos(item){
-
-    },
-    simular(){
-
-    },
-    //detalhes do produto
-    toDetalhes (item){
-      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/variantes/'+item.codigo);
+    getFabricante(email){
+      //TODO é forbidden
+      this.$axios.$get('/api/fabricantes/'+email)
+        .then((fabricante) => {
+          this.fabricante = fabricante;
+        })
     },
     sendEmail(){
       this.date = this.getDate();
@@ -287,7 +187,7 @@ export default {
   },
   created() {
     this.getEstrutura();
-    this.getProjeto();
+    this.getVariante();
   }
 }
 </script>

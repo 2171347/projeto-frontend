@@ -41,7 +41,7 @@ export default {
   },
   methods:{
     submit(){
-      this.$axios.$post('/api/produtos', {
+      this.$axios.$post('/api/variantes', {
         nome: this.nome,
         referencia: "PR_"+this.nome,
         emailCliente: this.emailCliente,

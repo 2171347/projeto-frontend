@@ -63,7 +63,7 @@
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
 
     <v-row>
-      <v-col md="5">
+      <v-col md="6">
         <v-card>
           <v-card-title>Dados do Projeto</v-card-title>
           <v-card-text>
@@ -74,7 +74,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col md="5">
+      <v-col md="6">
         <!--  Ações para o cliente  -->
         <v-card v-if="this.$auth.user.groups.includes('Cliente')">
           <v-card-title>Ações</v-card-title>
