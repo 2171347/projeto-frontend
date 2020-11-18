@@ -62,7 +62,6 @@
     </v-dialog>
 <!--    -->
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
-    {{this.estrutura}}
     <v-row>
       <v-col md="6">
         <v-card>
@@ -212,11 +211,6 @@ export default {
         align: 'start',
         sortable: true,
         value: 'nome',
-      },{
-        text: 'Estado',
-        align: 'start',
-        sortable: true,
-        value: 'estado',
       },{
         text: 'Ações',
         value: 'actions',

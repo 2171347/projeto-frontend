@@ -41,9 +41,6 @@
     </v-dialog>
     <!--    -->
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
-
-    <p>Variante {{ this.variante }}</p>
-    <p>Produto {{ this.produto }}</p>
     <v-row>
       <v-col md="6">
         <v-card>
@@ -52,46 +49,16 @@
             <v-row>
               <v-col>
                 <p><b>Nome:</b> {{ produto.nome }}</p>
-                <p><b>Referencia:</b> {{ produto.refere }}</p>
-              </v-col>
-              <v-col>
+                <p><b>Variante:</b> {{ variante.nome }}</p>
                 <p><b>Fabricante:</b> {{ produto.emailFabricante }}</p>
-                <p><b>Tipo Material:</b> {{ estrutura.nomeTipoMaterial }}</p>
+                <p><b>Tipo Material:</b> {{ produto.nomeTipoMaterial }}</p>
+                <p><b>Familia Material:</b> {{ produto.nomeFamiliaMaterial }}</p>
+              </v-col>
+              <v-col>
+                <p><b>Referencia Fabricante:</b> {{ produto.referenciaFabricante }}</p>
+                <p><b>Código Variante:</b> {{ variante.codigo }}</p>
               </v-col>
             </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <!--  Ações para o cliente  -->
-        <v-card v-if="this.$auth.user.groups.includes('Cliente')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text >
-            <v-row>
-              <v-col>
-                <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn @click="" small>Perfil Projetista</v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn @click="" color="success" small>Aprovar Estrutura</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn @click="" color="error" small> Rejeitar Estrutura</v-btn>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-        <!--  Ações para o projetista  -->
-        <v-card v-if="this.$auth.user.groups.includes('Projetista')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text >
-            <!--TODO rever formatação dos botões-->
-            <v-btn x-small color="primary" @click="">Editar</v-btn>
-            <v-btn x-small color="error" @click="">Eliminar</v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -99,11 +66,13 @@
     <v-row>
       <v-col md="6">
         <v-card>
-          <v-card-title>Dados Geométricos Estrutura</v-card-title>
+          <v-card-title>Dimensões e Caracteristicas</v-card-title>
           <v-card-text>
-            <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
-            <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} m</p>
-            <p><b>Sobrecarga:</b> {{ estrutura.sobrecarga }}</p>
+            <p><b>Área:</b> {{ variante.ar }}</p>
+            <p><b>Peso próprio:</b> {{ variante.pp }} </p>
+            <p><b>Tensão de cedência (Σ):</b> {{ variante.sigmaC }}</p>
+            <p><b>Modo Elástico Positivo:</b> {{ variante.weff_p }}</p>
+            <p><b>Modo Elástico Negativo:</b> {{ variante.weff_n  }}</p>
           </v-card-text>
         </v-card>
       </v-col>
@@ -142,7 +111,7 @@ export default {
       this.$axios.$get('/api/produtos/'+id)
         .then((produto) => {
           this.produto = produto;
-          this.getFabricante(produto.emailFabricante);
+          //this.getFabricante(produto.emailFabricante);
         })
     },
     getVariante(){
