@@ -20,6 +20,9 @@
         <nuxt />
       </v-container>
     </v-main>
+    <v-footer>
+      Criado por Eduarda Ramos e Rafael Correia
+    </v-footer>
     <!--TODO criar um footer com ligação para uma página de contacto-->
   </v-app>
 </template>
