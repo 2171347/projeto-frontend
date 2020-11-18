@@ -28,9 +28,9 @@
                 prepend-icon='mdi-account-plus'
                 type="email"
                 v-model.trim="email"
+                :rules="emailRules"
                 required
               ></v-text-field>
-
               <v-text-field
                 id="password"
                 label="Palavra-Chave"
@@ -66,6 +66,10 @@ export default {
       email: null,
       password: null,
       token:'',
+      emailRules: [
+        v => !!v || 'Email é um campo obrigatório',
+        v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
+      ],
       // ---- SNACKBAR INFO -----
       color: '',
       mode: '',
@@ -87,33 +91,6 @@ export default {
         }
       })
       promise.then((response) => {
-        /*//this.getToken()
-        console.log(promise);
-        console.log(response.data.token);
-        const auth = {
-          accessToken: response.data.token
-        }
-        this.$store.commit('setAuth', auth) // mutating to store for client rendering
-        Cookie.set('auth', auth)
-        console.log(this.$store)*//*//this.getToken()
-        console.log(promise);
-        console.log(response.data.token);
-        const auth = {
-          accessToken: response.data.token
-        }
-        this.$store.commit('setAuth', auth) // mutating to store for client rendering
-        Cookie.set('auth', auth)
-        console.log(this.$store)*/
-
-        /*console.log(promise)
-        this.color = 'red lighten-1';
-        this.text = promise.data
-        this.snackbar = true;
-        this.$auth.setToken('local','Bearer ' + promise.data.token);
-       /!* this.$auth.setRefreshToken('local', promise.data.token)*!/
-        this.$axios.setHeader('Authorization', 'Bearer ' + promise.data.token);
-        this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + promise.data.token)
-        */
         this.$router.push('/home');
       });
       promise.catch(() => {
