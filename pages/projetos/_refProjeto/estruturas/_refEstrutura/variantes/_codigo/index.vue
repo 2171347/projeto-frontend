@@ -92,6 +92,7 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
+
       email_app:'noreply@projeto.com',
       email_assunto:'[Projeto +]',
       dialog_observacao: false,

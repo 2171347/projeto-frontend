@@ -35,6 +35,32 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+<!--    DIALOG PARA EDITAR O PROJETO-->
+    <v-dialog v-model="dialog_editar_projeto" max-width="490">
+      <v-card style="margin-top: 10px">
+        <v-card-title>
+          Editar Projeto
+        </v-card-title>
+        <v-card-text>
+          <validation-observer ref="observer_projeto" v-slot="{invalid}">
+            <validation-provider v-slot="{errors}" name="Nome" rules="required|max:50">
+              <v-text-field
+                v-model="nome"
+                :counter="50"
+                :error-messages="errors"
+                label="Nome:"
+                ></v-text-field>
+            </validation-provider>
+            <v-btn color="green darken-1" text @click="editarProjeto">
+              Guardar
+            </v-btn>
+          </validation-observer>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+<!--    FIM DO EDITAR PROJETO-->
+
     <!--    DIALOG para enviar um email ao projetista         -->
     <v-dialog v-model="dialog_email" max-width="490">
       <v-card>
@@ -102,7 +128,7 @@
           <v-card-title>Ações</v-card-title>
           <v-card-text >
             <!--TODO rever formatação dos botões-->
-            <v-btn x-small color="primary" @click="editarProjeto()">Editar</v-btn>
+            <v-btn x-small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
             <v-btn x-small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
             <template v-if="this.projeto.visivelCliente === false">
               <v-btn x-small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
@@ -127,7 +153,7 @@
           <v-card-text>
             <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
               <template v-slot:item.actions="{ item }">
-                <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+                <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
                 <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
               </template>
             </v-data-table>
@@ -156,6 +182,9 @@
 </template>
 <script>
 
+
+import {ValidationObserver, ValidationProvider} from "vee-validate";
+
 export default {
   data: () => {
     return {
@@ -168,6 +197,7 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
+
       email_app:'noreply@projeto.com',
       email_assunto:'[Projeto +]',
       dialog_observacao: false,
@@ -178,6 +208,7 @@ export default {
       message:'',
       observacao:'',
       date:'',
+
       cabecalhos_estruturas:[{
         text: 'Nome Estrutura',
         align: 'start',
@@ -197,7 +228,12 @@ export default {
         text: 'Ações',
         value: 'actions',
       },
-      ]
+      ],
+
+      projeto_editar:'',
+      nome:'',
+      dialog_editar_projeto:false,
+
     }
   },
   methods:{
@@ -206,6 +242,9 @@ export default {
         .then((projeto) => {
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
+          this.projeto_editar=projeto;
+          this.nome = projeto.nome;
+          console.log(projeto)
       })
     },
     editarObservacao(){
@@ -243,7 +282,26 @@ export default {
         })
     },
     editarProjeto(){
-      //TODO redirecionar para a página de atualizar projeto
+      if(this.$refs.observer_projeto.validate()){
+        this.$axios.$put('api/projetos/'+this.$route.params.refProjeto, {
+          nome: this.nome,
+          emailCliente: this.projeto.emailCliente,
+          emailProjetista: this.projeto.emailProjetista,
+          referencia: this.projeto.referencia,
+        })
+          .then(() => {
+            this.color = 'green';
+            this.text = 'Edição do Projeto realizado com sucesso.';
+            this.snackbar = true;
+          })
+          .catch(error => {
+            this.color = 'error';
+            this.text = 'Ocorreu um erro com a edição do projeto.';
+            this.snackbar = true;
+          })
+      }
+      this.dialog_editar_projeto = false;
+      this.getProjeto();
     },
     eliminarProjeto(){
       this.$axios.delete('/api/projetos/'+this.projeto.referencia+'/')
@@ -254,7 +312,7 @@ export default {
 
         setTimeout(() => {
           this.$router.push("/projetos");
-        }, 2000);
+        }, 1500);
       })
     },
     eliminarEstrutura(item){
@@ -267,11 +325,11 @@ export default {
         })
     },
     sendEmail(){
-      this.date = this.getDate();
+      this.date = new Date();
       this.$axios.post('/api/emails/'+this.projeto.emailProjetista+'/sendto/'+this.$auth.user.sub,{
         subject: '[Projeto +] ['+this.projeto.referencia+'] '+this.subject,
         message: '[Mensagem do cliente] \n '+this.message + '\n ['+this.date+']'
-      }).then((response) => {
+      }).then(() => {
           this.color = 'green lighten-1';
           this.text = 'Email enviado com sucesso.';
           this.snackbar = true;
@@ -285,19 +343,19 @@ export default {
         this.snackbar = true;
       })
     },
-    toDetalhes (item){
+    toDetalhesEsrutura (item){
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+item.referencia);
     },
     criarEstrutura(){
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/criar');
     },
-    getDate(){
-      var currentDate = new Date();
-      return currentDate;
-    }
   },
   created() {
     this.getProjeto()
+  },
+  components: {
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
   },
 }
 

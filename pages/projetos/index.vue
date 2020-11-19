@@ -31,9 +31,10 @@
 </template>
 
 <script>
+
 export default {
   name: "lista_projetos",
-  data () {
+  data: () => {
     return {
       projetos:[],
       person:'',
