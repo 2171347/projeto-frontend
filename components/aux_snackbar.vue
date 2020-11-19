@@ -26,7 +26,7 @@ name: "aux_snackbar",
       mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
+      timeout: 3000,
       x: null,
       y: 'top',
       // ------------------------

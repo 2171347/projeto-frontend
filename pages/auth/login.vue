@@ -1,19 +1,6 @@
 <template>
   <div>
-    <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :color="color"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <aux_snackbar v-bind:snackbar="snackbar" v-bind:text="text" v-bind:color="color"></aux_snackbar>
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-12" style="margin-top: auto">
@@ -72,12 +59,8 @@ export default {
       ],
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // ------------------------
     }
   },
