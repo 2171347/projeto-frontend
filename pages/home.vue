@@ -1,20 +1,33 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title style="justify-content: center">Painel Geral do <!--{{this.$auth.user.groups[0]}}--></v-card-title>
-      <v-card-text>
-        Email: {{this.$auth.user.sub}}
-        <!--{{this.$store.state.auth}}-->
-
-      </v-card-text>
-    </v-card>
+      <template v-if="this.$auth.user.groups[0] === 'Projetista'">
+        <layout_projetista></layout_projetista>
+      </template>
+      <template v-if="this.$auth.user.groups[0] === 'Cliente'">
+        <layout_cliente></layout_cliente>
+      </template>
+      <template v-if="this.$auth.user.groups[0] === 'Fabricante'">
+        <layout_fabricante/>
+      </template>
+      <template v-if="this.$auth.user.groups[0] === 'Administrador'">
+        <layout_administrador/>
+      </template>
   </div>
 </template>
 
 <script>
+import layout_projetista from '@/components/aux_home_projetista'
+import layout_fabricante from '@/components/aux_home_fabricante'
+import layout_cliente from '@/components/aux_home_cliente'
+import layout_administrador from '@/components/aux_home_administrador'
 export default {
-  //middleware: 'Authenticated',
-  name: "home"
+  name: "home",
+  components:{
+    layout_projetista,
+    layout_administrador,
+    layout_cliente,
+    layout_fabricante
+  }
 }
 </script>
 

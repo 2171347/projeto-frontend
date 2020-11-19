@@ -1,39 +1,14 @@
 <template>
   <v-app light>
     <v-dialog v-model="dialog_notificacoes" max-width="490">
-      <!--<v-card>
-        <v-card-title class="headline">
-          Notificações
-        </v-card-title>
-        <v-card-text>
-          &lt;!&ndash;TODO Apresentar lista de notificações ao utilizador&ndash;&gt;
-          {{this.notificacoes}}
-          <v-data-table
-          :items="notificacoes"
-          :headers="tab_notificacoes_headers">
-            <template v-slot:item.action="{ item }">
-              <v-btn x-small @click="setNotificacaoLida(item)">Lido</v-btn>
-            </template>
-          </v-data-table>
-        </v-card-text>
-      </v-card>-->
-      <!--https://vuetifyjs.com/en/components/lists/-->
-      <!--<v-card
-        class="mx-auto"
-        max-width="500"
-      >
-        <v-toolbar
-          color="pink"
-          dark
-        >
+            https://vuetifyjs.com/en/components/lists/
+      <v-card class="mx-auto" max-width="500">
+        <v-toolbar color="pink" dark>
           <v-toolbar-title>Notificações</v-toolbar-title>
-
           <v-spacer></v-spacer>
-
           <v-btn icon>
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
-
           <v-btn icon>
             <v-icon>mdi-checkbox-marked-circle</v-icon>
           </v-btn>
@@ -43,7 +18,7 @@
         <v-list two-line>
           <v-list-item-group
             v-model="selected"
-            active-class="pink&#45;&#45;text"
+            active-class="pink--text"
             multiple
           >
             <template v-for="(item, index) in notificacoes">
@@ -53,7 +28,7 @@
                     <v-list-item-title v-text="item.title"></v-list-item-title>
 
                     <v-list-item-subtitle
-                      class="text&#45;&#45;primary"
+                      class="text--primary"
                       v-text="item.headline"
                     ></v-list-item-subtitle>
 
@@ -87,7 +62,7 @@
             </template>
           </v-list-item-group>
         </v-list>
-      </v-card>-->
+      </v-card>
     </v-dialog>
     <v-navigation-drawer
       v-model="drawer"
@@ -123,15 +98,16 @@
       <v-btn icon to="/home">
         <v-icon>mdi-home</v-icon>
       </v-btn>
-
+      <v-spacer/>
       <v-toolbar-title v-text="title" />
       <v-spacer />
+
       <v-badge
         overlap
         offset-x="28"
-        offset-y="20"
-        v-if="this.num_notificacoes !== 0"
-      >
+        offset-y="20">
+        <!--v-if="this.num_notificacoes !== 0"-->
+
         <span slot="badge">{{this.num_notificacoes}}</span>
       <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
         <v-icon>mdi-email</v-icon>

@@ -33,13 +33,7 @@
       <v-btn :disabled="!valid" color="success" class="mr-4" @click="createProject">
         Submeter
       </v-btn>
-      <v-btn color="error" class="mr-4">
-        Reset Formulário
-      </v-btn>
-      <v-btn color="warning" class="mr-4">
-        Reset Validação
-      </v-btn>
-      <v-btn color="error" class="mr-4" @click="$router.go(-1)" >
+      <v-btn color="error" class="mr-4"  >
         Cancelar
       </v-btn>
     </v-form>
@@ -86,7 +80,15 @@ name: "novo",
         }
       })
       // Verificar se o email do cliente corresponde a um cliente:
-      /*TODO validar se o email introduzido corresponde a um cliente*/
+
+      this.$axios.$get('/api/clientes/'+this.emailCliente+'/iscliente').then((response) => {
+        if(response.value !== true){
+          this.text = "O email inserido não corresponde a um email de um cliente. Por favor tente novamente."
+          this.color = "error"
+          this.snackbar = true;
+          return null;
+        }
+      })
 
       // Criar o novo projeto:
       this.$axios.$post('/api/projetos', {
