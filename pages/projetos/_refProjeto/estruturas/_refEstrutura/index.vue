@@ -36,6 +36,80 @@
       </v-card>
     </v-dialog>
 
+    <!--    DIALOG para editar uma estrutura           -->
+    <v-dialog v-model="dialog_editar_estrutura" max-width="490">
+      <v-card style="margin-top: 10px">
+        <v-card-title>
+          Editar Estrutura
+        </v-card-title>
+        <v-card-text>
+          <validation-observer ref="observer" v-slot="{ invalid }">
+            <form @submit.prevent="submit">
+              <v-row>
+                <v-col>
+                  <validation-provider v-slot="{ errors }" name="Nome" rules="required|max:50">
+                    <v-text-field
+                      v-model="estrutura_dados_originais.nome"
+                      :counter="50"
+                      :error-messages="errors"
+                      label="Nome:"
+                      required
+                    ></v-text-field>
+                  </validation-provider>
+                </v-col>
+                <v-col>
+                  <v-select
+                    :items="tiposMaterial"
+                    item-text="nome"
+                    item-value="id"
+                    :error-messages="errorsTipoMaterial"
+                    v-model="idTipoMaterial"
+                    label="Tipo de Material:"
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <validation-provider v-slot="{ errors }" name="numeroVaos" rules="required|numeric">
+                    <v-text-field
+                      v-model="estrutura_dados_originais.numeroVaos"
+                      :error-messages="errors"
+                      label="Número de Vãos:"
+                      required
+                    ></v-text-field>
+                  </validation-provider>
+                </v-col>
+                <v-col>
+                  <validation-provider v-slot="{ errors }" name="comprimentoVao" rules="required|numeric">
+                    <v-text-field
+                      :error-messages="errors"
+                      label="Comprimento de Vão:"
+                      v-model="estrutura_dados_originais.comprimentoVao"
+                      required
+                    ></v-text-field>
+                  </validation-provider>
+                </v-col>
+                <v-col>
+                  <validation-provider v-slot="{ errors }" name="sobrecarga" rules="required|numeric">
+                    <v-text-field
+                      v-model="estrutura_dados_originais.sobrecarga"
+                      :error-messages="errors"
+                      label="Sobrecarga:"
+                      required
+                    ></v-text-field>
+                  </validation-provider>
+                </v-col>
+              </v-row>
+              <v-btn color="green darken-1" text @click="editarEstrutura">
+                Guardar
+              </v-btn>
+            </form>
+          </validation-observer>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+<!--    FINAL DO DIALOG DE EDITAR UMA ESTRUTURA-->
+
     <!--    DIALOG para enviar um email ao projetista         -->
     <v-dialog v-model="dialog_email" max-width="490">
       <v-card>
@@ -108,7 +182,8 @@
           <v-card-title>Ações</v-card-title>
           <v-card-text >
             <!--TODO rever formatação dos botões-->
-            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>
+<!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
+            <v-btn x-small color="primary" @click.stop="dialog_editar_estrutura = true">Editar</v-btn>
             <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
             <v-btn x-small color="info" @click="simular">Simular</v-btn>
           </v-card-text>
@@ -176,7 +251,11 @@
   </div>
 </template>
 <script>
+
+import {ValidationObserver, ValidationProvider} from "vee-validate";
+
 export default {
+
   data: () => {
     return {
       // ---- SNACKBAR INFO -----
@@ -195,7 +274,6 @@ export default {
       projeto: "",
       estrutura:"",
       variantes:[],
-      auxVariantes: [],
       subject:'',
       message:'',
       observacao:'',
@@ -215,7 +293,13 @@ export default {
         text: 'Ações',
         value: 'actions',
       },
-      ]
+      ],
+//variaveis para o dialog de editar
+      idTipoMaterial:'',
+      tiposMaterial:[],
+      estrutura_dados_originais:'',
+      dialog_editar_estrutura: false,
+      errorsTipoMaterial:'',
     }
   },
   methods:{
@@ -230,21 +314,26 @@ export default {
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
         .then((estrutura) => {
           this.estrutura = estrutura;
-          this.auxVariantes = estrutura.variantes;
-          if(this.auxVariantes.length !== 0){
-            for (let aux in this.auxVariantes){
-              this.$axios.$get('/api/produtos/'+this.auxVariantes[aux].produtoID)
-                .then((produto) => {
-                  this.auxVariantes[aux].produtoID = produto.nome;
-                })
-            }
-          }else{
-            this.loading_produtos = false;
+          this.estrutura_dados_originais = estrutura;
+          this.variantes = estrutura.variantes;
+          for (let aux in this.variantes){
+            this.$axios.$get('/api/produtos/'+this.variantes[aux].produtoID)
+              .then((produto) => {
+                this.variantes[aux].produtoID = produto.nome;
+              })
           }
-      }).finally(() =>{
-        this.variantes = this.auxVariantes;
-        this.loading_produtos = false;
+          this.$axios.$get('/api/tipos_material/'+estrutura.idTipoMaterial)
+            .then((tipoMaterial) => {
+              this.idTipoMaterial = tipoMaterial.id;
+            })
+          this.loading_produtos = false;
       })
+    },
+    getTiposMateriais(){
+      this.$axios.$get('/api/tipos_material/all')
+        .then((response) => {
+          this.tiposMaterial = response;
+        })
     },
     editarObservacao(){
       //TODO criar rota para adicionar uma observação ao projeto
@@ -260,7 +349,29 @@ export default {
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/variantes/'+item.codigo);
     },
     editarEstrutura(){
-      this.$router.push("/projetos/"+this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/editar');
+      console.log("Editar Estrutura")
+      if(this.$refs.observer.validate()){
+        //Todo - terminar a função para guardar os novos dados
+        //Enviar os dados para o update da estrutura
+        this.$axios.$put('api/estruturas/'+this.$route.params.refEstrutura, {
+          nome: this.estrutura_dados_originais.nome,
+          idTipoMaterial: this.idTipoMaterial,
+          numeroVaos: this.estrutura_dados_originais.numeroVaos,
+          comprimentoVao: this.estrutura_dados_originais.comprimentoVao,
+          sobrecarga: this.estrutura_dados_originais.sobrecarga,
+        })
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O seu registo foi feito com sucesso.';
+            this.snackbar = true;
+          })
+          .catch(error => {
+            this.color = 'error';
+            this.text = 'Ocorreu um erro com o seu registo.';
+            this.snackbar = true;
+          })
+      }
+      this.dialog_editar_estrutura = false;
     },
     eliminarEstrutura(){
       this.$axios.delete('api/estruturas/'+this.$route.params.refEstrutura).then((response) => {
@@ -294,8 +405,13 @@ export default {
     },
   },
   created() {
-    this.getEstrutura();
-    this.getProjeto();
-  }
+    this.getEstrutura()
+    this.getProjeto()
+    this.getTiposMateriais()
+  },
+  components: {
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
+  },
 }
 </script>
