@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import VuetifyLogo from '@/components/logo_projeto.vue'
+import VuetifyLogo from '@/components/logo_projeto.vue';
 import Photo_client from "@/components/photo_client";
 import Photo_projetista from "@/components/photo_projetista";
 import Photo_fabricante from "@/components/photo_fabricante";

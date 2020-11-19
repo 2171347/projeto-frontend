@@ -1,6 +1,11 @@
 <template>
   <div>
-    <aux_snackbar v-bind:snackbar="snackbar" v-bind:text="text" v-bind:color="color"></aux_snackbar>
+    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
+      {{ text }}
+      <v-btn dark text @click="snackbar = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-snackbar>
     <!--TODO refefinir as validações deste formulário-->
     <v-form ref="form" v-model="valid" lazy-validation >
       <p class="subtitle-1 text-center">Registo de novo utilizador</p>
@@ -133,10 +138,13 @@ export default {
     valid: true,
     // ---- SNACKBAR INFO -----
     color: '',
+    mode: '',
     snackbar: false,
     text: '',
+    timeout: 4000,
+    x: null,
+    y: 'top',
     // ------------------------
-
     morada: '',
     nome: '',
     nomeRules: [

@@ -1,6 +1,11 @@
 <template>
   <div>
-    <aux_snackbar v-bind:snackbar="snackbar" v-bind:text="text" v-bind:color="color"></aux_snackbar>
+    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
+      {{ text }}
+      <v-btn dark text @click="snackbar = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-dialog v-model="dialog_criar_projeto" max-width="500px">
       <v-card>
         <v-card-title class="headline">
@@ -65,6 +70,7 @@
 
 <script>
 import aux_snackbar from "@/components/aux_snackbar";
+
 export default {
 name: "aux_home_projetista",
   data:function (){
@@ -82,10 +88,15 @@ name: "aux_home_projetista",
         v => !!v || 'Email é um campo obrigatório',
         v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
       ],
-      // ---- Dados snackbar ----
-      text:'',
-      color:'',
-      snackbar:'',
+      // ---- SNACKBAR INFO -----
+      color: '',
+      mode: '',
+      snackbar: false,
+      text: '',
+      timeout: 4000,
+      x: null,
+      y: 'top',
+      // ------------------------
     }
   },
   methods:{
@@ -102,6 +113,7 @@ name: "aux_home_projetista",
           return null;
         }
       })
+      console.log("ERROR ASDQUI")
       // Verificar se o email do cliente corresponde a um cliente:
       this.$axios.$get('/api/clientes/'+this.emailCliente+'/iscliente').then((response) => {
         if(response.value !== true){

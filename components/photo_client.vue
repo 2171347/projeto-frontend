@@ -2,7 +2,7 @@
   <img
     class="photoCard"
     alt="Photo Client"
-    src="/phone-875488_640.jpg"
+    src="/cliente.jpg"
   >
 </template>
 

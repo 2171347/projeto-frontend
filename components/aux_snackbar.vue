@@ -22,10 +22,7 @@ name: "aux_snackbar",
   data: () => {
     return {
       // ---- SNACKBAR INFO -----
-      color: '',
       mode: '',
-      snackbar: false,
-      text: '',
       timeout: 3000,
       x: null,
       y: 'top',

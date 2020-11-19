@@ -1,14 +1,6 @@
 <template>
   <div>
-    <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :color="color"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'">
+    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
       {{ text }}
       <v-btn dark text @click="snackbar = false">
         <v-icon>mdi-close</v-icon>
@@ -36,6 +28,7 @@
       </v-card>
     </v-dialog>
 
+
     <!--    DIALOG para editar uma estrutura           -->
     <v-dialog v-model="dialog_editar_estrutura" max-width="490">
       <v-card style="margin-top: 10px">
@@ -43,11 +36,11 @@
           Editar Estrutura
         </v-card-title>
         <v-card-text>
-          <validation-observer ref="observer" v-slot="{ invalid }">
-            <form @submit.prevent="submit">
+         <!-- <validation-observer ref="observer_dialog" v-slot="{ invalid }">
+            <form @submit.prevent="editarEstrutura">
               <v-row>
                 <v-col>
-                  <validation-provider v-slot="{ errors }" name="Nome" rules="required|max:50">
+                  <validation-provider v-slot="{ errors }" name="Nome_dialog" rules="required|max:50">
                     <v-text-field
                       v-model="estrutura_dados_originais.nome"
                       :counter="50"
@@ -104,7 +97,9 @@
                 Guardar
               </v-btn>
             </form>
-          </validation-observer>
+          </validation-observer>-->
+          <v-text-field
+          v-model="aux_estrutura.nome"></v-text-field>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -183,7 +178,7 @@
           <v-card-text >
             <!--TODO rever formatação dos botões-->
 <!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
-            <v-btn x-small color="primary" @click.stop="dialog_editar_estrutura = true">Editar</v-btn>
+            <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
             <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
             <v-btn x-small color="info" @click="simular">Simular</v-btn>
           </v-card-text>
@@ -253,7 +248,7 @@
 <script>
 
 import {ValidationObserver, ValidationProvider} from "vee-validate";
-
+import aux_snackbar from "@/components/aux_snackbar";
 export default {
 
   data: () => {
@@ -271,8 +266,8 @@ export default {
       email_assunto:'[Projeto +]',
       dialog_observacao: false,
       dialog_email: false,
-      projeto: "",
-      estrutura:"",
+      projeto: '',
+      estrutura:'',
       variantes:[],
       subject:'',
       message:'',
@@ -294,10 +289,10 @@ export default {
         value: 'actions',
       },
       ],
-//variaveis para o dialog de editar
+      //variaveis para o dialog de editar
       idTipoMaterial:'',
       tiposMaterial:[],
-      estrutura_dados_originais:'',
+      aux_estrutura:'',
       dialog_editar_estrutura: false,
       errorsTipoMaterial:'',
     }
@@ -314,7 +309,7 @@ export default {
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
         .then((estrutura) => {
           this.estrutura = estrutura;
-          this.estrutura_dados_originais = estrutura;
+          this.aux_estrutura = estrutura;
           this.variantes = estrutura.variantes;
           for (let aux in this.variantes){
             this.$axios.$get('/api/produtos/'+this.variantes[aux].produtoID)
@@ -350,15 +345,15 @@ export default {
     },
     editarEstrutura(){
       console.log("Editar Estrutura")
-      if(this.$refs.observer.validate()){
+      if(this.$refs.observer_dialog.validate()){
         //Todo - terminar a função para guardar os novos dados
         //Enviar os dados para o update da estrutura
         this.$axios.$put('api/estruturas/'+this.$route.params.refEstrutura, {
-          nome: this.estrutura_dados_originais.nome,
+          nome: this.aux_estrutura.nome,
           idTipoMaterial: this.idTipoMaterial,
-          numeroVaos: this.estrutura_dados_originais.numeroVaos,
-          comprimentoVao: this.estrutura_dados_originais.comprimentoVao,
-          sobrecarga: this.estrutura_dados_originais.sobrecarga,
+          numeroVaos: this.aux_estrutura.numeroVaos,
+          comprimentoVao: this.aux_estrutura.comprimentoVao,
+          sobrecarga: this.aux_estrutura.sobrecarga,
         })
           .then(() => {
             this.color = 'green';
@@ -412,6 +407,7 @@ export default {
   components: {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
+    aux_snackbar,
   },
 }
 </script>

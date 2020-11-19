@@ -1,15 +1,22 @@
 <template>
   <div>
-    <aux_snackbar v-bind:snackbar="snackbar" v-bind:text="text" v-bind:color="color"></aux_snackbar>
+    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
+      {{ text }}
+      <v-btn dark text @click="snackbar = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-dialog v-model="dialog_password" max-width="490">
       <v-card>
         <v-card-title class="headline">
           Alterar a Palavra-Chave
         </v-card-title>
         <v-card-text>
+          <form>
           <v-text-field label="Palavra-Chave antiga" :error-messages="error_old" v-model="old_password" type="password"></v-text-field>
           <v-text-field label="Nova Palavra-Chave" :error-messages="error_new" :rules="passwordRules"  v-model="new_password" type="password"></v-text-field>
           <v-text-field label="Confirmação da nova Palavra-Chave" :error-messages="error_confirmation" :rules="passwordRules"  v-model="confirmation_password" type="password"></v-text-field>
+          </form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -44,9 +51,9 @@
 </template>
 
 <script>
+import aux_snackbar from "@/components/aux_snackbar";
 export default {
   name: "perfil",
-  middleware: 'authenticated',
   data: () => {
     return {
       user:'',
@@ -62,8 +69,12 @@ export default {
 
       // ---- SNACKBAR INFO -----
       color: '',
+      mode: '',
       snackbar: false,
       text: '',
+      timeout: 4000,
+      x: null,
+      y: 'top',
       // ------------------------
 
       passwordRules:[
@@ -130,13 +141,18 @@ export default {
         })
       }).catch(error =>{
         this.error_old = "A palavra-chave introduzida não coincide com a palavra-chave atual."
-        console.log(error)
       })
     }
   },
   mounted() {
     this.getUser()
-  }
+  },
+  components:{
+    aux_snackbar
+  },
+
+
+
 }
 </script>
 
