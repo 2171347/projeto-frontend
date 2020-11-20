@@ -107,18 +107,13 @@
           <v-card-text >
             <v-row>
               <v-col>
-                <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
+                <v-btn x-small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
               </v-col>
               <v-col>
-                <v-btn @click="perfilProjetista" small>Perfil Projetista</v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn @click="aprovarProjeto" color="success" small>Aprovar Projeto</v-btn>
+                <v-btn x-small @click="aprovarProjeto" color="success" >Aprovar Projeto</v-btn>
               </v-col>
               <v-col>
-                <v-btn @click="rejeitarProjeto" color="error" small> Rejeitar Projeto</v-btn>
+                <v-btn x-small @click="rejeitarProjeto" color="error" > Rejeitar Projeto</v-btn>
               </v-col>
             </v-row>
           </v-card-text>
@@ -200,14 +195,17 @@ export default {
 
       email_app:'noreply@projeto.com',
       email_assunto:'[Projeto +]',
-      dialog_observacao: false,
-      dialog_email: false,
-      projeto:'',
-      estruturas:[],
       subject:'',
       message:'',
-      observacao:'',
       date:'',
+      dialog_email: false,
+
+      projeto:'',
+      estruturas:[],
+
+      dialog_observacao: false,
+      observacao:'',
+
 
       cabecalhos_estruturas:[{
         text: 'Nome Estrutura',
@@ -229,8 +227,7 @@ export default {
         value: 'actions',
       },
       ],
-
-      projeto_editar:'',
+      //props para o dialog de edição
       nome:'',
       dialog_editar_projeto:false,
 
@@ -242,9 +239,7 @@ export default {
         .then((projeto) => {
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
-          this.projeto_editar=projeto;
           this.nome = projeto.nome;
-          console.log(projeto)
       })
     },
     editarObservacao(){
@@ -252,20 +247,29 @@ export default {
     },
     aprovarProjeto(){
       //TODO criar rota para aprovar um projeto
-      // Enviar email ao projetista da plataforma a informar que o projeto foi aprovado
+      this.$axios.put('/api/projetos/aprove/'+this.projeto.referencia)
+      .then(() => {
+        this.color = 'green';
+        this.text = 'O projeto foi aprovado.';
+        this.snackbar = true;
+        this.getProjeto();
+      })
     },
     rejeitarProjeto(){
-      //TODO criar rota para rejeitar projeto
-      // Enviar email ao projetista da plataforma a informar que o projeto foi rejeitado
+      this.$axios.put('/api/projetos/reject/'+this.projeto.referencia)
+        .then(() => {
+          this.color = 'green';
+          this.text = 'O projeto foi rejeitado.';
+          this.snackbar = true;
+          this.getProjeto();
+        })
 
     },
-    perfilProjetista(){
-      //TODO redirecionar para o perfil do cliente
-    },
+
   //#############################################Funções para o projetista
     disponibilizar(){
-      this.$axios.put('/api/projetos/provide/'+this.projeto.referencia+'/')
-        .then((response) => {
+      this.$axios.put('/api/projetos/provide/'+this.projeto.referencia)
+        .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
           this.snackbar = true;
@@ -273,8 +277,8 @@ export default {
         })
     },
     indisponibilizar(){
-      this.$axios.put('/api/projetos/unavailable/'+this.projeto.referencia+'/')
-        .then((response) => {
+      this.$axios.put('/api/projetos/unavailable/'+this.projeto.referencia)
+        .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
           this.snackbar = true;
@@ -283,7 +287,7 @@ export default {
     },
     editarProjeto(){
       if(this.$refs.observer_projeto.validate()){
-        this.$axios.$put('api/projetos/'+this.$route.params.refProjeto, {
+        this.$axios.$put('/api/projetos/'+this.$route.params.refProjeto, {
           nome: this.nome,
           emailCliente: this.projeto.emailCliente,
           emailProjetista: this.projeto.emailProjetista,

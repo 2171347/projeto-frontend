@@ -54,8 +54,6 @@
           </v-card-text>
         </v-card>
       </v-col>
-    </v-row>
-    <v-row>
       <v-col md="6">
         <v-card>
           <v-card-title>Dimensões e Caracteristicas</v-card-title>

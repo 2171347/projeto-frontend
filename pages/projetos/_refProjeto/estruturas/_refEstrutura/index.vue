@@ -36,13 +36,13 @@
           Editar Estrutura
         </v-card-title>
         <v-card-text>
-         <!-- <validation-observer ref="observer_dialog" v-slot="{ invalid }">
+         <validation-observer ref="observer_dialog" v-slot="{ invalid }">
             <form @submit.prevent="editarEstrutura">
               <v-row>
                 <v-col>
                   <validation-provider v-slot="{ errors }" name="Nome_dialog" rules="required|max:50">
                     <v-text-field
-                      v-model="estrutura_dados_originais.nome"
+                      v-model="nome"
                       :counter="50"
                       :error-messages="errors"
                       label="Nome:"
@@ -65,7 +65,7 @@
                 <v-col>
                   <validation-provider v-slot="{ errors }" name="numeroVaos" rules="required|numeric">
                     <v-text-field
-                      v-model="estrutura_dados_originais.numeroVaos"
+                      v-model="numeroVaos"
                       :error-messages="errors"
                       label="Número de Vãos:"
                       required
@@ -77,7 +77,7 @@
                     <v-text-field
                       :error-messages="errors"
                       label="Comprimento de Vão:"
-                      v-model="estrutura_dados_originais.comprimentoVao"
+                      v-model="comprimentoVao"
                       required
                     ></v-text-field>
                   </validation-provider>
@@ -85,7 +85,7 @@
                 <v-col>
                   <validation-provider v-slot="{ errors }" name="sobrecarga" rules="required|numeric">
                     <v-text-field
-                      v-model="estrutura_dados_originais.sobrecarga"
+                      v-model="sobrecarga"
                       :error-messages="errors"
                       label="Sobrecarga:"
                       required
@@ -97,9 +97,7 @@
                 Guardar
               </v-btn>
             </form>
-          </validation-observer>-->
-          <v-text-field
-          v-model="aux_estrutura.nome"></v-text-field>
+          </validation-observer>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -164,10 +162,10 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn @click="" color="success" small>Aprovar Estrutura</v-btn>
+                <v-btn @click="changeAprovado" color="success" small>Aprovar Estrutura</v-btn>
               </v-col>
               <v-col>
-                <v-btn @click="" color="error" small> Rejeitar Estrutura</v-btn>
+                <v-btn @click="changeRejeitado" color="error" small> Rejeitar Estrutura</v-btn>
               </v-col>
             </v-row>
           </v-card-text>
@@ -181,6 +179,35 @@
             <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
             <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
             <v-btn x-small color="info" @click="simular">Simular</v-btn>
+          </v-card-text>
+        </v-card>
+        <!--  Ações para o administrador  -->
+        <v-card v-if="this.$auth.user.groups.includes('Administrador')">
+          <v-card-title>Ações</v-card-title>
+          <v-card-text >
+            <!--TODO rever formatação dos botões-->
+            <v-row>
+              <v-col>
+                <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
+              </v-col>
+              <v-col>
+                <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
+              </v-col>
+              <v-col>
+                <v-btn x-small color="info" @click="simular">Simular</v-btn>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-btn @click="changeAprovado" color="success" small>Aprovar Estrutura</v-btn>
+              </v-col>
+              <v-col>
+                <v-btn @click="changeRejeitado" color="error" small> Rejeitar Estrutura</v-btn>
+              </v-col>
+              <v-col>
+                <v-btn @click="changeAnalisar" color="error" small> Analisar Estrutura</v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
       </v-col>
@@ -202,10 +229,10 @@
         <v-card>
           <v-card-title>
             Produtos
-<!--            <v-spacer></v-spacer>-->
-<!--            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">-->
-<!--              <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>-->
-<!--            </div>-->
+            <v-spacer></v-spacer>
+            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">
+              <v-btn x-small @click="">Catálogo</v-btn>
+            </div>
           </v-card-title>
           <v-card-text v-if="loading_produtos === true">
             <v-progress-circular
@@ -248,11 +275,12 @@
 <script>
 
 import {ValidationObserver, ValidationProvider} from "vee-validate";
-import aux_snackbar from "@/components/aux_snackbar";
+
 export default {
 
   data: () => {
     return {
+
       // ---- SNACKBAR INFO -----
       color: '',
       mode: '',
@@ -262,6 +290,7 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
+
       email_app:'noreply@projeto.com',
       email_assunto:'[Projeto +]',
       dialog_observacao: false,
@@ -290,9 +319,12 @@ export default {
       },
       ],
       //variaveis para o dialog de editar
+      nome:'',
+      comprimentoVao:'',
+      numeroVaos:'',
+      sobrecarga:'',
       idTipoMaterial:'',
       tiposMaterial:[],
-      aux_estrutura:'',
       dialog_editar_estrutura: false,
       errorsTipoMaterial:'',
     }
@@ -309,7 +341,6 @@ export default {
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
         .then((estrutura) => {
           this.estrutura = estrutura;
-          this.aux_estrutura = estrutura;
           this.variantes = estrutura.variantes;
           for (let aux in this.variantes){
             this.$axios.$get('/api/produtos/'+this.variantes[aux].produtoID)
@@ -323,6 +354,15 @@ export default {
             })
           this.loading_produtos = false;
       })
+      .then(() => {
+        this.preencherProps();
+      })
+    },
+    preencherProps(){
+      this.nome = this.estrutura.nome;
+      this.sobrecarga = this.estrutura.sobrecarga;
+      this.comprimentoVao = this.estrutura.comprimentoVao;
+      this.numeroVaos = this.estrutura.numeroVaos;
     },
     getTiposMateriais(){
       this.$axios.$get('/api/tipos_material/all')
@@ -330,54 +370,24 @@ export default {
           this.tiposMaterial = response;
         })
     },
-    editarObservacao(){
-      //TODO criar rota para adicionar uma observação ao projeto
-    },
-    removerProdutos(item){
-
-    },
-    simular(){
-
-    },
-    //detalhes do produto
-    toDetalhes (item){
-      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/variantes/'+item.codigo);
-    },
-    editarEstrutura(){
-      console.log("Editar Estrutura")
-      if(this.$refs.observer_dialog.validate()){
-        //Todo - terminar a função para guardar os novos dados
-        //Enviar os dados para o update da estrutura
-        this.$axios.$put('api/estruturas/'+this.$route.params.refEstrutura, {
-          nome: this.aux_estrutura.nome,
-          idTipoMaterial: this.idTipoMaterial,
-          numeroVaos: this.aux_estrutura.numeroVaos,
-          comprimentoVao: this.aux_estrutura.comprimentoVao,
-          sobrecarga: this.aux_estrutura.sobrecarga,
+    // --------------------Métodos para o Cliente
+    changeAprovado(){
+      this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/aprove/'+this.estrutura.referencia)
+        .then(() => {
+          this.getEstrutura()
         })
-          .then(() => {
-            this.color = 'green';
-            this.text = 'O seu registo foi feito com sucesso.';
-            this.snackbar = true;
-          })
-          .catch(error => {
-            this.color = 'error';
-            this.text = 'Ocorreu um erro com o seu registo.';
-            this.snackbar = true;
-          })
-      }
-      this.dialog_editar_estrutura = false;
     },
-    eliminarEstrutura(){
-      this.$axios.delete('api/estruturas/'+this.$route.params.refEstrutura).then((response) => {
-        this.color = 'green';
-        this.text = 'A Estrutura foi eliminada com sucesso.';
-        this.snackbar = true;
-
-        setTimeout(() => {
-          this.$router.push("/projetos/"+this.projeto.referencia);
-        }, 1000);
-      })
+    changeRejeitado(){
+      this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/reject/'+this.estrutura.referencia)
+        .then(() => {
+          this.getEstrutura()
+        })
+    },
+    editarObservacao(){
+      //TODO criar rota para adicionar uma observação à estrutura
+    },
+    limparObservacao(){
+      //TODO criar rota para limpar uma observação da estrutura
     },
     sendEmail(){
       this.date = this.getDate();
@@ -398,6 +408,62 @@ export default {
         this.snackbar = true;
       })
     },
+    //-------------------------------Métodos para o projetista
+    removerProdutos(item){
+      this.$axios.$put('/api/estruturas/'+this.estrutura.referencia+'/removeVariante/'+item.codigo)
+      .then(() => {
+        this.getEstrutura()
+      })
+    },
+    changeAnalisar(){
+      this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/analise/'+this.estrutura.referencia)
+        .then(() => {
+          this.getEstrutura()
+        })
+    },
+    simular(){
+
+    },
+    editarEstrutura(){
+      if(this.$refs.observer_dialog.validate()){
+        //Enviar os dados para o update da estrutura
+        this.$axios.$put('api/estruturas/'+this.$route.params.refEstrutura, {
+          nome: this.nome,
+          idTipoMaterial: this.idTipoMaterial,
+          numeroVaos: this.numeroVaos,
+          comprimentoVao: this.comprimentoVao,
+          sobrecarga: this.sobrecarga,
+        })
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O seu registo foi feito com sucesso.';
+            this.snackbar = true;
+          })
+          .catch(error => {
+            this.color = 'error';
+            this.text = 'Ocorreu um erro com o seu registo.';
+            this.snackbar = true;
+          })
+      }
+      this.dialog_editar_estrutura = false;
+      this.getEstrutura()
+    },
+    eliminarEstrutura(){
+      this.$axios.delete('api/estruturas/'+this.$route.params.refEstrutura).then((response) => {
+        this.color = 'green';
+        this.text = 'A Estrutura foi eliminada com sucesso.';
+        this.snackbar = true;
+
+        setTimeout(() => {
+          this.$router.push("/projetos/"+this.projeto.referencia);
+        }, 1000);
+      })
+    },
+    // Métodos gerais
+    //detalhes do produto
+    toDetalhes (item){
+      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/variantes/'+item.codigo);
+    },
   },
   created() {
     this.getEstrutura()
@@ -407,7 +473,6 @@ export default {
   components: {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
-    aux_snackbar,
   },
 }
 </script>
