@@ -1,6 +1,13 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
+    <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :color="color"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :timeout="timeout" :top="y === 'top'"
+      :vertical="mode === 'vertical'">
       {{ text }}
       <v-btn dark text @click="snackbar = false">
         <v-icon>mdi-close</v-icon>
@@ -11,7 +18,7 @@
     <v-dialog v-model="dialog_observacao" max-width="490">
       <v-card>
         <v-card-title class="headline">
-          Adicionar uma observação
+          Adicionar/Editar uma observação
         </v-card-title>
         <v-card-text>
           <v-textarea solo v-model="observacao"></v-textarea>
@@ -27,7 +34,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
 
     <!--    DIALOG para editar uma estrutura           -->
     <v-dialog v-model="dialog_editar_estrutura" max-width="490">
@@ -101,7 +107,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-<!--    FINAL DO DIALOG DE EDITAR UMA ESTRUTURA-->
 
     <!--    DIALOG para enviar um email ao projetista         -->
     <v-dialog v-model="dialog_email" max-width="490">
@@ -127,9 +132,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-<!--    -->
+
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
+
     <v-row>
+      <!-- Dados Estrutura -->
       <v-col md="6">
         <v-card>
           <v-card-title>Dados da Estrutura</v-card-title>
@@ -147,35 +154,23 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <!-- Coluna Ações-->
       <v-col md="6">
         <!--  Ações para o cliente  -->
         <v-card v-if="this.$auth.user.groups.includes('Cliente')">
           <v-card-title>Ações</v-card-title>
-          <v-card-text >
-            <v-row>
-              <v-col>
-                <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn @click="" small>Perfil Projetista</v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn @click="changeAprovado" color="success" small>Aprovar Estrutura</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn @click="changeRejeitado" color="error" small> Rejeitar Estrutura</v-btn>
-              </v-col>
-            </v-row>
+          <v-card-text>
+            <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
+            <v-btn small @click="changeAprovado" color="success" >Aprovar Estrutura</v-btn>
+            <v-btn small @click="changeRejeitado" color="error" > Rejeitar Estrutura</v-btn>
           </v-card-text>
         </v-card>
         <!--  Ações para o projetista  -->
         <v-card v-if="this.$auth.user.groups.includes('Projetista')">
           <v-card-title>Ações</v-card-title>
-          <v-card-text >
+          <v-card-text>
             <!--TODO rever formatação dos botões-->
-<!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
+            <!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
             <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
             <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
             <v-btn x-small color="info" @click="simular">Simular</v-btn>
@@ -184,7 +179,7 @@
         <!--  Ações para o administrador  -->
         <v-card v-if="this.$auth.user.groups.includes('Administrador')">
           <v-card-title>Ações</v-card-title>
-          <v-card-text >
+          <v-card-text>
             <!--TODO rever formatação dos botões-->
             <v-row>
               <v-col>
@@ -261,7 +256,7 @@
             <v-spacer></v-spacer>
             <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
               <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
-              <v-btn x-small>Limpar</v-btn>
+              <v-btn v-if="estrutura.observacoes" x-small>Limpar</v-btn>
             </div>
           </v-card-title>
           <v-card-text v-if="estrutura.observacoes">
@@ -384,10 +379,39 @@ export default {
         })
     },
     editarObservacao(){
-      //TODO criar rota para adicionar uma observação à estrutura
+      this.$axios.put('/api/estruturas/'+this.$route.params.refEstrutura+'/observacoes',{
+        observacao: this.observacao
+      })
+        .then(() => {
+          this.color = 'green';
+          this.text = 'Observação alterada com sucesso.';
+          this.snackbar = true;
+          this.dialog_observacao = false;
+          this.getProjeto();
+        })
+        .catch(error => {
+          this.color = 'error';
+          this.text = 'Ocorreu um erro com a alteração da observação.';
+          this.snackbar = true;
+          this.dialog_observacao = false;
+        })
     },
     limparObservacao(){
-      //TODO criar rota para limpar uma observação da estrutura
+      this.$axios.put('/api/estruturas/'+this.$route.params.refEstrutura+'/observacoes', {
+        observacao: ''
+      })
+        .then(() => {
+          this.color = 'green';
+          this.text = 'Observação limpa com sucesso.';
+          this.snackbar = true;
+          this.getProjeto();
+        })
+        .catch(error => {
+          this.color = 'error';
+          this.text = 'Ocorreu um erro com a limpeza da observação.';
+          this.snackbar = true;
+        })
+
     },
     sendEmail(){
       this.date = this.getDate();

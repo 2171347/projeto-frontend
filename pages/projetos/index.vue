@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="this.loading == 1">
+    <div v-if="this.loading === 1">
       <v-text-field color="success" loading disabled
       ></v-text-field>
     </div>
-    <div v-if="this.projetos.length == 0 && this.loading == 0" style="text-align: center">
+    <div v-if="this.projetos.length === 0 && this.loading === 0" style="text-align: center">
       <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
       <div id="h2">Ainda não tem projetos!</div>
       <v-btn x-small to="/home">Página Inicial</v-btn>

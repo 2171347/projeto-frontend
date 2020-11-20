@@ -19,7 +19,7 @@
     <v-dialog v-model="dialog_observacao" max-width="490">
       <v-card>
         <v-card-title class="headline">
-         Adicionar uma observação
+         Adicionar/Editar uma observação
         </v-card-title>
         <v-card-text>
           <v-textarea solo v-model="observacao"></v-textarea>
@@ -89,6 +89,7 @@
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
 
     <v-row>
+<!--      Dados Projeto-->
       <v-col md="6">
         <v-card>
           <v-card-title>Dados do Projeto</v-card-title>
@@ -100,22 +101,17 @@
           </v-card-text>
         </v-card>
       </v-col>
+<!--      Coluna Ações-->
       <v-col md="6">
         <!--  Ações para o cliente  -->
         <v-card v-if="this.$auth.user.groups.includes('Cliente')">
           <v-card-title>Ações</v-card-title>
           <v-card-text >
-            <v-row>
-              <v-col>
-                <v-btn x-small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn x-small @click="aprovarProjeto" color="success" >Aprovar Projeto</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn x-small @click="rejeitarProjeto" color="error" > Rejeitar Projeto</v-btn>
-              </v-col>
-            </v-row>
+                <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
+            <template v-if="this.projeto.estado === 'ANALISE'">
+              <v-btn small @click="aprovarProjeto" color="success">Aprovar Projeto</v-btn>
+              <v-btn small @click="rejeitarProjeto" color="error"> Rejeitar Projeto</v-btn>
+            </template>
           </v-card-text>
         </v-card>
         <!--  Ações para o projetista  -->
@@ -123,18 +119,19 @@
           <v-card-title>Ações</v-card-title>
           <v-card-text >
             <!--TODO rever formatação dos botões-->
-            <v-btn x-small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
-            <v-btn x-small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
+            <v-btn small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
+            <v-btn small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
             <template v-if="this.projeto.visivelCliente === false">
-              <v-btn x-small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
+              <v-btn small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
             </template>
             <template v-if="this.projeto.visivelCliente === true">
-              <v-btn x-small color="accent" @click="indisponibilizar()">Indisponibilizar</v-btn>
+              <v-btn small color="accent" @click="indisponibilizar()">Indisponibilizar</v-btn>
             </template>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+    <!--      Tabela Estruturas-->
     <v-row>
       <v-col>
         <v-card>
@@ -147,15 +144,19 @@
           </v-card-title>
           <v-card-text>
             <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
+<!--              TODO verificar se o user é um projetista por causa do botão eliminar-->
               <template v-slot:item.actions="{ item }">
                 <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
-                <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
+                <template v-if="">
+                  <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
+                </template>
               </template>
             </v-data-table>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+    <!--      Observações-->
     <v-row>
       <v-col>
         <v-card>
@@ -164,7 +165,7 @@
             <v-spacer></v-spacer>
             <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
               <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
-              <v-btn x-small>Limpar</v-btn>
+              <v-btn v-if="projeto.observacoes" x-small @click="limparObservacao">Limpar</v-btn>
             </div>
           </v-card-title>
           <v-card-text v-if="projeto.observacoes">
@@ -179,6 +180,7 @@
 
 
 import {ValidationObserver, ValidationProvider} from "vee-validate";
+import error from "@/layouts/error";
 
 export default {
   data: () => {
@@ -205,7 +207,6 @@ export default {
 
       dialog_observacao: false,
       observacao:'',
-
 
       cabecalhos_estruturas:[{
         text: 'Nome Estrutura',
@@ -241,9 +242,47 @@ export default {
           this.estruturas = projeto.estruturas;
           this.nome = projeto.nome;
       })
+      .catch (error => {
+        this.color = 'error';
+        this.text = 'Ocorreu um erro.';
+        this.snackbar = true;
+        this.$router.push("/home");
+      })
     },
     editarObservacao(){
-      //TODO criar rota para adicionar uma observação ao projeto
+      this.$axios.put('/api/projetos/'+this.$route.params.refProjeto+'/observacoes',{
+        observacao: this.observacao
+      })
+        .then(() => {
+          this.color = 'green';
+          this.text = 'Observação alterada com sucesso.';
+          this.snackbar = true;
+          this.dialog_observacao = false;
+          this.getProjeto();
+        })
+        .catch(error => {
+          this.color = 'error';
+          this.text = 'Ocorreu um erro com a alteração da observação.';
+          this.snackbar = true;
+          this.dialog_observacao = false;
+        })
+    },
+    limparObservacao(){
+      this.$axios.put('/api/projetos/'+this.$route.params.refProjeto+'/observacoes', {
+        observacao: ''
+      })
+        .then(() => {
+          this.color = 'green';
+          this.text = 'Observação limpa com sucesso.';
+          this.snackbar = true;
+          this.getProjeto();
+        })
+        .catch(error => {
+          this.color = 'error';
+          this.text = 'Ocorreu um erro com a limpeza da observação.';
+          this.snackbar = true;
+        })
+
     },
     aprovarProjeto(){
       //TODO criar rota para aprovar um projeto
