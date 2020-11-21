@@ -133,111 +133,115 @@
       </v-card>
     </v-dialog>
 
-    <v-btn @click="$router.go(-1)">Voltar</v-btn>
+    <!--    LOADING        -->
+    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+      <v-layout column justify-center align-center fill-height>
+        <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
+        </v-progress-circular>
+        {{ loading_text }}
+      </v-layout>
+    </v-container>
 
-    <v-row>
-      <!-- Dados Estrutura -->
-      <v-col md="6">
-        <v-card>
-          <v-card-title>Dados da Estrutura</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col>
-                <p><b>Referencia:</b> {{ estrutura.referencia }}</p>
-                <p><b>Nome:</b> {{ estrutura.nome }}</p>
-              </v-col>
-              <v-col>
-                <p><b>Estado:</b> {{ estrutura.estado }}</p>
-                <p><b>Tipo Material:</b> {{ estrutura.nomeTipoMaterial }}</p>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <!-- Coluna Ações-->
-      <v-col md="6">
-        <!--  Ações para o cliente  -->
-        <v-card v-if="this.$auth.user.groups.includes('Cliente')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text>
-            <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-            <template v-if="estrutura.estado === 'ANALISE'">
-              <v-btn small @click="changeAprovado" color="success">Aprovar Estrutura</v-btn>
-              <v-btn small @click="changeRejeitado" color="error"> Rejeitar Estrutura</v-btn>
-            </template>
-          </v-card-text>
-        </v-card>
-        <!--  Ações para o projetista  -->
-        <v-card v-if="this.$auth.user.groups.includes('Projetista')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text>
-            <!--TODO rever formatação dos botões-->
-            <!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
-            <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
-            <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
-            <v-btn x-small color="info" @click="simular">Simular</v-btn>
-          </v-card-text>
-        </v-card>
-        <!--  Ações para o administrador  -->
-        <v-card v-if="this.$auth.user.groups.includes('Administrador')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text>
-            <!--TODO rever formatação dos botões-->
-            <v-row>
-              <v-col>
-                <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn x-small color="info" @click="simular">Simular</v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn @click="changeAprovado" color="success" small>Aprovar Estrutura</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn @click="changeRejeitado" color="error" small> Rejeitar Estrutura</v-btn>
-              </v-col>
-              <v-col>
-                <v-btn @click="changeAnalisar" color="error" small> Analisar Estrutura</v-btn>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col md="6">
-        <v-card>
-          <v-card-title>Dados Geométricos Estrutura</v-card-title>
-          <v-card-text>
-            <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
-            <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} m</p>
-            <p><b>Sobrecarga:</b> {{ estrutura.sobrecarga }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            Produtos
-            <v-spacer></v-spacer>
-            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">
-              <v-btn x-small @click="">Catálogo</v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text v-if="loading_produtos === true">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </v-card-text>
-          <template v-if="loading_produtos === false">
+    <v-container v-if="this.loading === false">
+
+      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+
+      <v-row>
+        <!-- Dados Estrutura -->
+        <v-col md="6">
+          <v-card>
+            <v-card-title>Dados da Estrutura</v-card-title>
+            <v-card-text>
+              <v-row>
+                <v-col>
+                  <p><b>Referencia:</b> {{ estrutura.referencia }}</p>
+                  <p><b>Nome:</b> {{ estrutura.nome }}</p>
+                </v-col>
+                <v-col>
+                  <p><b>Estado:</b> {{ estrutura.estado }}</p>
+                  <p><b>Tipo Material:</b> {{ estrutura.nomeTipoMaterial }}</p>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <!-- Coluna Ações-->
+        <v-col md="6">
+          <!--  Ações para o cliente  -->
+          <v-card v-if="this.$auth.user.groups.includes('Cliente')">
+            <v-card-title>Ações</v-card-title>
+            <v-card-text>
+              <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
+              <template v-if="estrutura.estado === 'ANALISE'">
+                <v-btn small @click="aprovarEstrutura" color="success">Aprovar Estrutura</v-btn>
+                <v-btn small @click="rejeitarEstrutura" color="error"> Rejeitar Estrutura</v-btn>
+              </template>
+            </v-card-text>
+          </v-card>
+          <!--  Ações para o projetista  -->
+          <v-card v-if="this.$auth.user.groups.includes('Projetista')">
+            <v-card-title>Ações</v-card-title>
+            <v-card-text>
+              <!--TODO rever formatação dos botões-->
+              <!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
+              <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
+              <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
+              <v-btn x-small color="info" @click="simular">Simular</v-btn>
+            </v-card-text>
+          </v-card>
+          <!--  Ações para o administrador  -->
+          <v-card v-if="this.$auth.user.groups.includes('Administrador')">
+            <v-card-title>Ações</v-card-title>
+            <v-card-text>
+              <!--TODO rever formatação dos botões-->
+              <v-row>
+                <v-col>
+                  <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn x-small color="info" @click="simular">Simular</v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-btn @click="aprovarEstrutura" color="success" small>Aprovar Estrutura</v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn @click="rejeitarEstrutura" color="error" small> Rejeitar Estrutura</v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn @click="changeAnalisar" color="error" small> Analisar Estrutura</v-btn>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col md="6">
+          <v-card>
+            <v-card-title>Dados Geométricos Estrutura</v-card-title>
+            <v-card-text>
+              <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
+              <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} m</p>
+              <p><b>Sobrecarga:</b> {{ estrutura.sobrecarga }}</p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-card-title>
+              Produtos
+              <v-spacer></v-spacer>
+              <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">
+                <v-btn x-small @click="">Catálogo</v-btn>
+              </div>
+            </v-card-title>
             <v-card-text v-if="variantes.length!==0">
               <v-data-table :items="variantes" :headers="cabecalhos_variantes">
                 <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
@@ -249,27 +253,27 @@
                 </template>
               </v-data-table>
             </v-card-text>
-          </template>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            Observações
-            <v-spacer></v-spacer>
-            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
-              <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
-              <v-btn v-if="estrutura.observacoes" x-small>Limpar</v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text v-if="estrutura.observacoes">
-            {{ estrutura.observacoes}}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-card-title>
+              Observações
+              <v-spacer></v-spacer>
+              <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
+                <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
+                <v-btn v-if="estrutura.observacoes" x-small>Limpar</v-btn>
+              </div>
+            </v-card-title>
+            <v-card-text v-if="estrutura.observacoes">
+              {{ estrutura.observacoes}}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 <script>
@@ -302,7 +306,10 @@ export default {
       message:'',
       observacao:'',
       date:'',
-      loading_produtos: true,
+
+      loading: true,
+      loading_text:'',
+
       cabecalhos_variantes:[{
         text: 'Produto',
         align: 'start',
@@ -337,7 +344,7 @@ export default {
         })
     },
     getEstrutura(){
-      //TODO - JOANA verificar assincrono
+      this.loading_text = "A procurar produtos..."
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
         .then((estrutura) => {
           this.estrutura = estrutura;
@@ -352,11 +359,13 @@ export default {
             .then((tipoMaterial) => {
               this.idTipoMaterial = tipoMaterial.id;
             })
-          this.loading_produtos = false;
       })
       .then(() => {
         this.preencherProps();
       })
+      setTimeout(() => {
+        this.loading = false;
+      }, 1000);
     },
     preencherProps(){
       this.nome = this.estrutura.nome;
@@ -371,13 +380,17 @@ export default {
         })
     },
     // --------------------Métodos para o Cliente
-    changeAprovado(){
+    aprovarEstrutura(){
+      this.loading = true;
+      this.loading_text = 'A enviar pombos correio...'
       this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/aprove/'+this.estrutura.referencia)
         .then(() => {
           this.getEstrutura()
         })
     },
-    changeRejeitado(){
+    rejeitarEstrutura(){
+      this.loading = true;
+      this.loading_text = 'A enviar pombos correio...'
       this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/reject/'+this.estrutura.referencia)
         .then(() => {
           this.getEstrutura()
@@ -439,12 +452,16 @@ export default {
     },
     //-------------------------------Métodos para o projetista
     removerProdutos(item){
+      this.loading = true;
+      this.loading_text = 'A processar dados...'
       this.$axios.$put('/api/estruturas/'+this.estrutura.referencia+'/removeVariante/'+item.codigo)
       .then(() => {
         this.getEstrutura()
       })
     },
     changeAnalisar(){
+      this.loading = true;
+      this.loading_text = 'A processar dados...'
       this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/analise/'+this.estrutura.referencia)
         .then(() => {
           this.getEstrutura()

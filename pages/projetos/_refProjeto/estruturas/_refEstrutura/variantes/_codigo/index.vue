@@ -31,42 +31,53 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!--    -->
-    <v-btn @click="$router.go(-1)">Voltar</v-btn>
-    <v-row>
-      <v-col md="6">
-        <v-card>
-          <v-card-title>Dados do Produto</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col>
-                <p><b>Nome:</b> {{ produto.nome }}</p>
-                <p><b>Variante:</b> {{ variante.nome }}</p>
-                <p><b>Fabricante:</b> {{ produto.emailFabricante }}</p>
-                <p><b>Tipo Material:</b> {{ produto.nomeTipoMaterial }}</p>
-                <p><b>Familia Material:</b> {{ produto.nomeFamiliaMaterial }}</p>
-              </v-col>
-              <v-col>
-                <p><b>Referencia Fabricante:</b> {{ produto.referenciaFabricante }}</p>
-                <p><b>Código Variante:</b> {{ variante.codigo }}</p>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <v-card>
-          <v-card-title>Dimensões e Caracteristicas</v-card-title>
-          <v-card-text>
-            <p><b>Área:</b> {{ variante.ar }}</p>
-            <p><b>Peso próprio:</b> {{ variante.pp }} </p>
-            <p><b>Tensão de cedência (Σ):</b> {{ variante.sigmaC }}</p>
-            <p><b>Modo Elástico Positivo:</b> {{ variante.weff_p }}</p>
-            <p><b>Modo Elástico Negativo:</b> {{ variante.weff_n  }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+
+    <!--    LOADING-->
+    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+      <v-layout column justify-center align-center fill-height>
+        <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
+        </v-progress-circular>
+        {{ loading_text }}
+      </v-layout>
+    </v-container>
+
+    <v-container v-if="this.loading === false">
+      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+      <v-row>
+        <v-col md="6">
+          <v-card>
+            <v-card-title>Dados do Produto</v-card-title>
+            <v-card-text>
+              <v-row>
+                <v-col>
+                  <p><b>Nome:</b> {{ produto.nome }}</p>
+                  <p><b>Variante:</b> {{ variante.nome }}</p>
+                  <p><b>Fabricante:</b> {{ produto.emailFabricante }}</p>
+                  <p><b>Tipo Material:</b> {{ produto.nomeTipoMaterial }}</p>
+                  <p><b>Familia Material:</b> {{ produto.nomeFamiliaMaterial }}</p>
+                </v-col>
+                <v-col>
+                  <p><b>Referencia Fabricante:</b> {{ produto.referenciaFabricante }}</p>
+                  <p><b>Código Variante:</b> {{ variante.codigo }}</p>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card>
+            <v-card-title>Dimensões e Caracteristicas</v-card-title>
+            <v-card-text>
+              <p><b>Área:</b> {{ variante.ar }}</p>
+              <p><b>Peso próprio:</b> {{ variante.pp }} </p>
+              <p><b>Tensão de cedência (Σ):</b> {{ variante.sigmaC }}</p>
+              <p><b>Modo Elástico Positivo:</b> {{ variante.weff_p }}</p>
+              <p><b>Modo Elástico Negativo:</b> {{ variante.weff_n  }}</p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 <script>
@@ -95,6 +106,9 @@ export default {
       message:'',
       observacao:'',
       date:'',
+
+      loading: true,
+      loading_text:'',
     }
   },
   methods:{
@@ -102,10 +116,11 @@ export default {
       this.$axios.$get('/api/produtos/'+id)
         .then((produto) => {
           this.produto = produto;
-          //this.getFabricante(produto.emailFabricante);
+          this.loading = false;
         })
     },
     getVariante(){
+      this.loading_text = "A desinfetar..."
       this.$axios.$get('/api/variantes/'+this.$route.params.codigo)
         .then((variante) => {
           this.variante = variante;

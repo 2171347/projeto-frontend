@@ -113,7 +113,8 @@ export default {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.red.darken1,
-          success: colors.green.darken1
+          success: colors.green.darken1,
+          loading: colors.teal.lighten3,
         }
       }
     }

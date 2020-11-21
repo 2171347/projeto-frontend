@@ -86,105 +86,111 @@
       </v-card>
     </v-dialog>
 
-    <v-btn @click="$router.go(-1)">Voltar</v-btn>
-    <template v-if="this.loading === true">
-      <v-progress-linear
-        indeterminate
-        color="green"
-      ></v-progress-linear>
-    </template>
+    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+      <v-layout column justify-center align-center fill-height>
+        <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
+        </v-progress-circular>
+        {{ loading_text }}
+      </v-layout>
+    </v-container>
 
-    <v-row>
-<!--      Dados Projeto-->
-      <v-col md="6">
-        <v-card>
-          <v-card-title>Dados do Projeto</v-card-title>
-          <v-card-text>
-            <p><b>Referencia Projeto:</b> {{ projeto.referencia }}</p>
-            <p><b>Nome Projeto:</b> {{ projeto.nome }}</p>
-            <p><b>Estado:</b> {{ projeto.estado }}</p>
-            <p v-if="this.projeto.visivelCliente === true" ><b>Disponivel ao Cliente</b></p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-<!--      Coluna Ações-->
-      <v-col md="6">
-        <!--  Ações para o cliente  -->
-        <v-card v-if="this.$auth.user.groups.includes('Cliente')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text >
-                <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-            <template v-if="this.projeto.estado === 'ANALISE'">
-              <v-btn small @click="aprovarProjeto" color="success">Aprovar Projeto</v-btn>
-              <v-btn small @click="rejeitarProjeto" color="error"> Rejeitar Projeto</v-btn>
-            </template>
-          </v-card-text>
-        </v-card>
-        <!--  Ações para o projetista  -->
-        <v-card v-if="this.$auth.user.groups.includes('Projetista')">
-          <v-card-title>Ações</v-card-title>
-          <v-card-text >
-            <!--TODO rever formatação dos botões-->
-            <v-btn small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
-            <v-btn small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
-            <template v-if="this.projeto.visivelCliente === false">
-              <v-btn small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
-            </template>
-            <template v-if="this.projeto.visivelCliente === true">
-              <v-btn small color="accent" @click="indisponibilizar()">Indisponibilizar</v-btn>
-            </template>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <!--      Tabela Estruturas-->
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            Estruturas
-            <v-spacer></v-spacer>
-            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">
-              <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text>
-            <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
-<!--              TODO verificar se o user é um projetista por causa do botão eliminar-->
-              <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
-                <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
-                <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
+    <v-container v-if="this.loading === false">
+      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+
+      <v-row>
+        <!--      Dados Projeto-->
+        <v-col md="6">
+          <v-card>
+            <v-card-title>Dados do Projeto</v-card-title>
+            <v-card-text>
+              <p><b>Referencia Projeto:</b> {{ projeto.referencia }}</p>
+              <p><b>Nome Projeto:</b> {{ projeto.nome }}</p>
+              <p><b>Estado:</b> {{ projeto.estado }}</p>
+              <p v-if="this.projeto.visivelCliente === true"><b>Disponivel ao Cliente</b></p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <!--      Coluna Ações-->
+        <v-col md="6">
+          <!--  Ações para o cliente  -->
+          <v-card v-if="this.$auth.user.groups.includes('Cliente')">
+            <v-card-title>Ações</v-card-title>
+            <v-card-text>
+              <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
+              <template v-if="this.projeto.estado === 'ANALISE'">
+                <v-btn small @click="aprovarProjeto" color="success">Aprovar Projeto</v-btn>
+                <v-btn small @click="rejeitarProjeto" color="error"> Rejeitar Projeto</v-btn>
               </template>
-              <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Cliente')">
-                <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
-                <template v-if="item.estado === 'ANALISE'">
-                  <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
-                  <v-btn x-small color="error" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
+            </v-card-text>
+          </v-card>
+          <!--  Ações para o projetista  -->
+          <v-card v-if="this.$auth.user.groups.includes('Projetista')">
+            <v-card-title>Ações</v-card-title>
+            <v-card-text>
+              <!--TODO rever formatação dos botões-->
+              <v-btn small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
+              <v-btn small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
+              <template v-if="this.projeto.visivelCliente === false">
+                <v-btn small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
+              </template>
+              <template v-if="this.projeto.visivelCliente === true">
+                <v-btn small color="accent" @click="indisponibilizar()">Indisponibilizar</v-btn>
+              </template>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <!--      Tabela Estruturas-->
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-card-title>
+              Estruturas
+              <v-spacer></v-spacer>
+              <div class="d-flex justify-end" style="margin-right: 2px;"
+                   v-if="this.$auth.user.groups.includes('Projetista')">
+                <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>
+              </div>
+            </v-card-title>
+            <v-card-text>
+              <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
+                <!--              TODO verificar se o user é um projetista por causa do botão eliminar-->
+                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
+                  <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
+                  <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
                 </template>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <!--      Observações-->
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            Observações
-            <v-spacer></v-spacer>
-            <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
-              <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
-              <v-btn v-if="projeto.observacoes" x-small @click="limparObservacao">Limpar</v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text v-if="projeto.observacoes">
-            {{ projeto.observacoes}}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Cliente')">
+                  <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
+                  <template v-if="item.estado === 'ANALISE'">
+                    <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
+                    <v-btn x-small color="error" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
+                  </template>
+                </template>
+              </v-data-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <!--      Observações-->
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-card-title>
+              Observações
+              <v-spacer></v-spacer>
+              <div class="d-flex justify-end" style="margin-right: 2px;"
+                   v-if="this.$auth.user.groups.includes('Cliente')">
+                <v-btn x-small @click.stop="dialog_observacao = true">Editar</v-btn>
+                <v-btn v-if="projeto.observacoes" x-small @click="limparObservacao">Limpar</v-btn>
+              </div>
+            </v-card-title>
+            <v-card-text v-if="projeto.observacoes">
+              {{ projeto.observacoes }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 <script>
@@ -206,7 +212,8 @@ export default {
       y: 'top',
       // ------------------------
 
-      loading: false,
+      loading: true,
+      loading_text:'',
 
       email_app:'noreply@projeto.com',
       email_assunto:'[Projeto +]',
@@ -249,11 +256,13 @@ export default {
   },
   methods:{
     getProjeto(){
+      this.loading_text= 'A limpar ferrugem...'
       this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
         .then((projeto) => {
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
           this.nome = projeto.nome;
+          this.loading = false
       })
       .catch (error => {
         this.color = 'error';
@@ -304,7 +313,8 @@ export default {
 
     },
     aprovarProjeto(){
-      this.loading = true
+      this.loading = true;
+      this.loading_text = 'A carregar os seus dados...'
       //TODO criar rota para aprovar um projeto
       this.$axios.put('/api/projetos/aprove/'+this.projeto.referencia)
       .then(() => {
@@ -312,64 +322,64 @@ export default {
         this.text = 'O projeto foi aprovado.';
         this.snackbar = true;
         this.getProjeto();
-        this.loading = false
+
       })
     },
     rejeitarProjeto(){
-      this.loading = true
+      this.loading = true;
+      this.loading_text = 'A carregar os seus dados...'
       this.$axios.put('/api/projetos/reject/'+this.projeto.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi rejeitado.';
           this.snackbar = true;
           this.getProjeto();
-          this.loading = false
         })
     },
     aprovarEstrutura(item){
-      this.loading = true
+      this.loading = true;
+      this.loading_text = 'A carregar os seus dados...'
       this.$axios.put('/api/projetos/'+this.projeto.referencia+'/aprove/'+item.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O Estrutura foi aprovada.';
           this.snackbar = true;
           this.getProjeto();
-          this.loading = false
         })
     },
     rejeitarEstrutura(item){
-      this.loading = true
+      this.loading = true;
+      this.loading_text = 'A carregar os seus dados...'
       this.$axios.put('/api/projetos/'+this.projeto.referencia+'/reject/'+item.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O Estrutura foi rejeitada.';
           this.snackbar = true;
           this.getProjeto();
-          this.loading = false
         })
     },
 
   //#############################################Funções para o projetista
     disponibilizar(){
-      this.loading = true
+      this.loading = true;
+      this.loading_text = 'A processar dados...'
       this.$axios.put('/api/projetos/provide/'+this.projeto.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
           this.snackbar = true;
           this.getProjeto();
-          this.loading = false
         })
     },
     indisponibilizar(){
-      this.loading = true
+      this.loading = true;
+      this.loading_text = 'A processar dados...'
       this.$axios.put('/api/projetos/unavailable/'+this.projeto.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
           this.snackbar = true;
           this.getProjeto();
-          this.loading = false
         })
     },
     editarProjeto(){
