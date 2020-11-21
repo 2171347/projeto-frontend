@@ -1,58 +1,37 @@
 <template>
   <v-app light>
-    <v-dialog v-model="dialog_notificacoes" max-width="490">
-            https://vuetifyjs.com/en/components/lists/
-      <v-card class="mx-auto" max-width="500">
+    <v-dialog v-model="dialog_notificacoes" persistent max-width="490">
+      <v-card class="mx-auto" max-width="500" >
         <v-toolbar color="pink" dark>
           <v-toolbar-title>Notificações</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon>
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>mdi-checkbox-marked-circle</v-icon>
+          <v-btn icon @click="fecharNotificacoes">
+            <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        {{this.notificacoes}}
-
-        <v-list two-line>
-          <v-list-item-group
-            v-model="selected"
-            active-class="pink--text"
-            multiple
-          >
+        <template>
+          <v-list two-line>
             <template v-for="(item, index) in notificacoes">
               <v-list-item :key="item.texto">
-                <template v-slot:default="{ active }">
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item.title"></v-list-item-title>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.refProjeto"></v-list-item-title>
+                  <v-list-item-subtitle
+                    class="text--primary"
+                    v-text="item.texto"
+                  ></v-list-item-subtitle>
+                  <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                </v-list-item-content>
 
-                    <v-list-item-subtitle
-                      class="text--primary"
-                      v-text="item.headline"
-                    ></v-list-item-subtitle>
+                <v-list-item-action>
+                  Lido
+                  <v-icon v-if="item.lido === false" @click="setNotificacaoLida(item)" color="grey lighten-1">
+                    mdi-check-box-outline
+                  </v-icon>
 
-                    <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
-                  </v-list-item-content>
-
-                  <v-list-item-action>
-                    <v-list-item-action-text v-text="item.action"></v-list-item-action-text>
-
-                    <v-icon
-                      v-if="!active"
-                      color="grey lighten-1"
-                    >
-                      mdi-star-outline
-                    </v-icon>
-
-                    <v-icon
-                      v-else
-                      color="yellow darken-3"
-                    >
-                      mdi-star
-                    </v-icon>
-                  </v-list-item-action>
-                </template>
+                  <v-icon v-if="item.lido === true" color="yellow darken-3" @click="setNotificacaoNaoLida(item)">
+                    mdi-checkbox-marked
+                  </v-icon>
+                </v-list-item-action>
               </v-list-item>
 
               <v-divider
@@ -60,8 +39,13 @@
                 :key="index"
               ></v-divider>
             </template>
-          </v-list-item-group>
-        </v-list>
+          </v-list>
+        </template>
+        <template v-if="notificacoes.length === 0">
+          <v-card-text>
+            <p>De momento não tem notificações novas.</p>
+          </v-card-text>
+        </template>
       </v-card>
     </v-dialog>
     <v-navigation-drawer
@@ -102,17 +86,23 @@
       <v-toolbar-title v-text="title" />
       <v-spacer />
 
-      <v-badge
-        overlap
-        offset-x="28"
-        offset-y="20">
-        <!--v-if="this.num_notificacoes !== 0"-->
-
-        <span slot="badge">{{this.num_notificacoes}}</span>
-      <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
-        <v-icon>mdi-email</v-icon>
-      </v-btn>
-      </v-badge>
+      <template v-if="this.num_notificacoes !== 0">
+        <v-badge
+          overlap
+          offset-x="28"
+          offset-y="20">
+          <!--v-if="this.num_notificacoes !== 0"-->
+          <span slot="badge">{{ this.num_notificacoes }}</span>
+          <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
+            <v-icon>mdi-email</v-icon>
+          </v-btn>
+        </v-badge>
+      </template>
+      <template v-else>
+        <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
+          <v-icon>mdi-email</v-icon>
+        </v-btn>
+      </template>
   <!--      TODO: Adicionar nome do utilizador ao lado do botão "user"-->
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -167,6 +157,8 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
+      active: false,
+      notificacao:'',
 
       tab_notificacoes_headers:[
         { text: 'Notificação', value: 'texto' },
@@ -254,13 +246,33 @@ export default {
         this.num_notificacoes = notificacoes.data.length;
       })
     },
-    setNotificacaoLida(){
-
+    setNotificacaoLida(item){
+      item.lido = true;
     },
+    setNotificacaoNaoLida(item){
+      item.lido = false;
+    },
+    async fecharNotificacoes() {
+      this.dialog_notificacoes = false;
+
+      for (let aux in this.notificacoes) {
+        console.log(this.notificacoes[aux])
+        if (this.notificacoes[aux].lido === true) {
+          console.log("terceira paragem -> if")
+          await this.$axios.put('/api/notificacoes/' + this.notificacoes[aux].id + '/lido')
+            .then((response) => {
+                console.log("veio aqui")
+              }
+            )
+        }
+      }
+      this.getNotificacoes()
+    }
   },
   created() {
     this.getUser()
     this.getNotificacoes()
-  }
+  },
+
 }
 </script>

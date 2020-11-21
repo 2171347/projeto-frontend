@@ -82,8 +82,15 @@ export default {
         }
       })
       promise.then((response) => {
+        if(response.statusText === 'OK'){
+          this.$store.commit("setEmailUser", this.email)
+          /*this.$store.commit("setUser")*/
+          this.$store.commit("getUser")
+
+        }
         this.$router.push('/home');
       });
+
       promise.catch(() => {
         this.color = 'red lighten-1';
         this.text = 'Dados de acesso inválidos. Por favor, tente novamente.';
