@@ -49,6 +49,7 @@ export default {
         },
         { text: 'Nome Projetista',sortable: true, value: 'nomeProjetista' },
         { text: 'Nome Cliente',sortable: true, value: 'nomeCliente' },
+        { text: 'Estado',sortable: true, value: 'estado' },
         { text: 'Ações',sortable: true, value: 'actions'},
       ],
     }

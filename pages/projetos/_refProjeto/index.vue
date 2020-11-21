@@ -87,6 +87,12 @@
     </v-dialog>
 
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
+    <template v-if="this.loading === true">
+      <v-progress-linear
+        indeterminate
+        color="green"
+      ></v-progress-linear>
+    </template>
 
     <v-row>
 <!--      Dados Projeto-->
@@ -145,10 +151,15 @@
           <v-card-text>
             <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
 <!--              TODO verificar se o user é um projetista por causa do botão eliminar-->
-              <template v-slot:item.actions="{ item }">
+              <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
                 <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
-                <template v-if="">
-                  <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
+                <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
+              </template>
+              <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Cliente')">
+                <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
+                <template v-if="item.estado === 'ANALISE'">
+                  <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
+                  <v-btn x-small color="error" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
                 </template>
               </template>
             </v-data-table>
@@ -194,6 +205,8 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
+
+      loading: false,
 
       email_app:'noreply@projeto.com',
       email_assunto:'[Projeto +]',
@@ -249,6 +262,12 @@ export default {
         this.$router.push("/home");
       })
     },
+    getEstruturas(){
+      this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto+'/estruturas')
+        .then((response) => {
+          this.estruturas = response;
+        })
+    },
     editarObservacao(){
       this.$axios.put('/api/projetos/'+this.$route.params.refProjeto+'/observacoes',{
         observacao: this.observacao
@@ -285,6 +304,7 @@ export default {
 
     },
     aprovarProjeto(){
+      this.loading = true
       //TODO criar rota para aprovar um projeto
       this.$axios.put('/api/projetos/aprove/'+this.projeto.referencia)
       .then(() => {
@@ -292,36 +312,64 @@ export default {
         this.text = 'O projeto foi aprovado.';
         this.snackbar = true;
         this.getProjeto();
+        this.loading = false
       })
     },
     rejeitarProjeto(){
+      this.loading = true
       this.$axios.put('/api/projetos/reject/'+this.projeto.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi rejeitado.';
           this.snackbar = true;
           this.getProjeto();
+          this.loading = false
         })
-
+    },
+    aprovarEstrutura(item){
+      this.loading = true
+      this.$axios.put('/api/projetos/'+this.projeto.referencia+'/aprove/'+item.referencia)
+        .then(() => {
+          this.color = 'green';
+          this.text = 'O Estrutura foi aprovada.';
+          this.snackbar = true;
+          this.getProjeto();
+          this.loading = false
+        })
+    },
+    rejeitarEstrutura(item){
+      this.loading = true
+      this.$axios.put('/api/projetos/'+this.projeto.referencia+'/reject/'+item.referencia)
+        .then(() => {
+          this.color = 'green';
+          this.text = 'O Estrutura foi rejeitada.';
+          this.snackbar = true;
+          this.getProjeto();
+          this.loading = false
+        })
     },
 
   //#############################################Funções para o projetista
     disponibilizar(){
+      this.loading = true
       this.$axios.put('/api/projetos/provide/'+this.projeto.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
           this.snackbar = true;
           this.getProjeto();
+          this.loading = false
         })
     },
     indisponibilizar(){
+      this.loading = true
       this.$axios.put('/api/projetos/unavailable/'+this.projeto.referencia)
         .then(() => {
           this.color = 'green';
           this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
           this.snackbar = true;
           this.getProjeto();
+          this.loading = false
         })
     },
     editarProjeto(){

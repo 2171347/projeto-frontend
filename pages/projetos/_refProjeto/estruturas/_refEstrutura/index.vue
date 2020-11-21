@@ -161,8 +161,10 @@
           <v-card-title>Ações</v-card-title>
           <v-card-text>
             <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-            <v-btn small @click="changeAprovado" color="success" >Aprovar Estrutura</v-btn>
-            <v-btn small @click="changeRejeitado" color="error" > Rejeitar Estrutura</v-btn>
+            <template v-if="estrutura.estado === 'ANALISE'">
+              <v-btn small @click="changeAprovado" color="success">Aprovar Estrutura</v-btn>
+              <v-btn small @click="changeRejeitado" color="error"> Rejeitar Estrutura</v-btn>
+            </template>
           </v-card-text>
         </v-card>
         <!--  Ações para o projetista  -->
@@ -238,9 +240,12 @@
           <template v-if="loading_produtos === false">
             <v-card-text v-if="variantes.length!==0">
               <v-data-table :items="variantes" :headers="cabecalhos_variantes">
-                <template v-slot:item.actions="{ item }">
+                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
                   <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                   <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
+                </template>
+                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Cliente')">
+                  <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                 </template>
               </v-data-table>
             </v-card-text>
