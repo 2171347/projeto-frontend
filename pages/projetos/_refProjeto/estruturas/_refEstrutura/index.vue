@@ -194,27 +194,15 @@
             <v-card-title>Ações</v-card-title>
             <v-card-text>
               <!--TODO rever formatação dos botões-->
-              <v-row>
-                <v-col>
-                  <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn x-small color="info" @click="simular">Simular</v-btn>
-                </v-col>
+              <v-row style="margin-bottom: 10px">
+                  <v-btn small color="primary" @click="dialog_editar_estrutura = true" style="margin-right: 5px">Editar</v-btn>
+                  <v-btn small color="error" @click="eliminarEstrutura" style="margin-right: 5px">Eliminar</v-btn>
+                  <v-btn small color="info" @click="simular">Simular</v-btn>
               </v-row>
               <v-row>
-                <v-col>
-                  <v-btn @click="aprovarEstrutura" color="success" small>Aprovar Estrutura</v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn @click="rejeitarEstrutura" color="error" small> Rejeitar Estrutura</v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn @click="changeAnalisar" color="error" small> Analisar Estrutura</v-btn>
-                </v-col>
+                  <v-btn @click="aprovarEstrutura" color="success" small style="margin-right: 5px">Aprovar Estrutura</v-btn>
+                  <v-btn @click="rejeitarEstrutura" color="error" small style="margin-right: 5px"> Rejeitar Estrutura</v-btn>
+                  <v-btn @click="changeAnalisar" color="warning" small> Analisar Estrutura</v-btn>
               </v-row>
             </v-card-text>
           </v-card>
@@ -238,17 +226,17 @@
             <v-card-title>
               Produtos
               <v-spacer></v-spacer>
-              <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista')">
+              <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                 <v-btn x-small @click="">Catálogo</v-btn>
               </div>
             </v-card-title>
             <v-card-text v-if="variantes.length!==0">
               <v-data-table :items="variantes" :headers="cabecalhos_variantes">
-                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
+                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                   <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                   <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
                 </template>
-                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Cliente')">
+                <template v-if="this.$auth.user.groups.includes('Cliente')">
                   <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                 </template>
               </v-data-table>

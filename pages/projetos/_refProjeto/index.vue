@@ -138,6 +138,27 @@
               </template>
             </v-card-text>
           </v-card>
+          <!--  Ações para o administrador  -->
+          <v-card v-if="this.$auth.user.groups.includes('Administrador')">
+            <v-card-title>Ações</v-card-title>
+            <v-card-text>
+              <!--TODO rever formatação dos botões-->
+              <v-row style="margin-bottom: 15px">
+                <v-btn small color="primary" @click.stop="dialog_editar_projeto=true" style="margin-right: 5px">Editar</v-btn>
+                <template v-if="this.projeto.visivelCliente === false">
+                  <v-btn small color="accent" @click="disponibilizar()" style="margin-right: 5px">Disponibilizar</v-btn>
+                </template>
+                <template v-if="this.projeto.visivelCliente === true">
+                  <v-btn small color="accent" @click="indisponibilizar()" style="margin-right: 5px">Indisponibilizar</v-btn>
+                </template>
+                <v-btn small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
+              </v-row>
+              <v-row>
+                <v-btn small @click="aprovarProjeto" color="success" style="margin-right: 5px">Aprovar Projeto</v-btn>
+                <v-btn small @click="rejeitarProjeto" color="warning" style="margin-right: 5px"> Rejeitar Projeto</v-btn>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
       <!--      Tabela Estruturas-->
@@ -146,25 +167,38 @@
           <v-card>
             <v-card-title>
               Estruturas
+              <v-text-field
+                v-model="search"
+                label="Pesquisa"
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                class="shrink"
+                style="margin-left: 15px"
+              ></v-text-field>
               <v-spacer></v-spacer>
               <div class="d-flex justify-end" style="margin-right: 2px;"
-                   v-if="this.$auth.user.groups.includes('Projetista')">
+                   v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                 <v-btn x-small @click="criarEstrutura">Criar Estrutura</v-btn>
               </div>
             </v-card-title>
             <v-card-text>
-              <v-data-table :items="estruturas" :headers="cabecalhos_estruturas">
-                <!--              TODO verificar se o user é um projetista por causa do botão eliminar-->
+              <v-data-table :items="estruturas" :headers="cabecalhos_estruturas" :search="search">
                 <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista')">
                   <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
                   <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
                 </template>
-                <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Cliente')">
+                <template v-slot:item.actions="{item}" v-if="this.$auth.user.groups.includes('Cliente')">
                   <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
                   <template v-if="item.estado === 'ANALISE'">
                     <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
                     <v-btn x-small color="error" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
                   </template>
+                </template>
+                <template v-slot:item.actions="{item}" v-if="this.$auth.user.groups.includes('Administrador')">
+                  <v-btn x-small @click="toDetalhesEsrutura(item)">Detalhes</v-btn>
+                  <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
+                  <v-btn x-small color="warning" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
+                  <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -224,6 +258,7 @@ export default {
 
       projeto:'',
       estruturas:[],
+      search:'',
 
       dialog_observacao: false,
       observacao:'',

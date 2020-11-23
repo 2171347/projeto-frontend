@@ -3,11 +3,14 @@
     <h1 v-if="error.statusCode === 404">
       {{ pageNotFound }}
     </h1>
+    <h1 v-if="error.statusCode === 403">
+      {{ forbidden }}
+    </h1>
     <h1 v-else>
       {{ otherError }}
     </h1>
     <NuxtLink to="/">
-      Home page
+      Página Inicial
     </NuxtLink>
   </v-app>
 </template>
@@ -24,6 +27,7 @@ export default {
   data () {
     return {
       pageNotFound: '404 Not Found',
+      forbidden: '403 Forbidden',
       otherError: 'An error occurred'
     }
   },

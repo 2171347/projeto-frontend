@@ -190,14 +190,35 @@ export default {
           to: ''
         }
       ],
-      items_fornecedor: [
+      items_fabricante: [
+        {
+          icon: 'mdi-apps',
+          title: 'Produtos',
+          to: '/produtos/'
+        },
         {
           icon: 'mdi-plus-circle',
           title: 'Criar Produto',
-          to: '/variantes/criar'
-        },{
+          to: '/produtos/criar'
+        },
+        {
+          icon: 'mdi-apps',
+          title: 'Tipos Material',
+          to: ''
+        },
+        {
           icon: 'mdi-plus-circle',
-          title: 'Criar Tipo de Material',
+          title: 'Tipos de Material',
+          to: '/tipo_material/criar'
+        },
+        {
+          icon: 'mdi-apps',
+          title: 'Familias de Material',
+          to: ''
+        },
+        {
+          icon: 'mdi-plus-circle',
+          title: 'Criar Familia de Mat.',
           to: '/tipo_material/criar'
         },
       ],
@@ -205,17 +226,17 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Listar Projetos',
-          to: '/admin/projetos/'
+          to: '/projetos/'
         },
         {
-          icon: 'mdi-apps',
+          icon: 'mdi-account-box-multiples',
           title: 'Listar Utilizadores',
           to: ''
         },
         {
           icon: 'mdi-apps',
           title: 'Listar Produtos',
-          to: ''
+          to: '/produtos/'
         },
       ],
     }
@@ -233,7 +254,7 @@ export default {
             this.items = this.items_projetista;
         }
         if (this.$auth.user.groups.includes('Fabricante')) {
-            this.items = this.items_fornecedor;
+            this.items = this.items_fabricante;
         }
         if (this.$auth.user.groups.includes('Administrador')) {
             this.items = this.items_admin;
