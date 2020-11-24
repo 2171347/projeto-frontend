@@ -290,8 +290,12 @@ export default {
     }
   },
   created() {
-    this.getUser()
-    this.getNotificacoes()
+    if(this.$auth.loggedIn) {
+      this.getUser()
+      this.getNotificacoes()
+    }else{
+      this.$router.push("/");
+    }
   },
   computed:{
 

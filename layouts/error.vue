@@ -1,17 +1,21 @@
 <template>
   <v-app dark>
-    <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
-    </h1>
-    <h1 v-if="error.statusCode === 403">
-      {{ forbidden }}
-    </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <NuxtLink to="/">
-      Página Inicial
-    </NuxtLink>
+    <v-container>
+      <v-row v-if="error.statusCode === 404">
+          <h1>{{ pageNotFound }}</h1>
+          <v-btn @click="$router.go(-1)">Voltar</v-btn>
+      </v-row>
+
+      <v-row v-if="error.statusCode === 403">
+        <h1>{{ forbidden }}</h1>
+      </v-row>
+      <v-row v-if="error.statusCode === 401">
+        <h1>{{ unautorized }}</h1>
+      </v-row>
+      <v-row>
+        <v-btn to="/">Página Inicial</v-btn>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
@@ -28,16 +32,9 @@ export default {
     return {
       pageNotFound: '404 Not Found',
       forbidden: '403 Forbidden',
-      otherError: 'An error occurred'
+      unautorized: '401 Unauthorized'
     }
   },
-  head () {
-    const title =
-      this.error.statusCode === 404 ? this.pageNotFound : this.otherError
-    return {
-      title
-    }
-  }
 }
 </script>
 
