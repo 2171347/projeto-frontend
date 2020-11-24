@@ -70,11 +70,14 @@ export default {
       x: null,
       y: 'top',
       // -------------------------
+
+      // ----------- DADOS A CARREGAR NA STORE -------
+      notificacoes:'',
     }
   },
   methods:{
 
-    onSubmit(){
+    async onSubmit(){
       let promise = this.$auth.loginWith('local', {
         data: {
           email: this.email,
@@ -84,8 +87,9 @@ export default {
       promise.then((response) => {
         if(response.statusText === 'OK'){
           this.$store.commit("setEmailUser", this.email)
-          /*this.$store.commit("setUser")*/
-          this.$store.commit("getUser")
+
+          // Carregar as notificações do utilizador para a store
+          this.getNotificacoes()
 
         }
         this.$router.push('/home');
@@ -103,6 +107,14 @@ export default {
     },
     redirectEsqueciPassword(){
       this.$router.push('/auth/redirect_password');
+    },
+    async getNotificacoes() {
+      await this.$axios.get('/api/notificacoes/' + this.$auth.user.sub).then((notificacoes) => {
+        this.$store.commit("setNotificacoes", notificacoes.data)
+        this.$store.commit("setNumNotificacoes", notificacoes.data.length)
+        /*this.notificacoes = notificacoes.data;
+        this.num_notificacoes = notificacoes.data.length;*/
+      })
     }
   },
 }

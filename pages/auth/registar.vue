@@ -54,7 +54,6 @@
         label="Morada:"
         :error-messages="errorsMorada"
         :counter="80"
-
       ></v-text-field>
       <v-row>
         <v-col>
