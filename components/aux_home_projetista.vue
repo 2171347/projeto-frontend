@@ -48,11 +48,8 @@
               <v-card-text> Os meus projetos vão aparecer aqui</v-card-text>
             </v-card>
           </v-col>
-          <v-col>
-            <v-card>
-              <v-card-title style="justify-content: center">Notificações</v-card-title>
-              <v-card-text> As minhas notificações</v-card-text>
-            </v-card>
+          <v-col md="3">
+            <vcard_notificacoes_homepage/>
           </v-col>
           <v-col md="2">
             <v-card>
@@ -70,6 +67,8 @@
 
 <script>
 import aux_snackbar from "@/components/aux_snackbar";
+import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
+
 
 export default {
 name: "aux_home_projetista",
@@ -146,6 +145,7 @@ name: "aux_home_projetista",
   },
   components:{
   aux_snackbar,
+  vcard_notificacoes_homepage,
   }
 
 }

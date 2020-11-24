@@ -266,6 +266,7 @@ export default {
         this.notificacoes = notificacoes.data;
         this.num_notificacoes = notificacoes.data.length;
       })
+
     },
     setNotificacaoLida(item){
       item.lido = true;
@@ -277,12 +278,10 @@ export default {
       this.dialog_notificacoes = false;
 
       for (let aux in this.notificacoes) {
-        console.log(this.notificacoes[aux])
         if (this.notificacoes[aux].lido === true) {
-          console.log("terceira paragem -> if")
           await this.$axios.put('/api/notificacoes/' + this.notificacoes[aux].id + '/lido')
             .then((response) => {
-                console.log("veio aqui")
+
               }
             )
         }
@@ -298,6 +297,9 @@ export default {
       this.$router.push("/");
     }
   },
+  computed:{
+
+  }
 
 }
 </script>

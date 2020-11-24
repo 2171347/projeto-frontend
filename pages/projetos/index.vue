@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+    <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
         </v-progress-circular>
@@ -8,8 +8,8 @@
       </v-layout>
     </v-container>
 
-    <v-container v-if="this.loading === false">
-      <div v-if="this.projetos.length === 0" style="text-align: center">
+    <v-container v-if="!loading">
+      <div v-if="projetos.length === 0" style="text-align: center">
         <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
         <div id="h2">Ainda não tem projetos!</div>
         <v-btn x-small to="/home">Página Inicial</v-btn>

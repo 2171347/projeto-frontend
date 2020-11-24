@@ -4,12 +4,14 @@ export const state = () =>({
   user: '',
   firstLogin: false,
   emailUser:'',
+  notificacoes:'',
+  num_notificacoes:'',
 })
 
 export const  mutations = {
 
   getUser: async state => {
-    const ip = await this.$axios.$get('/api/projetistas/' + this.$store.state.emailUser)
+    const ip = await axios.get('/api/projetistas/' + this.$store.state.emailUser)
     state.user = ip;
   },
   setEmailUser: (state, email) => {
@@ -36,7 +38,14 @@ export const  mutations = {
   },
   setFirstLogin: state => {
     state.firstLogin = true
-  }
+  },
+  setNotificacoes: (state, lista) => {
+    state.notificacoes = lista
+  },
+  setNumNotificacoes: (state, numero) => {
+    state.num_notificacoes = numero
+  },
+
 }
 
 
