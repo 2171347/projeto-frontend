@@ -4,8 +4,7 @@ export const state = () =>({
   user: '',
   firstLogin: false,
   emailUser:'',
-  notificacoes:'',
-  num_notificacoes:'',
+  emailNoReply: 'noreply@projeto.com'
 })
 
 export const  mutations = {

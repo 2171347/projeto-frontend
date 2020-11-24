@@ -59,7 +59,7 @@ export default {
         v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
       ],
       date:'',
-      emailSistema:'noreply@projet.com',
+
 
     }
   },
@@ -69,14 +69,14 @@ export default {
       return currentDate;
     },
     submit() {
-      if (this.$refs.form.validate()) {
+      if(this.$refs.observer.validate()){
         // Verificar se o email existe na BD
         this.$axios.$get('/api/users/' + this.email).then((response) => {
           if (response.value === true) { // O email existe
             //Enviar um email de reposição de password para o utilizador
             this.date = this.getDate();
 
-            this.$axios.post('/api/emails/' + this.emailSistema + '/sendto/' + this.email, {
+            this.$axios.post('/api/emails/' + this.$store.state.emailNoReply + '/sendto/' + this.email, {
               subject: '[Projeto +] Repor Palavra-Chave',
               message: '[Por favor não responda a este email] \n ' +
                 'Bem-vindo ao Projeto +\n ' +
@@ -90,7 +90,7 @@ export default {
             })
           }
         })
-        this.text = "Caso o email exista na nossa base de dados, irá receber um email com instruções para repor a sua palavra-chave."
+        this.text = "Caso o email esteja associado a uma conta, irá receber um email com instruções para repor a sua palavra-chave."
         this.snackbar = true;
         setTimeout(() => {
           this.$router.push('/');

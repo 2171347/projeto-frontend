@@ -9,12 +9,12 @@
     </v-container>
 
     <v-container v-if="!loading">
-      <div v-if="projetos.length === 0" style="text-align: center">
+      <template v-if="projetos.length === 0" style="text-align: center">
         <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
         <div id="h2">Ainda não tem projetos!</div>
         <v-btn x-small to="/home">Página Inicial</v-btn>
-      </div>
-      <div v-else>
+      </template>
+      <template v-else>
         <v-text-field
           v-model="search"
           label="Pesquisa"
@@ -31,7 +31,7 @@
             <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
           </template>
         </v-data-table>
-      </div>
+      </template>
     </v-container>
   </div>
 </template>

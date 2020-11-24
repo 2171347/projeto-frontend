@@ -13,7 +13,6 @@
         </v-card-title>
         <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
-
           <v-text-field
             v-model="nome"
             :counter="30"
@@ -44,20 +43,33 @@
         <v-row>
           <v-col>
             <v-card>
-              <v-card-title style="justify-content: center">Projetos</v-card-title>
-              <v-card-text> Os meus projetos vão aparecer aqui</v-card-text>
+              <v-toolbar>
+                <v-toolbar-title>Projetos</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on" @click="dialog_criar_projeto = true">
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Criar um novo projeto.</span>
+                </v-tooltip>
+              </v-toolbar>
+              <v-card-text>
+                <v-data-table
+                  :headers="headers"
+                  :items="projetos"
+                  class="elevation-1"
+                >
+                  <template v-slot:item.actions="{ item }">
+                    <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+                  </template>
+                </v-data-table>
+              </v-card-text>
             </v-card>
           </v-col>
           <v-col md="3">
             <vcard_notificacoes_homepage/>
-          </v-col>
-          <v-col md="2">
-            <v-card>
-              <v-card-title style="justify-content: center">Ações</v-card-title>
-              <v-card-text>
-                <v-btn @click="dialog_criar_projeto = true">Criar projeto</v-btn>
-              </v-card-text>
-            </v-card>
           </v-col>
         </v-row>
       </v-card-text>
@@ -68,7 +80,6 @@
 <script>
 import aux_snackbar from "@/components/aux_snackbar";
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
-
 
 export default {
 name: "aux_home_projetista",
@@ -95,24 +106,27 @@ name: "aux_home_projetista",
       timeout: 4000,
       x: null,
       y: 'top',
-      // ------------------------
+      // ----------Dados dos projetos--------------
+      headers: [
+        {  text: 'Nome Projeto',
+          value: 'nome',
+        },
+        { text: 'Nome Cliente',sortable: true, value: 'nomeCliente' },
+        { text: 'Ações',sortable: true, value: 'actions'},
+      ],
+      loading_projetos: false,
+      projetos:[],
+
     }
   },
   methods:{
     closeDialogCriarProjeto(){
       this.dialog_criar_projeto = false;
     },
+    toDetalhes (item){
+      this.$router.push('/projetos/'+item.referencia+'/');
+    },
     createProject(){
-      // Verificar se o email do cliente existe na BD:
-      this.$axios.get('/api/users/'+this.email).then((response) => {
-        if (response.data.value !== true) {
-          this.text = "O email inserido não corresponde a nenhum cliente registado."
-          this.snackbar = true;
-          this.color = "error"
-          return null;
-        }
-      })
-      console.log("ERROR ASDQUI")
       // Verificar se o email do cliente corresponde a um cliente:
       this.$axios.$get('/api/clientes/'+this.emailCliente+'/iscliente').then((response) => {
         if(response.value !== true){
@@ -136,16 +150,25 @@ name: "aux_home_projetista",
         this.closeDialogCriarProjeto()
 
       }).catch(error =>{
-        console.log(error)
         this.color = 'red';
         this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
         this.snackbar = true;
       })
+    },
+    getProjetos(){
+      this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')
+        .then((response) => {
+          this.projetos = response;
+          this.loading_projetos = true;
+        })
     }
   },
+  created() {
+    this.getProjetos()
+  },
   components:{
-  aux_snackbar,
-  vcard_notificacoes_homepage,
+    aux_snackbar,
+    vcard_notificacoes_homepage,
   }
 
 }
