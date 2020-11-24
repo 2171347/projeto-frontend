@@ -134,7 +134,7 @@
     </v-dialog>
 
     <!--    LOADING        -->
-    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+    <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
         </v-progress-circular>
@@ -142,7 +142,7 @@
       </v-layout>
     </v-container>
 
-    <v-container v-if="this.loading === false">
+    <v-container v-if="!loading">
 
       <v-btn @click="$router.go(-1)">Voltar</v-btn>
 

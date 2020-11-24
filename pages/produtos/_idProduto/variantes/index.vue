@@ -1,6 +1,39 @@
 <template>
   <div>
-    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+    <!--    DIALOG PARA EDITAR O PRODUTO-->
+    <v-dialog v-model="dialog_editar_produto" max-width="490">
+      <v-card style="margin-top: 10px">
+        <v-card-title>
+          Editar Produto
+        </v-card-title>
+        <v-card-text>
+          <validation-observer ref="observer_produto" v-slot="{invalid}">
+            <validation-provider v-slot="{errors}" name="Nome" rules="required|max:50">
+              <v-text-field
+                v-model="aux_produto.nome"
+                :counter="50"
+                :error-messages="errors"
+                label="Nome:"
+              ></v-text-field>
+              <v-text-field
+                v-model="aux_produto.referenciaFabricante"
+                :counter="50"
+                :error-messages="errors"
+                label="Referência Fabricante:"
+              ></v-text-field>
+            </validation-provider>
+            <v-btn color="green darken-1" text @click="dialog_editar_produto=false">
+              Cancelar
+            </v-btn>
+            <v-btn color="green darken-1" text @click="editarProduto">
+              Guardar
+            </v-btn>
+          </validation-observer>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
         </v-progress-circular>
@@ -8,7 +41,7 @@
       </v-layout>
     </v-container>
 
-    <v-container v-if="this.loading === false">
+    <v-container v-if="!loading">
       <v-btn @click="$router.go(-1)">Voltar</v-btn>
       <v-row>
         <!--      Dados Produto-->
@@ -17,7 +50,7 @@
             <v-card-title>Dados do Produto</v-card-title>
             <v-card-text>
               <p><b>Referencia Fabricante:</b> {{ produto.referenciaFabricante }}</p>
-              <p><b>Nome Projeto:</b> {{ produto.nome }}</p>
+              <p><b>Nome:</b> {{ produto.nome }}</p>
               <p><b>Tipo Material:</b> {{ produto.nomeTipoMaterial }}</p>
               <p><b>Familia Material:</b> {{ produto.nomeFamiliaMaterial }}</p>
             </v-card-text>
@@ -29,10 +62,37 @@
           <v-card>
             <v-card-title>Ações</v-card-title>
             <v-card-text>
-              <v-row style="margin-bottom: 15px">
-                <v-btn small color="primary" @click="editarProduto">Editar</v-btn>
-                <v-btn small color="error" @click="eliminarProduto">Eliminar</v-btn>
-              </v-row>
+              <v-btn small color="primary" @click.stop="dialog_editar_produto = true">Editar</v-btn>
+              <v-btn small color="error" @click="eliminarProduto">Eliminar</v-btn>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-card-title>
+              Variantes
+              <v-text-field
+                v-model="search"
+                label="Pesquisa"
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                class="shrink"
+                style="margin-left: 15px"
+              ></v-text-field>
+              <v-spacer></v-spacer>
+              <div class="d-flex justify-end" style="margin-right: 2px;"
+                   v-if="this.$auth.user.groups.includes('Fabricante') || this.$auth.user.groups.includes('Administrador')">
+                <v-btn x-small @click="criarVariante">Criar Variante</v-btn>
+              </div>
+            </v-card-title>
+            <v-card-text>
+              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
+                <template v-slot:item.actions="{ item }">
+                  <v-btn x-small color="error" @click="eliminarVariante(item)">Eliminar</v-btn>
+                </template>
+              </v-data-table>
             </v-card-text>
           </v-card>
         </v-col>
@@ -45,7 +105,8 @@
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 
 export default {
-name: "index",
+  middleware: 'isFabricante',
+  name: "index",
   data: () => {
     return {
       // ---- SNACKBAR INFO -----
@@ -61,62 +122,79 @@ name: "index",
       loading: true,
       loading_text:'',
 
-      email_app:'noreply@projeto.com',
-      email_assunto:'[Projeto +]',
-      subject:'',
-      message:'',
-      date:'',
-      dialog_email: false,
+      dialog_editar_produto: false,
 
-      projeto:'',
+      produto:'',
+      aux_produto:'',
       variantes:[],
       search:'',
 
       dialog_observacao: false,
       observacao:'',
 
-      cabecalhos_estruturas:[{
-        text: 'Nome Estrutura',
+      cabecalhos_variantes:[{
+        text: 'Codigo',
+        align: 'start',
+        sortable: true,
+        value: 'codigo',
+      },{
+        text: 'Nome',
         align: 'start',
         sortable: true,
         value: 'nome',
       },{
-        text: 'Tipo Material',
+        text: 'Área',
         align: 'start',
         sortable: true,
-        value: 'nomeTipoMaterial',
+        value: 'ar',
       },{
-        text: 'Estado',
+        text: 'Tensão Cedência',
         align: 'start',
         sortable: true,
-        value: 'estado',
+        value: 'sigmaC',
+      },{
+        text: 'Peso Próprio',
+        align: 'start',
+        sortable: true,
+        value: 'pp',
+      },{
+        text: 'WEFF_P',
+        align: 'start',
+        sortable: true,
+        value: 'weff_p',
+      },{
+        text: 'WEFF_N',
+        align: 'start',
+        sortable: true,
+        value: 'weff_n',
       },{
         text: 'Ações',
         value: 'actions',
       },
       ],
-      //props para o dialog de edição
-      nome:'',
-      dialog_editar_projeto:false,
 
     }
   },
-  methods:{
-    getProduto(){
-      this.loading_text= 'A procurar peças...'
-      this.$axios.$get('/api/produtos/'+this.$route.params.idProduto)
-        .then((projeto) => {
-          this.projeto = projeto;
-          this.estruturas = projeto.estruturas;
-          this.nome = projeto.nome;
+  methods: {
+    getProduto() {
+      this.loading = true;
+      this.loading_text = "A arrumar variantes..."
+      this.$axios.$get('/api/produtos/' + this.$route.params.idProduto)
+        .then((produto) => {
+          this.produto = produto;
+          this.aux_produto = JSON.parse(JSON.stringify(produto))
+          this.variantes = produto.variantes;
           this.loading = false
         })
-        .catch (error => {
+        .catch(error => {
           this.color = 'error';
           this.text = 'Ocorreu um erro.';
           this.snackbar = true;
-          this.$router.push("/produtos/");
+          this.$router.push("/home");
         })
+      setTimeout(() => {
+        this.loading = false;
+      }, 500);
     },
     editarProduto(){
       if(this.$refs.observer_produto.validate()){
@@ -138,14 +216,17 @@ name: "index",
       this.getProduto();
     },
     eliminarProduto(){
+      this.loading = true;
+      this.loading_text = "A remover ligacões e limpar dados..."
       this.$axios.delete('/api/produtos/'+this.produto.id+'/')
         .then((response) => {
           this.color = 'green';
-          this.text = 'O projeto foi eliminado com sucesso.';
+          this.text = 'O produto foi eliminado com sucesso.';
           this.snackbar = true;
+          this.loading_text = "A enviar para nova página..."
 
           setTimeout(() => {
-            this.$router.push("/projetos");
+            this.$router.push("/produtos/");
           }, 1500);
         })
     },
@@ -157,7 +238,7 @@ name: "index",
     },
   },
   created() {
-    this.getProjeto()
+    this.getProduto()
   },
   components: {
     ValidationObserver: ValidationObserver,

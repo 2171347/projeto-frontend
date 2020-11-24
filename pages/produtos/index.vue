@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+    <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
         </v-progress-circular>
@@ -8,7 +8,7 @@
       </v-layout>
     </v-container>
 
-    <v-container v-if="this.loading === false">
+    <v-container v-if="!loading">
       <div v-if="this.produtos.length === 0" style="text-align: center">
         <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
         <div id="h2">Ainda não tem produtos!</div>
@@ -53,37 +53,38 @@
 
 <script>
 export default {
-name: "index",
+  middleware: 'isFabricante',
+  name: "index",
   data: () => {
     return {
-      produtos:[],
-      person:'',
-      search:'',
+      produtos: [],
+      person: '',
+      search: '',
 
       loading: true,
-      loading_text:'',
+      loading_text: '',
 
       headers_fabricante: [
-        { text: 'Nome', align: 'start', sortable: true, value: 'nome',},
-        { text: 'Referencia',sortable: true, value: 'referenciaFabricante' },
-        { text: 'Tipo Material',sortable: true, value: 'nomeTipoMaterial' },
-        { text: 'Familia Material',sortable: true, value: 'nomeFamiliaMaterial' },
-        { text: 'Ações',sortable: true, value: 'actions'},
+        {text: 'Nome', align: 'start', sortable: true, value: 'nome',},
+        {text: 'Referencia', sortable: true, value: 'referenciaFabricante'},
+        {text: 'Tipo Material', sortable: true, value: 'nomeTipoMaterial'},
+        {text: 'Familia Material', sortable: true, value: 'nomeFamiliaMaterial'},
+        {text: 'Ações', sortable: true, value: 'actions'},
       ],
 
       headers_admin: [
-        { text: 'Nome', align: 'start', sortable: true, value: 'nome',},
-        { text: 'Referencia',sortable: true, value: 'referenciaFabricante' },
-        { text: 'Fabricante',sortable: true, value: 'emailFabricante' },
-        { text: 'Tipo Material',sortable: true, value: 'nomeTipoMaterial' },
-        { text: 'Familia Material',sortable: true, value: 'nomeFamiliaMaterial' },
-        { text: 'Ações',sortable: true, value: 'actions'},
+        {text: 'Nome', align: 'start', sortable: true, value: 'nome',},
+        {text: 'Referencia', sortable: true, value: 'referenciaFabricante'},
+        {text: 'Fabricante', sortable: true, value: 'emailFabricante'},
+        {text: 'Tipo Material', sortable: true, value: 'nomeTipoMaterial'},
+        {text: 'Familia Material', sortable: true, value: 'nomeFamiliaMaterial'},
+        {text: 'Ações', sortable: true, value: 'actions'},
       ],
     }
   },
   methods: {
     toVariantes(item) {
-      this.$router.push('/projetos/' + item.id + '/variantes');
+      this.$router.push('/produtos/' + item.id + '/variantes/');
     },
     getProdutos() {
       this.loading = true;
