@@ -108,31 +108,6 @@
       </v-card>
     </v-dialog>
 
-    <!--    DIALOG para enviar um email ao projetista         -->
-    <v-dialog v-model="dialog_email" max-width="490">
-      <v-card>
-        <v-card-title class="headline">
-          Enviar um email
-        </v-card-title>
-        <v-card-text>
-          <v-text-field label="Assunto" v-model="subject">
-          </v-text-field>
-          <v-card-text>
-            <v-textarea solo label="Conteúdo do email" v-model="message"></v-textarea>
-          </v-card-text>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog_email = false">
-            Cancelar
-          </v-btn>
-          <v-btn color="green darken-1" text @click="sendEmail">
-            Guardar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!--    LOADING        -->
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
@@ -283,10 +258,8 @@ export default {
       y: 'top',
       // ------------------------
 
-      email_app:'noreply@projeto.com',
-      email_assunto:'[Projeto +]',
+
       dialog_observacao: false,
-      dialog_email: false,
       projeto: '',
       estrutura:'',
       variantes:[],
@@ -419,25 +392,7 @@ export default {
         })
 
     },
-    sendEmail(){
-      this.date = this.getDate();
-      this.$axios.post('/api/emails/'+this.projeto.emailProjetista+'/sendto/'+this.$auth.user.sub,{
-        subject: '[Estrutura +] ['+this.estrutura.referencia+'] '+this.subject,
-        message: '[Mensagem do cliente] \n '+this.message + '\n ['+this.date+']'
-      }).then((response) => {
-        this.color = 'green lighten-1';
-        this.text = 'Email enviado com sucesso.';
-        this.snackbar = true;
-        this.dialog_email = false;
-        this.subject = "";
-        this.message = ""
-      }).catch(error =>{
-        console.log(error)
-        this.color = 'red darken-1';
-        this.text = 'Ocorreu um erro ao enviar o email.';
-        this.snackbar = true;
-      })
-    },
+
     //-------------------------------Métodos para o projetista
     removerProdutos(item){
       this.loading = true;

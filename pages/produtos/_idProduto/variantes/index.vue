@@ -15,6 +15,8 @@
                 :error-messages="errors"
                 label="Nome:"
               ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{errors}" name="Referencia Fabricante" rules="required|max:10">
               <v-text-field
                 v-model="aux_produto.referenciaFabricante"
                 :counter="50"
@@ -26,6 +28,72 @@
               Cancelar
             </v-btn>
             <v-btn color="green darken-1" text @click="editarProduto">
+              Guardar
+            </v-btn>
+          </validation-observer>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <!--    DIALOG PARA EDITAR VARIANTE-->
+    <v-dialog v-model="dialog_editar_variante" max-width="490">
+      <v-card style="margin-top: 10px">
+        <v-card-title>
+          Editar Variante {{aux_variante.codigo}}
+        </v-card-title>
+        <v-card-text>
+          <validation-observer ref="observer_variante" v-slot="{invalid}">
+            <validation-provider v-slot="{errors}" name="Nome" rules="required|max:50">
+              <v-text-field
+                v-model="aux_variante.nome"
+                :counter="50"
+                :error-messages="errors"
+                label="Nome:"
+              ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{errors}" name="Área" rules="required">
+              <v-text-field
+                v-model="aux_variante.ar"
+                :counter="50"
+                :error-messages="errors"
+                label="Área:"
+              ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{errors}" name="Tensão Cedência" rules="required|numeric">
+              <v-text-field
+                v-model="aux_variante.sigmaC"
+                :counter="50"
+                :error-messages="errors"
+                label="Tensão de Cedência:"
+              ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{errors}" name="Peso Proprio" rules="required">
+              <v-text-field
+                v-model="aux_variante.pp"
+                :counter="50"
+                :error-messages="errors"
+                label="Peso Próprio:"
+              ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{errors}" name="Modo Elástico Positivo" rules="required">
+              <v-text-field
+                v-model="aux_variante.weff_p"
+                :counter="50"
+                :error-messages="errors"
+                label="Weff_p:"
+              ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{errors}" name="Modo Elástico Negativo" rules="required">
+              <v-text-field
+                v-model="aux_variante.weff_n"
+                :counter="50"
+                :error-messages="errors"
+                label="Weff_n:"
+              ></v-text-field>
+            </validation-provider>
+            <v-btn color="green darken-1" text @click="dialog_editar_variante=false">
+              Cancelar
+            </v-btn>
+            <v-btn color="green darken-1" text @click="editarVariante">
               Guardar
             </v-btn>
           </validation-observer>
@@ -90,6 +158,7 @@
             <v-card-text>
               <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
                 <template v-slot:item.actions="{ item }">
+                  <v-btn x-small @click="chamarDialogEditar(item)">Editar</v-btn>
                   <v-btn x-small color="error" @click="eliminarVariante(item)">Eliminar</v-btn>
                 </template>
               </v-data-table>
@@ -123,10 +192,13 @@ export default {
       loading_text:'',
 
       dialog_editar_produto: false,
+      dialog_editar_variante: false,
 
       produto:'',
       aux_produto:'',
+
       variantes:[],
+      aux_variante:'',
       search:'',
 
       dialog_observacao: false,
@@ -148,7 +220,7 @@ export default {
         sortable: true,
         value: 'ar',
       },{
-        text: 'Tensão Cedência',
+        text: 'Tensão de Cedência',
         align: 'start',
         sortable: true,
         value: 'sigmaC',
@@ -199,7 +271,12 @@ export default {
     editarProduto(){
       if(this.$refs.observer_produto.validate()){
         this.$axios.$put('/api/produtos/'+this.$route.params.idProduto, {
-          //TODO colocar os parametros
+          id: this.$route.params.idProduto,
+          nome: this.aux_produto.nome,
+          referenciaFabricante: this.aux_produto.referenciaFabricante,
+          emailFabricante : this.produto.emailFabricante,
+          idTipoMaterial : this.produto.idTipoMaterial,
+          idFamiliaMaterial : this.produto.idFamiliaMaterial
         })
           .then(() => {
             this.color = 'green';
@@ -212,7 +289,7 @@ export default {
             this.snackbar = true;
           })
       }
-      this.dialog_editar_projeto = false;
+      this.dialog_editar_produto = false;
       this.getProduto();
     },
     eliminarProduto(){
@@ -230,12 +307,44 @@ export default {
           }, 1500);
         })
     },
-    toDetalhesVariante (item){
-
+    chamarDialogEditar(item){
+      this.aux_variante = JSON.parse(JSON.stringify(item))
+      this.dialog_editar_variante = true
     },
     criarVariante(){
-
+//TODO criar variante
     },
+    editarVariante() {
+      console.log(this.aux_variante)
+      if (this.$refs.observer_variante.validate()) {
+        this.$axios.$put('/api/variantes/' + this.aux_variante.codigo, {
+          codigo: this.aux_variante.codigo,
+          nome: this.aux_variante.nome,
+          produtoID : this.aux_variante.produtoID,
+          sigmaC: this.aux_variante.sigmaC,
+          ar: this.aux_variante.ar,
+          pp: this.aux_variante.pp,
+          weff_p: this.aux_variante.weff_p,
+          weff_n: this.aux_variante.weff_n,
+        })
+          .then(() => {
+            this.color = 'green';
+            this.text = 'Edição do Produto realizado com sucesso.';
+            this.snackbar = true;
+          })
+          .catch(error => {
+            this.color = 'error';
+            this.text = 'Ocorreu um erro com a edição do produto.';
+            this.snackbar = true;
+          })
+      }
+      this.dialog_editar_variante = false;
+      this.loading = true;
+      this.getProduto();
+    },
+    eliminarVariante(){
+      //todo eliminar variante
+    }
   },
   created() {
     this.getProduto()

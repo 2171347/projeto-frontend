@@ -33,7 +33,7 @@
               <v-text-field :error-messages="errors" label="Telemóvel/Telefone:" v-model="user.contactoTelefonico"></v-text-field>
             </validation-provider>
             <validation-provider v-slot="{ errors }" name="NIF" rules="numeric|length:9">
-              <v-text-field label="NIF:" :error-messages="errors" v-model="user.nif"></v-text-field>
+              <v-text-field label="NIF:" :error-messages="errors" v-model="user.numContribuinte"></v-text-field>
             </validation-provider>
             <v-text-field label="Rua:" :error-messages="errorsMorada" v-model="rua"></v-text-field>
             <v-text-field label="Código-Postal:" v-model="codigoPostal"></v-text-field>
@@ -172,21 +172,21 @@ name: "editar",
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.user_dados_originais = utilizador;
+          this.email = utilizador.email;
           this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.user_dados_originais = utilizador;
+          this.email = utilizador.email;
           this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.user_dados_originais = utilizador;
+          this.email = utilizador.email;
           this.splitMorada();
         })
       }

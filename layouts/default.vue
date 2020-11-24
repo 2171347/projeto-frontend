@@ -201,6 +201,23 @@ export default {
           title: 'Criar Produto',
           to: '/produtos/criar'
         },
+      ],
+      items_admin: [
+        {
+          icon: 'mdi-apps',
+          title: 'Listar Projetos',
+          to: '/projetos/'
+        },
+        {
+          icon: 'mdi-account-box-multiples',
+          title: 'Listar Utilizadores',
+          to: ''
+        },
+        {
+          icon: 'mdi-apps',
+          title: 'Listar Produtos',
+          to: '/produtos/'
+        },
         {
           icon: 'mdi-apps',
           title: 'Tipos Material',
@@ -220,23 +237,6 @@ export default {
           icon: 'mdi-plus-circle',
           title: 'Criar Familia de Mat.',
           to: '/tipo_material/criar'
-        },
-      ],
-      items_admin: [
-        {
-          icon: 'mdi-apps',
-          title: 'Listar Projetos',
-          to: '/projetos/'
-        },
-        {
-          icon: 'mdi-account-box-multiples',
-          title: 'Listar Utilizadores',
-          to: ''
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'Listar Produtos',
-          to: '/produtos/'
         },
       ],
     }
@@ -290,12 +290,9 @@ export default {
     }
   },
   created() {
-    if(this.$auth.loggedIn) {
-      this.getUser()
-      this.getNotificacoes()
-    }else{
-      this.$router.push("/");
-    }
+    this.getUser()
+    this.getNotificacoes()
+
   },
   computed:{
 
