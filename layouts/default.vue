@@ -119,8 +119,8 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-main>
-      <v-container>
+    <v-main style="background-color: #ebedef">
+      <v-container style="background-color: #ebedef">
         <nuxt />
       </v-container>
     </v-main>
