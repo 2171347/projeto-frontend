@@ -172,7 +172,6 @@ export default {
     errorsUserType:'',
     errorsPassword:'',
     date:'',
-    emailSistema:'noreply@projeto.com',
     moradaSending:'',
   }),
 
@@ -202,13 +201,12 @@ export default {
     sendEmail(){
       this.date = this.getDate();
 
-      this.$axios.post('/api/emails/'+this.emailSistema+'/sendto/'+this.email,{
+      this.$axios.post('/api/emails/'+this.$store.state.emailNoReply+'/sendto/'+this.email,{
         subject: '[Projeto +] [Registo] Bem-vindo ao Projeto+!',
         message: '[Por favor não responda a este email] \n Bem-vindo ao Projeto +\n O seu registo na aplicação foi feito com sucesso. \n['+this.date+']'
       }).then((response) => {
 
       }).catch(error =>{
-        console.log(error)
       })
     },
 
@@ -267,7 +265,6 @@ export default {
             }, 3000);
           })
           .catch(error => {
-            console.log(error)
             this.color = 'error';
             this.text = 'Ocorreu um erro com o seu registo.';
             this.snackbar = true;
@@ -288,9 +285,7 @@ export default {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider
   },
-  /*updated() {
-    this.checkValidacaoMorada()
-   }*/
+
 
 }
 </script>

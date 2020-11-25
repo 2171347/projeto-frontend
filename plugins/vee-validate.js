@@ -48,5 +48,5 @@ extend('max', {
 });
 extend('email', {
   ...email,
-  message: 'Email deve ser válido',
+  message: 'Email deve estar no formato: nome@exemplo.com',
 });

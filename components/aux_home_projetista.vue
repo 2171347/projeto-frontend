@@ -13,6 +13,7 @@
         </v-card-title>
         <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
+          <!--TODO refer as validações deste form-->
           <v-text-field
             v-model="nome"
             :counter="30"

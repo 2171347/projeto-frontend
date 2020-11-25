@@ -103,7 +103,6 @@
           <v-icon>mdi-email</v-icon>
         </v-btn>
       </template>
-  <!--      TODO: Adicionar nome do utilizador ao lado do botão "user"-->
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on">

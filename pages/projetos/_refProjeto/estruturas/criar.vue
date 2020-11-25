@@ -48,7 +48,11 @@
             required
           ></v-text-field>
         </validation-provider>
-        <v-btn :disabled="!valid" color="success" @click="submit" small>
+        <validation-provider v-slot="{ errors }" name="TipoMaterial" rules="required">
+          <v-select :items="tiposMaterial" item-text="nome"  item-value="id" label="Tipo de Material:" v-model="tipoMaterialSelected"  :hint="tipoMaterialSelected.descricao" return-object>
+          </v-select>
+        </validation-provider>
+        <v-btn :disabled="invalid" color="success" @click="submit" small>
           Submeter
         </v-btn>
         <v-btn color="error" small>
@@ -67,7 +71,6 @@ import {ValidationObserver, ValidationProvider} from "vee-validate";
 export default {
   data: () =>{
     return{
-      // TODO - Fazer a página de criar estruturas
       // ---- SNACKBAR INFO -----
       color: '',
       mode: '',
@@ -78,37 +81,50 @@ export default {
       y: 'top',
       // ------------------------
       valid:true,
-      tiposMaterial:'',
+      tiposMaterial:[],
       nome:'',
       nVaos:'',
       comprimentoVaos:'',
       sobrecarga:'',
+      tipoMaterialSelected:'',
     }
   },
   methods:{
     submit(){
       if(this.$refs.observer.validate()){
+        console.log("1")
         this.$axios.$post('/api/estruturas/', {
+          idTipoMaterial: this.tipoMaterialSelected.id,
           nome: this.nome,
-          referencia: "ES_"+this.nome,
+          numeroVaos: this.nVaos,
+          comprimentoVao: this.comprimentoVaos,
+          sobrecarga: this.sobrecarga
 
         }).then(()=>{
+          console.log("2")
           this.color = 'green lighten-1';
-          this.text = 'Sucesso';
+          this.text = 'Estrutura foi criada com sucesso.';
           this.snackbar = true;
           setTimeout(() => {
-            this.$router.push('/home');
-          }, 3000);
+            this.$router.go(-1)
+          }, 1500);
 
         }).catch(error =>{
           console.log(error)
           this.color = 'red';
-          this.text = 'ERRO';
+          this.text = 'Ocorreu um erro.';
           this.snackbar = true;
         })
       }
 
-    }
+    },
+    getTiposMaterial(){
+      this.$axios.$get('/api/tipos_material/all').then((response)=>{
+        this.tiposMaterial = response;
+
+      }).catch( error =>{
+      })
+    },
   },
   created() {
     this.getTiposMaterial();
