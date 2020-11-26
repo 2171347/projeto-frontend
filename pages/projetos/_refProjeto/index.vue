@@ -95,7 +95,15 @@
     </v-container>
 
     <v-container v-if="this.loading === false">
-      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+      <v-toolbar>
+        <v-btn @click="$router.go(-1)">Voltar</v-btn>
+        <v-breadcrumbs :items="caminhos">
+          <template v-slot:divider>
+            <v-icon>mdi-chevron-right</v-icon>
+          </template>
+        </v-breadcrumbs>
+      </v-toolbar>
+
 
       <v-row>
         <!--      Dados Projeto-->
@@ -245,6 +253,18 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
+      caminhos: [
+        {
+          text: 'Projetos',
+          disabled: false,
+          href: '/projetos/',
+        },
+        {
+          text:'',
+          disabled: true,
+          href: 'breadcrumbs_link_1',
+        },
+      ],
 
       loading: true,
       loading_text:'',
@@ -297,7 +317,8 @@ export default {
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
           this.nome = projeto.nome;
-          this.loading = false
+          this.loading = false;
+          this.caminhos[1].text = projeto.referencia;
       })
       .catch (error => {
         this.color = 'error';

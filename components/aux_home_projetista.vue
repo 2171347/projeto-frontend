@@ -12,78 +12,84 @@
           Criar um novo projeto
         </v-card-title>
         <v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <!--TODO refer as validações deste form-->
-          <v-text-field
-            v-model="nome"
-            :counter="30"
-            :rules="nomeRules"
-            label="Nome"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="emailCliente"
-            :counter="30"
-            :rules="emailClienteRules"
-            label="Email do cliente"
-            required
-          ></v-text-field>
-          <v-btn :disabled="!valid" color="success" small  @click="createProject">
-            Criar
-          </v-btn>
-          <v-btn color="error" small @click="closeDialogCriarProjeto">
-            Cancelar
-          </v-btn>
-        </v-form>
+        <validation-observer ref="observer" v-slot="{ invalid }">
+          <form @submit.prevent="submit">
+            <validation-provider v-slot="{ errors }" name="Nome" rules="required|max:30">
+            <v-text-field
+              v-model="nome"
+              :counter="30"
+              :rules="nomeRules"
+              label="Nome:"
+              required
+            ></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{ errors }" name="Email" rules="required|email">
+              <v-text-field
+                v-model="emailCliente"
+                :counter="30"
+                :rules="emailClienteRules"
+                label="Email do cliente"
+                required
+              ></v-text-field>
+            </validation-provider>
+            <v-btn :disabled="invalid" color="success" small  @click="createProject">
+              Criar
+            </v-btn>
+            <v-btn color="error" small @click="closeDialogCriarProjeto">
+              Cancelar
+            </v-btn>
+          </form>
+        </validation-observer>
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-card>
-      <v-card-title style="justify-content: center">Painel Geral do {{ this.$auth.user.groups[0] }}</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-toolbar>
-                <v-toolbar-title>Projetos</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on" @click="dialog_criar_projeto = true">
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Criar um novo projeto.</span>
-                </v-tooltip>
-              </v-toolbar>
-              <v-card-text>
-                <v-data-table
-                  :headers="headers"
-                  :items="projetos"
-                  class="elevation-1"
-                >
-                  <template v-slot:item.actions="{ item }">
-                    <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
-                  </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col md="3">
-            <vcard_notificacoes_homepage/>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+    <v-toolbar class="d-flex justify-center">
+      <v-toolbar-title>Painel Geral do {{this.$auth.user.groups[0]}}</v-toolbar-title>
+    </v-toolbar>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-toolbar >
+            <v-toolbar-title class="d-flex justify-center">Projetos</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on" @click="dialog_criar_projeto = true">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </template>
+              <span>Criar um novo projeto.</span>
+            </v-tooltip>
+          </v-toolbar>
+          <v-card-text>
+            <v-data-table
+              :headers="headers"
+              :items="projetos"
+              class="elevation-1"
+            >
+              <template v-slot:item.actions="{ item }">
+                <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col md="3">
+        <vcard_notificacoes_homepage/>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 import aux_snackbar from "@/components/aux_snackbar";
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
+import {ValidationObserver, ValidationProvider} from "vee-validate";
+
 
 export default {
 name: "aux_home_projetista",
+
   data:function (){
     return {
       // --- Dados para dialog de criar projeto ----
@@ -117,7 +123,6 @@ name: "aux_home_projetista",
       ],
       loading_projetos: false,
       projetos:[],
-
     }
   },
   methods:{
@@ -148,6 +153,7 @@ name: "aux_home_projetista",
         this.color = 'green lighten-1';
         this.text = 'Projeto criado com sucesso.';
         this.snackbar = true;
+        this.getProjetos()
         this.closeDialogCriarProjeto()
 
       }).catch(error =>{
@@ -170,6 +176,8 @@ name: "aux_home_projetista",
   components:{
     aux_snackbar,
     vcard_notificacoes_homepage,
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
   }
 
 }

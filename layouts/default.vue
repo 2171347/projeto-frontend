@@ -2,7 +2,7 @@
   <v-app light>
     <v-dialog v-model="dialog_notificacoes" persistent max-width="490">
       <v-card class="mx-auto" max-width="500" >
-        <v-toolbar color="pink" dark>
+        <v-toolbar color="amber darken-1" dark>
           <v-toolbar-title>Notificações</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="fecharNotificacoes">
@@ -54,7 +54,8 @@
       :clipped="clipped"
       fixed
       app
-      color="grey lighten-1"
+      color= "#ADADAD"
+      light
     >
       <v-list>
         <v-list-item
@@ -65,25 +66,22 @@
           exact
           :disabled="item.active"
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+          <v-list-item-action class="white--text">
+            <v-icon class="white--text">{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title class="white--text" v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app color="cyan lighten-3">
+    <v-app-bar :clipped-left="clipped" fixed app color="amber darken-1">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
       <v-btn icon to="/home">
         <v-icon>mdi-home</v-icon>
       </v-btn>
       <v-spacer/>
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title  class="white--text" v-text="title" />
       <v-spacer />
 
       <template v-if="this.num_notificacoes !== 0">
@@ -91,7 +89,7 @@
           overlap
           offset-x="28"
           offset-y="20">
-          <!--v-if="this.num_notificacoes !== 0"-->
+
           <span slot="badge">{{ this.num_notificacoes }}</span>
           <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
             <v-icon>mdi-email</v-icon>
@@ -120,7 +118,7 @@
       </v-menu>
     </v-app-bar>
     <v-main style="background-color: #ebedef">
-      <v-container style="background-color: #ebedef">
+      <v-container fluid style="background-color: #ebedef">
         <nuxt />
       </v-container>
     </v-main>
@@ -136,7 +134,6 @@ export default {
       clipped: true,
       drawer: false,
       fixed: true,
-      items:[],
       email:'',
       miniVariant: false,
       right: true,
@@ -156,8 +153,9 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
-      active: false,
+
       notificacao:'',
+      items:'',
 
       tab_notificacoes_headers:[
         { text: 'Notificação', value: 'texto' },

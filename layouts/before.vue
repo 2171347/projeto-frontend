@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-app-bar :clipped-left="clipped" fixed app color="cyan lighten-3" style="max-width: 100%">
+    <v-app-bar :clipped-left="clipped" fixed app color="amber darken-1" style="max-width: 100%">
       <v-btn icon to="/">
         <v-icon>mdi-{{ `home` }}</v-icon>
 

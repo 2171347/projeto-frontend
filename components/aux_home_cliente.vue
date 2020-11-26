@@ -1,7 +1,8 @@
 <template>
-  <v-card>
-    <v-card-title style="justify-content: center">Painel Geral do {{this.$auth.user.groups[0]}}</v-card-title>
-    <v-card-text>
+  <div>
+    <v-toolbar class="d-flex justify-center">
+      <v-toolbar-title>Painel Geral do {{this.$auth.user.groups[0]}}</v-toolbar-title>
+    </v-toolbar>
       <v-row>
         <v-col>
           <v-card>
@@ -13,8 +14,7 @@
           <vcard_notificacoes_homepage/>
         </v-col>
       </v-row>
-    </v-card-text>
-  </v-card>
+  </div>
 </template>
 
 <script>
