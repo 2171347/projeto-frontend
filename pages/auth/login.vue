@@ -8,7 +8,7 @@
     </v-snackbar>    <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-12" style="margin-top: auto">
-          <v-toolbar color="cyan lighten-3" dark flat>
+          <v-toolbar color="amber darken-1" dark flat>
             <v-toolbar-title>Login form</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>

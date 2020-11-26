@@ -126,7 +126,6 @@
 </template>
 
 <script>
-
 export default {
 
   data () {
@@ -289,6 +288,7 @@ export default {
   created() {
     this.getUser()
     this.getNotificacoes()
+    this.$globalOn('i-got-clicked', this.getNotificacoes);
 
   },
   computed:{

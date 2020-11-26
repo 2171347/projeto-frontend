@@ -39,8 +39,9 @@
           <v-card-text>
             <p><b>Nome:</b> {{this.user.nome}}</p>
             <p><b>Email:</b> {{this.user.email}}</p>
-            <!--TODO alterar a morada e dividir nos 3 campos -->
-            <p><b>Morada:</b> {{this.user.morada}}</p>
+            <p><b>Rua:</b> {{this.rua}}</p>
+            <p><b>Código Postal:</b> {{this.codigoPostal}}</p>
+            <p><b>Localidade:</b> {{this.localidade}}</p>
             <p><b>NIF:</b> {{this.user.numContribuinte}}</p>
             <p><b>Telefone/Telemóvel:</b> {{this.user.contactoTelefonico}}</p>
           </v-card-text>
@@ -65,6 +66,10 @@ export default {
       error_old:'',
       error_new:'',
       error_confirmation:'',
+      auxiliarMorada:'',
+      rua:'',
+      localidade:'',
+      codigoPostal:'',
 
 
       // ---- SNACKBAR INFO -----
@@ -93,16 +98,19 @@ export default {
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.splitMorada();
         })
       }
     },
@@ -142,7 +150,13 @@ export default {
       }).catch(error =>{
         this.error_old = "A palavra-chave introduzida não coincide com a palavra-chave atual."
       })
-    }
+    },
+    splitMorada(){
+      this.auxiliarMorada = this.user.morada.split('|');
+      this.rua = this.auxiliarMorada[0];
+      this.codigoPostal = this.auxiliarMorada[1];
+      this.localidade = this.auxiliarMorada[2];
+    },
   },
   mounted() {
     this.getUser()

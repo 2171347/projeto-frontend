@@ -7,122 +7,126 @@
       </v-btn>
     </v-snackbar>
     <!--TODO refefinir as validações deste formulário-->
-    <v-form ref="form" v-model="valid" lazy-validation >
-      <p class="subtitle-1 text-center">Registo de novo utilizador</p>
-      <validation-provider v-slot="{ errors }" name="Name" rules="alpha_spaces|required">
-        <v-text-field
-          prepend-inner-icon="mdi-account"
-          v-model="nome"
-          :counter="30"
-          :error-messages="errors"
-          :rules="nomeRules"
-          label="Nome"
-          required
-        ></v-text-field>
-      </validation-provider>
-      <v-text-field
-        prepend-inner-icon="mdi-at"
-        v-model="email"
-        :rules="emailRules"
-        :error-messages="errorsEmail"
-        label="E-mail"
-        required
-      ></v-text-field>
-      <validation-provider v-slot="{ errors }" name="Password" rules="required|password:@confirm" >
-        <v-text-field
-          label="Palavra-Chave:"
-          v-model="password"
-          :error-messages="errors"
-          :rules="passwordRules"
-          type="password">
-          required>
-        </v-text-field>
-      </validation-provider>
-      <validation-provider v-slot="{  errors}" name="confirm" rules="required">
-        <v-text-field
-          label="Confirmação da Palavra-Chave:"
-          v-model="passwordConfirmation"
-          :error-messages=" errors"
-          required
-          type="password">
-        </v-text-field>
-      </validation-provider>
+    <v-card>
+      <v-card-title class="d-flex justify-center">Registo de Utilizador</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <validation-provider v-slot="{ errors }" name="Name" rules="alpha_spaces|required">
+            <v-text-field
+              prepend-inner-icon="mdi-account"
+              v-model="nome"
+              :counter="30"
+              :error-messages="errors"
+              :rules="nomeRules"
+              label="Nome"
+              required
+            ></v-text-field>
+          </validation-provider>
+          <v-text-field
+            prepend-inner-icon="mdi-at"
+            v-model="email"
+            :rules="emailRules"
+            :error-messages="errorsEmail"
+            label="E-mail"
+            required
+          ></v-text-field>
+          <validation-provider v-slot="{ errors }" name="Password" rules="required|password:@confirm">
+            <v-text-field
+              label="Palavra-Chave:"
+              v-model="password"
+              :error-messages="errors"
+              :rules="passwordRules"
+              type="password">
+              required>
+            </v-text-field>
+          </validation-provider>
+          <validation-provider v-slot="{  errors}" name="confirm" rules="required">
+            <v-text-field
+              label="Confirmação da Palavra-Chave:"
+              v-model="passwordConfirmation"
+              :error-messages=" errors"
+              required
+              type="password">
+            </v-text-field>
+          </validation-provider>
 
-      <v-text-field
-        prepend-inner-icon="mdi-map-marker"
-        v-model="morada"
-        label="Morada:"
-        :error-messages="errorsMorada"
-        :counter="80"
-      ></v-text-field>
-      <v-row>
-        <v-col>
-          <validation-provider v-slot="{ errors }" name="CodigoPostal" rules="codigoPostal">
-            <v-text-field v-model="codigoPostal" :error-messages="errors" label="Código Postal:">
-            </v-text-field>
-          </validation-provider>
-        </v-col>
-        <v-col>
-          <validation-provider
-            v-slot="{ errors }"
-            name="Localidade"
-            rules="alpha_spaces"
-          >
-            <v-text-field
-              v-model="localidade"
-              :error-messages="errors"
-              label="Localidade:"
-              @input="checkValidacaoMorada"
-            >
-            </v-text-field>
-          </validation-provider>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col md="5">
-          <validation-provider v-slot="{ errors }" name="Nif" rules="length:9">
-            <v-text-field
-              v-model="nif"
-              :error-messages="errors"
-              outlined
-              label="NIF:"
-              type="number">
-            </v-text-field>
-          </validation-provider>
-        </v-col>
-        <v-col>
-          <validation-provider v-slot="{ errors }" name="Contacto" rules="length:9">
-            <v-text-field
-              v-model="contacto"
-              :error-messages="errors"
-              outlined
-              label="Telefone/Telemóvel:"
-              type="number">
-            </v-text-field>
-          </validation-provider>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col md="6">
-          <v-select
-            :items="tiposUtilizador"
-            :error-messages="errorsUserType"
-            v-model="userType"
-            label="Vou utilizar esta aplicação no papel de:"
-          ></v-select>
-        </v-col>
-      </v-row>
-      <v-btn  color="success" class="mr-4" @click="submit">Submeter</v-btn>
-      <v-btn color="error" class="mr-4" @click="reset">
-        Reset Formulário
-      </v-btn>
-      <v-btn color="warning" class="mr-4" @click="resetValidation">
-        Reset Validação
-      </v-btn>
-      <v-btn color="error" class="mr-4" @click="cancel">
-        Cancelar
-      </v-btn>
-    </v-form>
+          <v-text-field
+            prepend-inner-icon="mdi-map-marker"
+            v-model="morada"
+            label="Morada:"
+            :error-messages="errorsMorada"
+            :counter="80"
+          ></v-text-field>
+          <v-row>
+            <v-col>
+              <validation-provider v-slot="{ errors }" name="CodigoPostal" rules="codigoPostal">
+                <v-text-field v-model="codigoPostal" :error-messages="errors" label="Código Postal:">
+                </v-text-field>
+              </validation-provider>
+            </v-col>
+            <v-col>
+              <validation-provider
+                v-slot="{ errors }"
+                name="Localidade"
+                rules="alpha_spaces"
+              >
+                <v-text-field
+                  v-model="localidade"
+                  :error-messages="errors"
+                  label="Localidade:"
+                  @input="checkValidacaoMorada"
+                >
+                </v-text-field>
+              </validation-provider>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col md="5">
+              <validation-provider v-slot="{ errors }" name="Nif" rules="length:9">
+                <v-text-field
+                  v-model="nif"
+                  :error-messages="errors"
+                  label="NIF:"
+                  type="number">
+                </v-text-field>
+              </validation-provider>
+            </v-col>
+            <v-col>
+              <validation-provider v-slot="{ errors }" name="Contacto" rules="length:9">
+                <v-text-field
+                  v-model="contacto"
+                  prepend-inner-icon="mdi-phone"
+                  :error-messages="errors"
+                  label="Telefone/Telemóvel:"
+                  type="number">
+                </v-text-field>
+              </validation-provider>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col md="6">
+              <v-select
+                :items="tiposUtilizador"
+                :error-messages="errorsUserType"
+                v-model="userType"
+                label="Vou utilizar esta aplicação no papel de:"
+              ></v-select>
+            </v-col>
+            <!--TODO adicionar um campo a explicar o tipo de utilizador-->
+          </v-row>
+          <v-btn color="success" class="mr-4" @click="submit">Submeter</v-btn>
+          <v-btn color="error" class="mr-4" @click="reset">
+            Reset Formulário
+          </v-btn>
+          <v-btn color="warning" class="mr-4" @click="resetValidation">
+            Reset Validação
+          </v-btn>
+          <v-btn color="error" class="mr-4" @click="cancel">
+            Cancelar
+          </v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -153,7 +157,7 @@ export default {
     email: '',
     emailRules: [
       v => !!v || 'Email é um campo obrigatório',
-      v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
+      v => /.+@.+\..+/.test(v) || 'Email deve estar no formato: nome@exemplo.com',
     ],
     nif:'',
     contacto:'',

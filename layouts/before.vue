@@ -8,15 +8,15 @@
       <v-spacer />
       <v-toolbar-title v-text="title" to="/"/>
       <v-spacer />
-      <v-btn small color="cyan lighten-4" to="/auth/registar" style="margin-right: 10px">
+      <v-btn small color="amber darken-1" to="/auth/registar" elevation="0" style="margin-right: 10px">
         Registar
       </v-btn>
-      <v-btn small color="cyan lighten-4" to="/auth/login">
+      <v-btn small color="amber darken-1" elevation="0" to="/auth/login">
         Entrar
       </v-btn>
     </v-app-bar>
-    <v-main>
-      <v-container>
+    <v-main style="background-color: #ebedef">
+      <v-container style="background-color: #ebedef">
         <nuxt />
       </v-container>
     </v-main>

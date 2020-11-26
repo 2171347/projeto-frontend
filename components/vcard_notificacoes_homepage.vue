@@ -60,6 +60,7 @@
 </template>
 
 <script>
+
 export default {
   name: "vcard_notificacoes_homepage",
   data () {
@@ -98,7 +99,9 @@ export default {
       }
       await this.getNotificacoes()
       this.loading = false;
-    }
+      this.$globalEmit('i-got-clicked', this.clickCount);
+    },
+
   },
   created() {
     this.getNotificacoes()
