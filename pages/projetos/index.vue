@@ -99,6 +99,14 @@ export default {
   },
   created() {
     this.getProjetos()
+    this.$on('debug', function (){
+      console.log("funcionou");
+    })
+  },
+  mounted() {
+    this.$on('debug', function (){
+      console.log("funcionou");
+    })
   }
 }
 </script>
