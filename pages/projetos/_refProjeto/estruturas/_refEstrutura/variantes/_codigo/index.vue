@@ -42,11 +42,22 @@
     </v-container>
 
     <v-container v-if="this.loading === false">
-      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+      <v-toolbar>
+        <v-btn @click="$router.go(-1)">Voltar</v-btn>
+        <v-breadcrumbs :items="caminhos">
+          <template v-slot:divider>
+            <v-icon>mdi-chevron-right</v-icon>
+          </template>
+        </v-breadcrumbs>
+      </v-toolbar>
       <v-row>
         <v-col md="6">
           <v-card>
-            <v-card-title>Dados do Produto</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Dados do Produto
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <v-row>
                 <v-col>
@@ -66,7 +77,11 @@
         </v-col>
         <v-col md="6">
           <v-card>
-            <v-card-title>Dimensões e Caracteristicas</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Dimensões e Características
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <p><b>Área:</b> {{ variante.ar }}</p>
               <p><b>Peso próprio:</b> {{ variante.pp }} </p>
@@ -109,9 +124,40 @@ export default {
 
       loading: true,
       loading_text:'',
+
+      caminhos: [
+        {
+          text: 'Projetos',
+          disabled: false,
+          href: '/projetos/',
+        },
+        {
+          text:'',
+          disabled: false,
+          href: 'breadcrumbs_link_1',
+        },
+        {
+          text:'',
+          disabled: false,
+          href: 'breadcrumbs_link_1',
+        },
+        {
+          text:'',
+          disabled: true,
+          href: 'breadcrumbs_link_1',
+        },
+      ],
+
     }
   },
   methods:{
+    preencherCaminhos(){
+      this.caminhos[1].text = this.$route.params.refProjeto;
+      this.caminhos[1].href = '/projetos/'+this.$route.params.refProjeto;
+      this.caminhos[2].text = this.$route.params.refEstrutura;
+      this.caminhos[2].href = '/projetos/'+this.$route.params.refProjeto+'/estruturas/'+this.$route.params.refEstrutura;
+      this.caminhos[3].text = 'Produto: '+this.$route.params.codigo;
+    },
     getProduto(id){
       this.$axios.$get('/api/produtos/'+id)
         .then((produto) => {
@@ -163,6 +209,7 @@ export default {
   created() {
     this.getEstrutura();
     this.getVariante();
+    this.preencherCaminhos()
   }
 }
 </script>

@@ -8,7 +8,7 @@
     </v-snackbar>
 
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
-
+<!--TODO adicionar v-card-->
     <validation-observer ref="observer" v-slot="{ invalid }">
       <form @submit.prevent="submit">
         <p class="subtitle-1 text-center">Criar Nova Estrutura</p>

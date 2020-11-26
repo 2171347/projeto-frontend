@@ -22,7 +22,12 @@
          Adicionar/Editar uma observação
         </v-card-title>
         <v-card-text>
-          <v-textarea solo v-model="observacao"></v-textarea>
+          <v-textarea
+            clearable
+            clear-icon="mdi-close-circle"
+            solo
+            v-model="observacao"
+          ></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -354,6 +359,7 @@ export default {
         .then((projeto) => {
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
+          this.observacao = projeto.observacoes;
           this.nome = projeto.nome;
           this.loading = false;
           this.caminhos[1].text = projeto.referencia;

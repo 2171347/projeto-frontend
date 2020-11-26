@@ -21,7 +21,11 @@
           Adicionar/Editar uma observação
         </v-card-title>
         <v-card-text>
-          <v-textarea solo v-model="observacao"></v-textarea>
+          <v-textarea
+            clearable
+            clear-icon="mdi-close-circle"
+            solo
+            v-model="observacao"></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
