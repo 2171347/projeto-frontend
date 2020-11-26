@@ -86,7 +86,7 @@
       </v-card>
     </v-dialog>
 
-    <v-container v-if="this.loading === true" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+    <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
         </v-progress-circular>
@@ -94,7 +94,7 @@
       </v-layout>
     </v-container>
 
-    <v-container v-if="this.loading === false">
+    <v-container v-if="!loading">
       <v-toolbar>
         <v-btn @click="$router.go(-1)">Voltar</v-btn>
         <v-breadcrumbs :items="caminhos">
@@ -245,15 +245,15 @@
                 Observações
               </v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-tooltip bottom>
+              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="dialog_observacao = true">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                 </template>
                 <span>Editar observação.</span>
-              </v-tooltip>
-              <v-tooltip bottom>
+              </v-tooltip >
+              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="limparObservacao">
                     <v-icon>mdi-eraser-variant</v-icon>

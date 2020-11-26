@@ -119,13 +119,24 @@
 
     <v-container v-if="!loading">
 
-      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+      <v-toolbar>
+        <v-btn @click="$router.go(-1)">Voltar</v-btn>
+        <v-breadcrumbs :items="caminhos">
+          <template v-slot:divider>
+            <v-icon>mdi-chevron-right</v-icon>
+          </template>
+        </v-breadcrumbs>
+      </v-toolbar>
 
       <v-row>
         <!-- Dados Estrutura -->
         <v-col md="6">
           <v-card>
-            <v-card-title>Dados da Estrutura</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Dados da Estrutura
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <v-row>
                 <v-col>
@@ -144,7 +155,11 @@
         <v-col md="6">
           <!--  Ações para o cliente  -->
           <v-card v-if="this.$auth.user.groups.includes('Cliente')">
-            <v-card-title>Ações</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Ações
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
               <template v-if="estrutura.estado === 'ANALISE'">
@@ -155,7 +170,11 @@
           </v-card>
           <!--  Ações para o projetista  -->
           <v-card v-if="this.$auth.user.groups.includes('Projetista')">
-            <v-card-title>Ações</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Ações
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <!--TODO rever formatação dos botões-->
               <!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
@@ -166,7 +185,11 @@
           </v-card>
           <!--  Ações para o administrador  -->
           <v-card v-if="this.$auth.user.groups.includes('Administrador')">
-            <v-card-title>Ações</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Ações
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <!--TODO rever formatação dos botões-->
               <v-row style="margin-bottom: 10px">
@@ -186,7 +209,11 @@
       <v-row>
         <v-col md="6">
           <v-card>
-            <v-card-title>Dados Geométricos Estrutura</v-card-title>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Dados Geométricos Estrutura
+              </v-toolbar-title>
+            </v-toolbar>
             <v-card-text>
               <p><b>Número de Vãos:</b> {{ estrutura.numeroVaos }}</p>
               <p><b>Comprimento de Vão:</b> {{ estrutura.comprimentoVao }} m</p>
@@ -198,13 +225,20 @@
       <v-row>
         <v-col>
           <v-card>
-            <v-card-title>
-              Produtos
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Produtos
+              </v-toolbar-title>
               <v-spacer></v-spacer>
-              <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
-                <v-btn x-small @click="">Catálogo</v-btn>
-              </div>
-            </v-card-title>
+              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="">
+                    <v-icon>mdi-format-list-text</v-icon>
+                  </v-btn>
+                </template>
+                <span>Catálogo de Produtos.</span>
+              </v-tooltip>
+            </v-toolbar>
             <v-card-text v-if="variantes.length!==0">
               <v-data-table :items="variantes" :headers="cabecalhos_variantes">
                 <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
@@ -222,14 +256,28 @@
       <v-row>
         <v-col>
           <v-card>
-            <v-card-title>
-              Observações
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Observações
+              </v-toolbar-title>
               <v-spacer></v-spacer>
-              <div class="d-flex justify-end" style="margin-right: 2px;" v-if="this.$auth.user.groups.includes('Cliente')">
-                <v-btn x-small  @click.stop="dialog_observacao = true">Editar</v-btn>
-                <v-btn v-if="estrutura.observacoes" x-small>Limpar</v-btn>
-              </div>
-            </v-card-title>
+              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Cliente')">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="dialog_observacao = true">
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                </template>
+                <span>Editar observação.</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Cliente')">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="limparObservacao">
+                    <v-icon>mdi-eraser-variant</v-icon>
+                  </v-btn>
+                </template>
+                <span>Limpar conteúdo da observação.</span>
+              </v-tooltip>
+            </v-toolbar>
             <v-card-text v-if="estrutura.observacoes">
               {{ estrutura.observacoes}}
             </v-card-text>
@@ -295,9 +343,33 @@ export default {
       tiposMaterial:[],
       dialog_editar_estrutura: false,
       errorsTipoMaterial:'',
+
+      caminhos: [
+        {
+          text: 'Projetos',
+          disabled: false,
+          href: '/projetos/',
+        },
+        {
+          text:'',
+          disabled: false,
+          href: 'breadcrumbs_link_1',
+        },
+        {
+          text:'',
+          disabled: true,
+          href: 'breadcrumbs_link_1',
+        },
+      ],
+
     }
   },
   methods:{
+    preencherCaminhos(){
+      this.caminhos[1].text = this.$route.params.refProjeto;
+      this.caminhos[1].href = '/projetos/'+this.$route.params.refProjeto;
+      this.caminhos[2].text = this.$route.params.refEstrutura;
+    },
     getProjeto(){
       this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
         .then((projeto) => {
@@ -458,6 +530,7 @@ export default {
     this.getEstrutura()
     this.getProjeto()
     this.getTiposMateriais()
+    this.preencherCaminhos()
   },
   components: {
     ValidationObserver: ValidationObserver,
