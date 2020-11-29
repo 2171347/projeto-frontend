@@ -15,6 +15,33 @@
       </v-btn>
     </v-snackbar>
 
+    <!--    DIALOG para adicionar um ficheiro ao projeto          -->
+    <v-dialog v-model="dialog_ficheiro" max-width="490">
+      <v-card>
+        <v-card-title class="headline">
+          Upload Ficheiro
+        </v-card-title>
+        <v-card-text>
+          <v-file-input
+            v-model="file"
+            chips
+            show-size
+            label="Inserir Ficheiro"
+          ></v-file-input>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog_ficheiro = false">
+            Cancelar
+          </v-btn>
+          <v-btn color="green darken-1" :disabled="!hasFile" text @click="upload">
+            Upload
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
     <!--    DIALOG para adicionar uma observação ao projeto           -->
     <v-dialog v-model="dialog_observacao" max-width="490">
       <v-card>
@@ -90,7 +117,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
+<!-- LOADING-->
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
@@ -100,6 +127,7 @@
     </v-container>
 
     <v-container v-if="!loading">
+<!--      TOOLBAR CAMINHOS-->
       <v-toolbar>
         <v-btn @click="$router.go(-1)">Voltar</v-btn>
         <v-breadcrumbs :items="caminhos">
@@ -273,6 +301,51 @@
           </v-card>
         </v-col>
       </v-row>
+
+      <!--      Ficheiros-->
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                Ficheiros
+              </v-toolbar-title>
+              <v-text-field
+                v-if="ficheiros.length !== 0"
+                v-model="search_ficheiro"
+                label="Pesquisa"
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                class="shrink"
+                style="margin-left: 15px"
+              ></v-text-field>
+              <v-spacer></v-spacer>
+              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente' || tipo_utilizador === 'Administrador'">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="dialog_ficheiro = true">
+                    <v-icon>mdi-file-upload</v-icon>
+                  </v-btn>
+                </template>
+                <span>Inserir ficheiro.</span>
+              </v-tooltip >
+            </v-toolbar>
+            <v-card-text v-if="ficheiros.length !== 0">
+              <v-data-table :items="ficheiros" :headers="cabecalhos_ficheiros" :search="search_ficheiro">
+                <template v-slot:item.actions_ficheiros="{ item }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on" @click="">
+                        <v-icon>mdi-file-download</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Descarregar ficheiro.</span>
+                  </v-tooltip >
+                </template>
+              </v-data-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -290,7 +363,7 @@ export default {
       mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
+      timeout: 3000,
       x: null,
       y: 'top',
       // ------------------------
@@ -319,46 +392,102 @@ export default {
 
       projeto:'',
       estruturas:[],
+      ficheiros:[],
       search:'',
+      search_ficheiro:'',
 
       dialog_observacao: false,
       observacao:'',
 
       tipo_utilizador:'',
 
-      cabecalhos_estruturas:[{
-        text: 'Nome Estrutura',
-        align: 'start',
-        sortable: true,
-        value: 'nome',
-      },{
-        text: 'Tipo Material',
-        align: 'start',
-        sortable: true,
-        value: 'nomeTipoMaterial',
-      },{
-        text: 'Estado',
-        align: 'start',
-        sortable: true,
-        value: 'estado',
-      },{
-        text: 'Ações',
-        value: 'actions',
-      },
+      cabecalhos_estruturas:[
+        {
+          text: 'Nome Estrutura',
+          align: 'start',
+          sortable: true,
+          value: 'nome',
+        },{
+          text: 'Tipo Material',
+          align: 'start',
+          sortable: true,
+          value: 'nomeTipoMaterial',
+        },{
+          text: 'Estado',
+          align: 'start',
+          sortable: true,
+          value: 'estado',
+        },{
+          text: 'Ações',
+          value: 'actions',
+        },
+      ],
+      cabecalhos_ficheiros:[
+        {
+          text: 'Nome Ficheiro',
+          align: 'start',
+          sortable: true,
+          value: 'filename',
+        },
+        {
+          text: 'Ações',
+          value: 'actions_ficheiros',
+        },
       ],
       //props para o dialog de edição
       nome:'',
       dialog_editar_projeto:false,
+      dialog_ficheiro: false,
+
+      file: null,
 
     }
   },
+  computed: {
+    hasFile () {
+      return this.file != null
+    },
+    formData () {
+      let formData = new FormData()
+      formData.append('referencia', this.$route.params.refProjeto)
+      if (this.file) {
+        formData.append('file', this.file)
+      }
+      return formData
+    }
+  },
   methods:{
+    upload() {
+      if (!this.hasFile) {
+        return
+      }
+      let promisse = this.$axios.$post('/api/ficheiros/upload', this.formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      promisse.then(() => {
+        this.color = 'green';
+        this.text = 'Ficheiro carregado com sucesso.';
+        this.snackbar = true;
+        this.dialog_ficheiro = false;
+        this.loading = true;
+        this.getProjeto();
+      })
+      promisse.catch(() => {
+        this.color = 'error';
+        this.text = 'Ocorreu um erro, ficheiro não carregado.';
+        this.snackbar = true;
+      })
+    },
     getProjeto(){
       this.loading_text= 'A limpar ferrugem...'
       this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
         .then((projeto) => {
+          console.log(projeto)
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
+          this.ficheiros = projeto.ficheiros;
           this.observacao = projeto.observacoes;
           this.nome = projeto.nome;
           this.loading = false;
