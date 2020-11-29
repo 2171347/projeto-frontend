@@ -233,6 +233,14 @@
               <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
                 Produtos
               </v-toolbar-title>
+              <v-text-field
+                v-model="search"
+                label="Pesquisa"
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                class="shrink"
+                style="margin-left: 15px"
+              ></v-text-field>
               <v-spacer></v-spacer>
               <v-tooltip bottom v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                 <template v-slot:activator="{ on, attrs }">
@@ -244,7 +252,7 @@
               </v-tooltip>
             </v-toolbar>
             <v-card-text v-if="variantes.length!==0">
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes">
+              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
                 <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                   <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                   <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
@@ -310,6 +318,7 @@ export default {
       y: 'top',
       // ------------------------
 
+      search:'',
 
       dialog_observacao: false,
       projeto: '',

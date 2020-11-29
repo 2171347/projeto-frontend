@@ -326,7 +326,7 @@
                     <v-icon>mdi-file-upload</v-icon>
                   </v-btn>
                 </template>
-                <span>Inserir ficheiro.</span>
+                <span>Inserir ficheiro</span>
               </v-tooltip >
             </v-toolbar>
             <v-card-text v-if="ficheiros.length !== 0">
@@ -334,11 +334,11 @@
                 <template v-slot:item.actions_ficheiros="{ item }">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn icon v-bind="attrs" v-on="on" @click="">
+                      <v-btn icon v-bind="attrs" v-on="on" @click="download(item)">
                         <v-icon>mdi-file-download</v-icon>
                       </v-btn>
                     </template>
-                    <span>Descarregar ficheiro.</span>
+                    <span>Descarregar ficheiro</span>
                   </v-tooltip >
                 </template>
               </v-data-table>
@@ -480,11 +480,25 @@ export default {
         this.snackbar = true;
       })
     },
+    download(ficheiro) {
+      const idFicheiro = ficheiro.id;
+      this.$axios.$get('/api/ficheiros/download/' + idFicheiro, {
+        responseType:
+          'arraybuffer'
+      })
+        .then(file => {
+          const url = window.URL.createObjectURL(new Blob([file]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', ficheiro.filename)
+          document.body.appendChild(link)
+          link.click()
+        })
+    },
     getProjeto(){
       this.loading_text= 'A limpar ferrugem...'
       this.$axios.$get('/api/projetos/'+this.$route.params.refProjeto)
         .then((projeto) => {
-          console.log(projeto)
           this.projeto = projeto;
           this.estruturas = projeto.estruturas;
           this.ficheiros = projeto.ficheiros;
