@@ -35,7 +35,7 @@
         </template>
         <template v-if="this.$auth.user.groups.includes('Administrador')">
           <v-data-table
-            :headers="headers_admin"
+            :headers="headers"
             :items="produtos"
             :search="search"
             :items-per-page="5"
@@ -72,7 +72,7 @@ export default {
         {text: 'Ações', sortable: true, value: 'actions'},
       ],
 
-      headers_admin: [
+      headers: [
         {text: 'Nome', align: 'start', sortable: true, value: 'nome',},
         {text: 'Referencia', sortable: true, value: 'referenciaFabricante'},
         {text: 'Fabricante', sortable: true, value: 'emailFabricante'},

@@ -244,7 +244,7 @@
               <v-spacer></v-spacer>
               <v-tooltip bottom v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" @click="">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="goToCatalogo">
                     <v-icon>mdi-format-list-text</v-icon>
                   </v-btn>
                 </template>
@@ -538,6 +538,10 @@ export default {
     toDetalhes (item){
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/variantes/'+item.codigo);
     },
+    goToCatalogo(){
+      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/catalogo');
+
+    }
   },
   created() {
     this.getEstrutura()
