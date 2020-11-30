@@ -199,6 +199,7 @@ export default {
 
     },
     adicionarProdutos(){
+      this.loading = true;
       for (let i in this.selected) {
         this.$axios.$put('/api/estruturas/' + this.$route.params.refEstrutura + '/addVariante/' + this.selected[i].codigo)
         .then(()=> {
@@ -210,7 +211,7 @@ export default {
       }
       setTimeout(() => {
         this.getProdutos();
-      }, 5000);
+      }, 1000);
 
     },
   },

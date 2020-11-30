@@ -451,7 +451,7 @@ export default {
           this.text = 'Observação alterada com sucesso.';
           this.snackbar = true;
           this.dialog_observacao = false;
-          this.getProjeto();
+          this.getEstrutura();
         })
         .catch(error => {
           this.color = 'error';
@@ -468,7 +468,7 @@ export default {
           this.color = 'green';
           this.text = 'Observação limpa com sucesso.';
           this.snackbar = true;
-          this.getProjeto();
+          this.getEstrutura();
         })
         .catch(error => {
           this.color = 'error';
@@ -484,6 +484,9 @@ export default {
       this.loading_text = 'A processar dados...'
       this.$axios.$put('/api/estruturas/'+this.estrutura.referencia+'/removeVariante/'+item.codigo)
       .then(() => {
+        this.color = 'green';
+        this.text = 'Produto removido com sucesso.';
+        this.snackbar = true;
         this.getEstrutura()
       })
     },
@@ -496,7 +499,10 @@ export default {
         })
     },
     simular(){
-
+      this.$axios.$get('api/estruturas/'+this.$route.params.refEstrutura+'/simular')
+      .then((response)=> {
+        console.log(response)
+      })
     },
     editarEstrutura(){
       if(this.$refs.observer_dialog.validate()){
