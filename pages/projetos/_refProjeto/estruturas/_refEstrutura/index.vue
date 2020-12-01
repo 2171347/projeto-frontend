@@ -226,11 +226,9 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <!--TODO rever formatação dos botões-->
-              <!--            <v-btn x-small color="primary" @click="editarEstrutura">Editar</v-btn>-->
               <v-btn x-small color="primary" @click="dialog_editar_estrutura = true">Editar</v-btn>
-              <v-btn x-small color="error" @click="eliminarEstrutura">Eliminar</v-btn>
-              <v-btn x-small color="info" @click="simular">Simular</v-btn>
+              <v-btn x-small color="error" @click="eliminarEstrutura" v-if="estrutura.estado === 'ANALISE'">Eliminar</v-btn>
+              <v-btn x-small color="info" @click="simular" v-if="estrutura.estado === 'ANALISE'">Simular</v-btn>
             </v-card-text>
           </v-card>
           <!--  Ações para o administrador  -->
@@ -241,7 +239,6 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <!--TODO rever formatação dos botões-->
               <v-row style="margin-bottom: 10px">
                   <v-btn small color="primary" @click="dialog_editar_estrutura = true" style="margin-right: 5px">Editar</v-btn>
                   <v-btn small color="error" @click="eliminarEstrutura" style="margin-right: 5px">Eliminar</v-btn>
@@ -298,7 +295,7 @@
               </v-tooltip>
             </v-toolbar>
             <v-card-text v-if="variantes.length!==0">
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search" multi-sort>
+              <v-data-table :items="variantes" :headers="cabecalhos" :search="search" multi-sort>
                 <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                   <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                   <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
@@ -319,7 +316,7 @@
                 Observações
               </v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Cliente')">
+              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Cliente') && estrutura.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="dialog_observacao = true">
                     <v-icon>mdi-pencil</v-icon>
@@ -327,7 +324,7 @@
                 </template>
                 <span>Editar observação.</span>
               </v-tooltip>
-              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Cliente')">
+              <v-tooltip bottom v-if="this.$auth.user.groups.includes('Cliente') && estrutura.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="limparObservacao">
                     <v-icon>mdi-eraser-variant</v-icon>
@@ -387,6 +384,8 @@ export default {
       loading_text:'',
       loading_simulador_text:'',
 
+      cabecalhos:[],
+
       cabecalhos_variantes:[{
         text: 'Produto',
         align: 'start',
@@ -400,6 +399,18 @@ export default {
       },{
         text: 'Ações',
         value: 'actions',
+      },
+      ],
+      cabecalhos_variantes_cliente:[{
+        text: 'Produto',
+        align: 'start',
+        sortable: true,
+        value: 'produtoNome',
+      },{
+        text: 'Variante',
+        align: 'start',
+        sortable: true,
+        value: 'nome',
       },
       ],
       cabecalhos_variantes_simuladas: [{
@@ -637,7 +648,6 @@ export default {
     },
     goToCatalogo(){
       this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+this.estrutura.referencia+'/catalogo');
-
     }
   },
   created() {
@@ -645,6 +655,11 @@ export default {
     this.getProjeto()
     this.getTiposMateriais()
     this.preencherCaminhos()
+    if(this.$auth.user.groups[0] === 'Cliente'){
+      this.cabecalhos = this.cabecalhos_variantes_cliente;
+    }else{
+      this.cabecalhos = this.cabecalhos_variantes;
+    }
   },
   components: {
     ValidationObserver: ValidationObserver,

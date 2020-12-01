@@ -1,5 +1,46 @@
 <template>
   <div>
+    <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :color="color"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'">
+      {{ text }}
+      <v-btn dark text @click="snackbar = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-snackbar>
+
+    <!--    DIALOG para adicionar um ficheiro ao projeto          -->
+    <v-dialog v-model="dialog_ficheiro" max-width="490">
+      <v-card>
+        <v-card-title class="headline">
+          Upload Ficheiro
+        </v-card-title>
+        <v-card-text>
+          <v-file-input
+            v-model="file"
+            chips
+            show-size
+            label="Inserir Ficheiro"
+          ></v-file-input>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog_ficheiro = false">
+            Cancelar
+          </v-btn>
+          <v-btn color="green darken-1" :disabled="!hasFile" text @click="upload">
+            Upload
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!--    DIALOG PARA EDITAR O PRODUTO-->
     <v-dialog v-model="dialog_editar_produto" max-width="490">
       <v-card style="margin-top: 10px">
@@ -152,6 +193,10 @@
               <v-spacer></v-spacer>
               <div class="d-flex justify-end" style="margin-right: 2px;"
                    v-if="this.$auth.user.groups.includes('Fabricante') || this.$auth.user.groups.includes('Administrador')">
+                <v-btn x-small @click="dialog_ficheiro = true">Carregar Ficheiro</v-btn>
+              </div>
+              <div class="d-flex justify-end" style="margin-right: 2px;"
+                   v-if="this.$auth.user.groups.includes('Fabricante') || this.$auth.user.groups.includes('Administrador')">
                 <v-btn x-small @click="criarVariante">Criar Variante</v-btn>
               </div>
             </v-card-title>
@@ -245,9 +290,47 @@ export default {
       },
       ],
 
+      dialog_ficheiro: false,
+      file: null,
+
+    }
+  },
+  computed: {
+    hasFile () {
+      return this.file != null
+    },
+    formData () {
+      let formData = new FormData()
+      if (this.file) {
+        formData.append('file', this.file)
+      }
+      return formData
     }
   },
   methods: {
+    upload() {
+      if (!this.hasFile) {
+        return
+      }
+      let promisse = this.$axios.$post('/api/excel/upload', this.formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      promisse.then(() => {
+        this.color = 'green';
+        this.text = 'Ficheiro carregado com sucesso.';
+        this.snackbar = true;
+        this.dialog_ficheiro = false;
+        this.loading = true;
+        this.getProduto();
+      })
+      promisse.catch(() => {
+        this.color = 'error';
+        this.text = 'Ocorreu um erro, ficheiro não carregado.';
+        this.snackbar = true;
+      })
+    },
     getProduto() {
       this.loading = true;
       this.loading_text = "A arrumar variantes..."

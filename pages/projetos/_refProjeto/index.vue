@@ -231,7 +231,7 @@
                   style="margin-left: 15px"
                 ></v-text-field>
                 <v-spacer></v-spacer>
-              <v-tooltip bottom v-if="this.tipo_utilizador ==='Projetista' || this.tipo_utilizador ==='Administrador'">
+              <v-tooltip bottom v-if="(this.tipo_utilizador ==='Projetista' || this.tipo_utilizador ==='Administrador') && this.projeto.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="criarEstrutura">
                     <v-icon>mdi-plus</v-icon>
@@ -276,7 +276,7 @@
                 Observações
               </v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente'">
+              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente' && this.projeto.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="dialog_observacao = true">
                     <v-icon>mdi-pencil</v-icon>
@@ -284,7 +284,7 @@
                 </template>
                 <span>Editar observação.</span>
               </v-tooltip>
-              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente'">
+              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente' && this.projeto.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="limparObservacao">
                     <v-icon>mdi-eraser-variant</v-icon>
@@ -318,7 +318,7 @@
                 style="margin-left: 15px"
               ></v-text-field>
               <v-spacer></v-spacer>
-              <v-tooltip bottom v-if="tipo_utilizador === 'Cliente' || tipo_utilizador === 'Administrador'">
+              <v-tooltip bottom v-if="(tipo_utilizador === 'Cliente' || tipo_utilizador === 'Administrador') && this.projeto.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="dialog_ficheiro = true">
                     <v-icon>mdi-file-upload</v-icon>
