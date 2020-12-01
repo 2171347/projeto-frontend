@@ -6,12 +6,12 @@
       <v-row>
         <v-col>
           <v-card>
-
+          notificações:{{this.$store.state.notificacoes}}
 
           </v-card>
         </v-col>
         <v-col md="3">
-          <vcard_notificacoes_homepage/>
+         <vcard_notificacoes_homepage/>
         </v-col>
       </v-row>
   </div>
@@ -27,11 +27,7 @@ name: "aux_home_projetista",
     }
   },
   methods:{
-    atualizarStore(){
-      if(this.$store.state.firstLogin){
-        this.$store.commit("setUser")
-      }
-    },
+
 
   },
   components:{

@@ -11,7 +11,7 @@
         </v-toolbar>
         <template>
           <v-list two-line>
-            <template v-for="(item, index) in notificacoes">
+            <template v-for="(item, index) in this.$store.state.notificacoes">
               <v-list-item :key="item.texto">
                 <v-list-item-content>
                   <v-list-item-title v-text="item.refProjeto"></v-list-item-title>
@@ -41,7 +41,7 @@
             </template>
           </v-list>
         </template>
-        <template v-if="notificacoes.length === 0">
+        <template v-if="this.$store.state.notificacoes.length === 0">
           <v-card-text>
             <p>De momento não tem notificações novas.</p>
           </v-card-text>
@@ -86,13 +86,13 @@
       <v-toolbar-title  class="white--text" v-text="title" />
       <v-spacer />
 
-      <template v-if="this.num_notificacoes !== 0">
+      <template v-if="this.$store.state.num_notificacoes !== 0">
         <v-badge
           overlap
           offset-x="28"
           offset-y="20">
 
-          <span slot="badge">{{ this.num_notificacoes }}</span>
+          <span slot="badge">{{ this.$store.state.num_notificacoes }}</span>
           <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
             <v-icon>mdi-email</v-icon>
           </v-btn>
@@ -141,8 +141,6 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'Projeto+',
-      notificacoes:'',
-      num_notificacoes:0,
       selected:'',
 
       // ---- SNACKBAR INFO -----
@@ -157,6 +155,7 @@ export default {
       // ------------------------
 
       notificacao:'',
+      notificacoes:'',
       items:'',
 
       tab_notificacoes_headers:[
@@ -262,8 +261,8 @@ export default {
     },
     getNotificacoes(){
       this.$axios.get('/api/notificacoes/'+ this.$auth.user.sub).then((notificacoes) => {
-        this.notificacoes = notificacoes.data;
-        this.num_notificacoes = notificacoes.data.length;
+        this.$store.commit("setNotificacoes", notificacoes.data);
+        this.$store.commit("setNumNotificacoes", notificacoes.data.length);
       })
 
     },
@@ -275,13 +274,11 @@ export default {
     },
     async fecharNotificacoes() {
       this.dialog_notificacoes = false;
-
+      this.notificacoes = this.$store.state.notificacoes;
       for (let aux in this.notificacoes) {
         if (this.notificacoes[aux].lido === true) {
           await this.$axios.put('/api/notificacoes/' + this.notificacoes[aux].id + '/lido')
-            .then((response) => {
-
-              }
+            .then((response) => {}
             )
         }
       }
@@ -289,10 +286,8 @@ export default {
     }
   },
   created() {
-   /* this.getUser()*/
     this.getNotificacoes()
     this.$globalOn('i-got-clicked', this.getNotificacoes);
-
   },
   components:{
     sidebar_admin,

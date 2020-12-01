@@ -21,7 +21,7 @@
           </v-progress-linear>
         </v-layout>
         <v-list two-line >
-          <template v-for="(item, index) in notificacoes">
+          <template v-for="(item, index) in this.$store.state.notificacoes">
             <v-list-item :key="item.texto">
               <v-list-item-content>
                 <v-list-item-title v-text="item.refProjeto"></v-list-item-title>
@@ -43,14 +43,14 @@
                 </v-icon>
               </v-list-item-action>
             </v-list-item>
-            <v-divider
-              v-if="index < notificacoes.length - 1"
+<!--            <v-divider
+              v-if="index < this.$store.state.notificacoes.length - 1"
               :key="index"
-            ></v-divider>
+            ></v-divider>-->
           </template>
         </v-list>
       </template>
-      <template v-if="notificacoes.length === 0 && !loading">
+      <template v-if="this.$store.state.num_notificacoes === 0 && !loading">
         <v-card-text>
           <p>De momento não tem notificações novas.</p>
         </v-card-text>
@@ -72,7 +72,8 @@ export default {
   methods:{
     async getNotificacoes() {
       await this.$axios.get('/api/notificacoes/' + this.$auth.user.sub).then((notificacoes) => {
-        this.notificacoes = notificacoes.data;
+        this.$store.commit("setNotificacoes",notificacoes.data);
+        this.$store.commit("setNumNotificacoes",notificacoes.data.length);
       })
     },
     async setNotificacaoLida(item) {
@@ -91,15 +92,16 @@ export default {
     },
     async setAllNotificacoesLidas() {
       this.loading = true;
-      for (let aux in this.notificacoes) {
-        await this.$axios.put('/api/notificacoes/' + this.notificacoes[aux].id + '/lido')
+      this.notificacoes = this.$store.state.notificacoes
+      for (let aux in this.$store.state.notificacoes) {
+        await this.$axios.put('/api/notificacoes/' + this.$store.state.notificacoes[aux].id + '/lido')
           .then((response) => {
             }
           )
       }
       await this.getNotificacoes()
       this.loading = false;
-      this.$globalEmit('i-got-clicked', this.clickCount);
+      this.$globalEmit('i-got-clicked');
     },
 
   },

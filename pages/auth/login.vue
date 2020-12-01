@@ -86,11 +86,8 @@ export default {
       })
       promise.then((response) => {
         if(response.statusText === 'OK'){
-          this.$store.commit("setEmailUser", this.email)
-
           // Carregar as notificações do utilizador para a store
           this.getNotificacoes()
-
         }
         this.$router.push('/home');
       });
