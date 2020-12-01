@@ -35,18 +35,16 @@
 
       <v-row>
         <v-col>
-          <template v-if="produtos.length === 0" style="text-align: center">
-            <div class="text-h2 font-weight-light" style="margin-top: 10px">Ooops!</div>
-            <div id="h2">Ainda não tem produtos!</div>
-            <v-btn x-small to="/home">Página Inicial</v-btn>
-          </template>
-          <template v-else>
+          <template>
             <v-card>
               <v-toolbar>
                 <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">Catálogo de Produtos
                 </v-toolbar-title>
               </v-toolbar>
-              <v-card-text>
+              <v-card-text v-if="produtos.length ===0">
+                Catálogo Vazio
+              </v-card-text>
+              <v-card-text v-if="produtos.length !==0">
                 <v-data-table
                   :headers="headers"
                   :items="produtos"
@@ -55,6 +53,7 @@
                   :single-expand="singleExpand"
                   :expanded.sync="expanded"
                   show-expand
+                  no-data-text="Sem produtos para adicionar"
                   class="elevation-1"
                   @click:row="(item, slot) => slot.expand(!slot.isExpanded)"
                 >
@@ -81,7 +80,7 @@
                     </v-toolbar>
                   </template>
                   <template v-slot:expanded-item="{ headers, item}">
-                    <td :colspan="headers.length" v-if="item.variantes.length !==0">
+                    <td :colspan="headers.length">
                       <v-data-table
                         v-model = "selected"
                         item-key="codigo"
@@ -93,7 +92,7 @@
                         multi-sort
                         show-select
                         hide-default-footer
-                        no-data-text="Não contém variantes"
+                        no-data-text="Sem produtos para adicionar."
                       ></v-data-table>
                     </td>
                   </template>
@@ -189,6 +188,7 @@ export default {
       this.$axios.$get('/api/produtos/'+this.$route.params.refEstrutura+'/with_variantes')
         .then((response) => {
           this.produtos = response;
+          console.log(this.produtos)
           this.loading = false;
         })
 
@@ -217,7 +217,7 @@ export default {
   },
   erro (){
     this.color = 'error';
-    this.text = 'Ocorreu um erro com a alteração da observação.';
+    this.text = 'Ocorreu um erro.';
     this.snackbar = true;
     this.getProdutos();
   },

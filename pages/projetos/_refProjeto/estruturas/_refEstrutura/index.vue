@@ -112,6 +112,52 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="dialog_variantes_simuladas" :fullscreen="active">
+      <v-container v-if="loading_simulador" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
+        <v-layout column justify-center align-center fill-height>
+          <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
+          </v-progress-circular>
+          {{ loading_simulador_text }}
+        </v-layout>
+      </v-container>
+      <v-container v-if="!loading_simulador" >
+          <v-card>
+            <v-card-title>
+              Produtos Recomendados
+              <v-text-field
+                v-model="search"
+                label="Pesquisa"
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                class="shrink"
+                style="margin-left: 15px"
+              ></v-text-field>
+            </v-card-title>
+            <v-card-text>
+              <v-data-table
+                v-model="selected"
+                :items="variantes_recomendadas"
+                item-key="codigo"
+                :headers="cabecalhos_variantes_simuladas"
+                :search="search_recomendadas"
+                show-select
+                multi-sort
+              >
+              </v-data-table>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="dialog_variantes_simuladas = false">
+                Cancelar
+              </v-btn>
+              <v-btn color="green darken-1" text @click="adicionarProdutos">
+                Adicionar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+      </v-container>
+    </v-dialog>
+
     <!--    LOADING        -->
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
@@ -252,7 +298,7 @@
               </v-tooltip>
             </v-toolbar>
             <v-card-text v-if="variantes.length!==0">
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
+              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search" multi-sort>
                 <template v-slot:item.actions="{ item }" v-if="this.$auth.user.groups.includes('Projetista') || this.$auth.user.groups.includes('Administrador')">
                   <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
                   <v-btn x-small color="error" @click="removerProdutos(item)">Remover</v-btn>
@@ -319,24 +365,33 @@ export default {
       // ------------------------
 
       search:'',
+      search_recomendadas:'',
 
       dialog_observacao: false,
+      dialog_editar_estrutura: false,
+      dialog_variantes_simuladas: false,
+      active: false,
+
       projeto: '',
       estrutura:'',
       variantes:[],
+      variantes_recomendadas:[],
+      selected:[],
       subject:'',
       message:'',
       observacao:'',
       date:'',
 
       loading: true,
+      loading_simulador: true,
       loading_text:'',
+      loading_simulador_text:'',
 
       cabecalhos_variantes:[{
         text: 'Produto',
         align: 'start',
         sortable: true,
-        value: 'produtoID',
+        value: 'produtoNome',
       },{
         text: 'Variante',
         align: 'start',
@@ -347,6 +402,20 @@ export default {
         value: 'actions',
       },
       ],
+      cabecalhos_variantes_simuladas: [{
+        text: 'Produto',
+        align: 'start',
+        sortable: true,
+        value: 'produtoNome',
+      },
+        {text: 'Variante', align: 'start', sortable: true, value: 'nome',},
+        {text: 'Área', align: 'start', sortable: true, value: 'ar',},
+        {text: 'Peso Próprio', align: 'start', sortable: true, value: 'pp',},
+        {text: 'Tensão de Cedência', align: 'start', sortable: true, value: 'sigmaC',},
+        {text: 'Weff_P', align: 'start', sortable: true, value: 'weff_p',},
+        {text: 'Weff_N', align: 'start', sortable: true, value: 'weff_n',},
+      ],
+
       //variaveis para o dialog de editar
       nome:'',
       comprimentoVao:'',
@@ -354,7 +423,6 @@ export default {
       sobrecarga:'',
       idTipoMaterial:'',
       tiposMaterial:[],
-      dialog_editar_estrutura: false,
       errorsTipoMaterial:'',
 
       caminhos: [
@@ -395,16 +463,13 @@ export default {
         .then((estrutura) => {
           this.estrutura = estrutura;
           this.variantes = estrutura.variantes;
-          for (let aux in this.variantes){
-            this.$axios.$get('/api/produtos/'+this.variantes[aux].produtoID)
-              .then((produto) => {
-                this.variantes[aux].produtoID = produto.nome;
-              })
-          }
-          this.$axios.$get('/api/tipos_material/'+estrutura.idTipoMaterial)
-            .then((tipoMaterial) => {
-              this.idTipoMaterial = tipoMaterial.id;
-            })
+          this.idTipoMaterial = estrutura.idTipoMaterial
+          // for (let aux in this.variantes){
+          //   this.$axios.$get('/api/produtos/'+this.variantes[aux].produtoID)
+          //     .then((produto) => {
+          //       this.variantes[aux].produtoID = produto.nome;
+          //     })
+          // }
       })
       .then(() => {
         this.preencherProps();
@@ -501,7 +566,15 @@ export default {
     simular(){
       this.$axios.$get('api/estruturas/'+this.$route.params.refEstrutura+'/simular')
       .then((response)=> {
-        console.log(response)
+        this.variantes_recomendadas = response;
+        if (response.length > 0){
+          this.dialog_variantes_simuladas = true;
+          this.loading_simulador = false;
+        }else{
+          this.color = 'blue';
+          this.text = 'Produtos simulados já adicionados.';
+          this.snackbar = true;
+        }
       })
     },
     editarEstrutura(){
@@ -538,6 +611,24 @@ export default {
           this.$router.push("/projetos/"+this.projeto.referencia);
         }, 1000);
       })
+    },
+    adicionarProdutos(){
+      this.active = true;
+      this.loading_simulador = true;
+      this.loading_simulador_text = "A adicionar produtos..."
+      for (let i in this.selected) {
+        this.$axios.$put('/api/estruturas/' + this.$route.params.refEstrutura + '/addVariante/' + this.selected[i].codigo)
+          .then(()=> {
+            console.log("Adicionado produto")
+          })
+      }
+      setTimeout(() => {
+        this.dialog_variantes_simuladas = false
+        this.active = false;
+        this.selected = []
+        this.getEstrutura();
+      }, 1000);
+
     },
     // Métodos gerais
     //detalhes do produto
