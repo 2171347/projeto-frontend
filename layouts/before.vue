@@ -6,7 +6,7 @@
 
       </v-btn>
       <v-spacer />
-      <v-toolbar-title v-text="title" to="/"/>
+      <v-toolbar-title class="white--text" v-text="title" to="/"/>
       <v-spacer />
       <v-btn small color="amber darken-1" to="/auth/registar" elevation="0" style="margin-right: 10px">
         Registar

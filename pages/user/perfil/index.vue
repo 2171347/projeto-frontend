@@ -20,10 +20,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog_password = false">
+          <v-btn color="error" text @click="dialog_password = false">
             Cancelar
           </v-btn>
-          <v-btn color="green darken-1" text  @click="updatePassword">
+          <v-btn color="success" text  @click="updatePassword">
             Guardar
           </v-btn>
         </v-card-actions>

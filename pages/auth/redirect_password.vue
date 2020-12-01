@@ -76,18 +76,24 @@ export default {
             //Enviar um email de reposição de password para o utilizador
             this.date = this.getDate();
 
-            this.$axios.post('/api/emails/' + this.$store.state.emailNoReply + '/sendto/' + this.email, {
-              subject: '[Projeto +] Repor Palavra-Chave',
-              message: '[Por favor não responda a este email] \n ' +
-                'Bem-vindo ao Projeto +\n ' +
-                'Foi feito um pedido para repor a sua palavra-chave. Caso não tenha feito este pedido, por favor ignore este email. \n' +
-                'Para repor a sua palavra-chave deve aceder a este link : ' +
-                'http://localhost:3000/auth/' + this.email + '/repor_password' +
-                ' e preencha o novo formulário.\n' +
-                '[' + this.date + ']'
-            }).then((response) => {
-            }).catch(error => {
+            //Obter o token para enviar no email ao utilizador
+            this.$axios.get('api/users/'+ this.email+ '/get_token').then((response) =>{
+              this.$axios.post('/api/emails/' + this.$store.state.emailNoReply + '/sendto/' + this.email, {
+                subject: '[Projeto +] Repor Palavra-Chave',
+                message: '[Por favor não responda a este email] \n ' +
+                  'Bem-vindo ao Projeto +\n ' +
+                  'Foi feito um pedido para repor a sua palavra-chave. Caso não tenha feito este pedido, por favor ignore este email. \n' +
+                  'Para repor a sua palavra-chave deve aceder a este link : ' +
+                  'http://localhost:3000/auth/' + response.data + '/repor_password' +
+                  ' e preencha o novo formulário.\n' +
+                  '[' + this.date + ']'
+              }).then((response) => {
+              }).catch(error => {
+              })
             })
+
+
+
           }
         })
         this.text = "Caso o email esteja associado a uma conta, irá receber um email com instruções para repor a sua palavra-chave."
@@ -105,3 +111,4 @@ export default {
 }
 
 </script>
+<!--TODO adicionar o loading-->

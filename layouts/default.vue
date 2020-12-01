@@ -57,7 +57,8 @@
       color= "#ADADAD"
       light
     >
-      <v-list>
+    <sidebar_admin v-if="this.$auth.user.groups.includes('Administrador')"/>
+      <!--<v-list>
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -65,15 +66,16 @@
           router
           exact
           :disabled="item.active"
+          style="height: 20px;"
         >
-          <v-list-item-action class="white--text">
-            <v-icon class="white--text">{{ item.icon }}</v-icon>
+          <v-list-item-action class="black&#45;&#45;text">
+            <v-icon class="black&#45;&#45;text">{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title class="white--text" v-text="item.title" />
+            <v-list-item-title class="black&#45;&#45;text" v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
-      </v-list>
+      </v-list>-->
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app color="amber darken-1">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -126,6 +128,7 @@
 </template>
 
 <script>
+import sidebar_admin from "@/components/sidebar_admin";
 export default {
 
   data () {
@@ -286,13 +289,13 @@ export default {
     }
   },
   created() {
-    this.getUser()
+   /* this.getUser()*/
     this.getNotificacoes()
     this.$globalOn('i-got-clicked', this.getNotificacoes);
 
   },
-  computed:{
-
+  components:{
+    sidebar_admin,
   }
 
 }
