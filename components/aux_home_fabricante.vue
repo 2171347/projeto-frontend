@@ -5,7 +5,22 @@
       <v-row>
         <v-col>
           <v-card>
-
+            <v-toolbar>
+            <v-toolbar-title>Variantes Selecionadas</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="search"
+                label="Pesquisa"
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                class="shrink"
+              ></v-text-field>
+              <v-spacer></v-spacer>
+            </v-toolbar>
+            <v-card-text>
+              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
+              </v-data-table>
+            </v-card-text>
 
           </v-card>
         </v-col>
@@ -21,7 +36,45 @@
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
 
 export default {
-name: "aux_home_projetista",
+  name: "aux_home_projetista",
+  data: () => {
+    return {
+      variantes:[],
+
+      search:'',
+
+      cabecalhos_variantes: [
+      {
+        text: 'Produto',
+        align: 'start',
+        sortable: true,
+        value: 'produtoNome',
+      }, {
+        text: 'Variante',
+        align: 'start',
+        sortable: true,
+        value: 'nome',
+      }, {
+        text: 'Núm. Selecionados',
+        align: 'start',
+        sortable: true,
+        value: 'count',
+      },
+      ],
+    }
+  },
+  methods :{
+    getVariantes(){
+      this.$axios.$get('/api/variantes/fabricante/' + this.$auth.user.sub)
+        .then((variantes) => {
+          console.log(variantes)
+          this.variantes = variantes;
+        })
+    }
+  },
+  created() {
+    this.getVariantes()
+  },
   components:{
     vcard_notificacoes_homepage
   }

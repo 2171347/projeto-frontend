@@ -166,7 +166,7 @@
             </v-toolbar>
             <v-card-text>
               <v-btn small @click.stop="dialog_email = true">Contactar Projetista</v-btn>
-              <template v-if="this.projeto.estado === 'ANALISE'">
+              <template v-if="this.projeto.estado === 'ANALISE' && this.projeto.visivelCliente">
                 <v-btn small @click="aprovarProjeto" color="success">Aprovar Projeto</v-btn>
                 <v-btn small @click="rejeitarProjeto" color="error"> Rejeitar Projeto</v-btn>
               </template>
@@ -180,13 +180,12 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <!--TODO rever formatação dos botões-->
               <v-btn small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
               <v-btn small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
               <template v-if="this.projeto.visivelCliente === false">
                 <v-btn small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
               </template>
-              <template v-if="this.projeto.visivelCliente === true">
+              <template v-if="this.projeto.visivelCliente === true && this.projeto.estado !== 'APROVADO'">
                 <v-btn small color="accent" @click="indisponibilizar()">Indisponibilizar</v-btn>
               </template>
             </v-card-text>
@@ -199,7 +198,6 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <!--TODO rever formatação dos botões-->
               <v-row style="margin-bottom: 15px">
                 <v-btn small color="primary" @click.stop="dialog_editar_projeto=true" style="margin-right: 5px">Editar</v-btn>
                 <template v-if="this.projeto.visivelCliente === false">
@@ -219,7 +217,7 @@
         </v-col>
       </v-row>
       <!--      Tabela Estruturas-->
-      <v-row>
+      <v-row v-if="this.tipo_utilizador === 'Cliente' && this.projeto.visivelCliente || this.tipo_utilizador !== 'Cliente'">
         <v-col>
           <v-card>
             <v-toolbar>
@@ -241,27 +239,27 @@
                 </template>
                 <span>Criar um nova estrutura.</span>
               </v-tooltip>
-
             </v-toolbar>
-            <v-card-text>
+            <v-card-text v-if="tipo_utilizador !=='Cliente'">
               <v-data-table :items="estruturas" :headers="cabecalhos_estruturas" :search="search">
                 <template v-slot:item.actions="{ item }">
-                  <template v-if="tipo_utilizador ==='Projetista'">
                     <v-btn x-small @click="toDetalhesEstrutura(item)">Detalhes</v-btn>
-                    <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
-                  </template>
-                  <template v-if="tipo_utilizador ==='Cliente'">
-                    <v-btn x-small @click="toDetalhesEstrutura(item)">Detalhes</v-btn>
-                    <template v-if="item.estado === 'ANALISE'">
-                      <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
-                      <v-btn x-small color="error" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
-                    </template>
-                  </template>
+                    <v-btn x-small color="error" @click="eliminarEstrutura(item)" v-if="item.estado === 'ANALISE' && tipo_utilizador ==='Projetista'">Eliminar</v-btn>
                   <template v-if="tipo_utilizador ==='Administrador'">
-                    <v-btn x-small @click="toDetalhesEstrutura(item)">Detalhes</v-btn>
                     <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
                     <v-btn x-small color="warning" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
-                    <v-btn x-small color="error" @click="eliminarEstrutura(item)">Eliminar</v-btn>
+                    <v-btn x-small color="error" @click="eliminarEstrutura(item)" >Eliminar</v-btn>
+                  </template>
+                </template>
+              </v-data-table>
+            </v-card-text>
+            <v-card-text v-if="tipo_utilizador ==='Cliente' && this.projeto.visivelCliente">
+              <v-data-table :items="estruturas" :headers="cabecalhos_estruturas" :search="search">
+                <template v-slot:item.actions="{ item }">
+                  <v-btn x-small @click="toDetalhesEstrutura(item)">Detalhes</v-btn>
+                  <template v-if="item.estado === 'ANALISE'">
+                    <v-btn x-small color="success" @click="aprovarEstrutura(item)">Aprovar</v-btn>
+                    <v-btn x-small color="error" @click="rejeitarEstrutura(item)">Rejeitar</v-btn>
                   </template>
                 </template>
               </v-data-table>
@@ -285,7 +283,7 @@
                   </v-btn>
                 </template>
                 <span>Editar observação.</span>
-              </v-tooltip >
+              </v-tooltip>
               <v-tooltip bottom v-if="tipo_utilizador === 'Cliente'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" @click="limparObservacao">
