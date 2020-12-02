@@ -1,5 +1,6 @@
 
 export const state = () =>({
+  emailUser:'',
   emailNoReply: 'noreply@projeto.com',
   notificacoes:'',
   num_notificacoes:'',
@@ -13,6 +14,9 @@ export const  mutations = {
   setNumNotificacoes: (state, numero) => {
     state.num_notificacoes = numero
   },
+  setEmailUser: (state, email) => {
+    state.emailUser = email
+  }
 
 }
 

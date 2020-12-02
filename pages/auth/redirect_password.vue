@@ -59,8 +59,6 @@ export default {
         v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
       ],
       date:'',
-
-
     }
   },
   methods:{
@@ -91,9 +89,6 @@ export default {
               }).catch(error => {
               })
             })
-
-
-
           }
         })
         this.text = "Caso o email esteja associado a uma conta, irá receber um email com instruções para repor a sua palavra-chave."

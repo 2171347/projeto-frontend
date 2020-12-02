@@ -12,6 +12,13 @@ const EventBus = {
     Vue.prototype.$globalEmit = function (event, ...args) {
       VueEventBus.$emit(event, ...args)
     }
+
+    Vue.prototype.$storeGetNotificacoes = function (){
+      this.$axios.get('/api/notificacoes/' + this.$store.state.emailUser).then((notificacoes) => {
+        this.$store.commit("setNotificacoes",notificacoes.data);
+        this.$store.commit("setNumNotificacoes",notificacoes.data.length);
+      })
+    }
   }
 }
 

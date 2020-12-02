@@ -5,7 +5,7 @@
         <v-spacer></v-spacer>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="setAllNotificacoesLidas">
+            <v-btn icon v-bind="attrs" v-on="on" @click="setAllNotificacoesLidas" >
               <v-icon>mdi-check-box-outline</v-icon>
             </v-btn>
           </template>
@@ -83,7 +83,7 @@ export default {
         .then((response) => {
           }
         )
-      await this.getNotificacoes()
+      await  this.$storeGetNotificacoes()
       this.loading = false;
 
     },
@@ -99,14 +99,14 @@ export default {
             }
           )
       }
-      await this.getNotificacoes()
+      await  this.$storeGetNotificacoes()
       this.loading = false;
       this.$globalEmit('i-got-clicked');
     },
 
   },
   created() {
-    this.getNotificacoes()
+    this.$storeGetNotificacoes()
   },
 }
 </script>

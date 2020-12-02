@@ -87,7 +87,9 @@ export default {
       promise.then((response) => {
         if(response.statusText === 'OK'){
           // Carregar as notificações do utilizador para a store
-          this.getNotificacoes()
+
+          this.$storeGetNotificacoes()
+          this.$store.commit("setEmailUser", this.email);
         }
         this.$router.push('/home');
       });
@@ -105,14 +107,6 @@ export default {
     redirectEsqueciPassword(){
       this.$router.push('/auth/redirect_password');
     },
-    async getNotificacoes() {
-      await this.$axios.get('/api/notificacoes/' + this.$auth.user.sub).then((notificacoes) => {
-        this.$store.commit("setNotificacoes", notificacoes.data)
-        this.$store.commit("setNumNotificacoes", notificacoes.data.length)
-        /*this.notificacoes = notificacoes.data;
-        this.num_notificacoes = notificacoes.data.length;*/
-      })
-    }
   },
 }
 </script>

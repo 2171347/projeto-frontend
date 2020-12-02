@@ -33,11 +33,6 @@
                   </v-icon>
                 </v-list-item-action>
               </v-list-item>
-
-              <v-divider
-                v-if="index < items.length - 1"
-                :key="index"
-              ></v-divider>
             </template>
           </v-list>
         </template>
@@ -86,13 +81,13 @@
       <v-toolbar-title  class="white--text" v-text="title" />
       <v-spacer />
 
-      <template v-if="this.$store.state.num_notificacoes !== 0">
+      <template v-if="this.$store.state.notificacoes.length !== 0">
         <v-badge
           overlap
           offset-x="28"
           offset-y="20">
 
-          <span slot="badge">{{ this.$store.state.num_notificacoes }}</span>
+          <span slot="badge">{{ this.$store.state.notificacoes.length }}</span>
           <v-btn icon style="margin-right: 10px" @click.stop="dialog_notificacoes = true">
             <v-icon>mdi-email</v-icon>
           </v-btn>
@@ -153,9 +148,8 @@ export default {
       x: null,
       y: 'top',
       // ------------------------
-
-      notificacao:'',
       notificacoes:'',
+      numNotificacoes:'',
       items:'',
 
       tab_notificacoes_headers:[
@@ -240,6 +234,10 @@ export default {
     }
   },
   methods:{
+    start(){
+      this.notificacoes = JSON.parse(JSON.stringify(this.$store.state.notificacoes))
+      this.numNotificacoes = JSON.parse(JSON.stringify(this.$store.state.num_notificacoes))
+    },
     logout () {
       this.$auth.logout()
     },
@@ -259,13 +257,6 @@ export default {
         }
       }
     },
-    getNotificacoes(){
-      this.$axios.get('/api/notificacoes/'+ this.$auth.user.sub).then((notificacoes) => {
-        this.$store.commit("setNotificacoes", notificacoes.data);
-        this.$store.commit("setNumNotificacoes", notificacoes.data.length);
-      })
-
-    },
     setNotificacaoLida(item){
       item.lido = true;
     },
@@ -274,24 +265,24 @@ export default {
     },
     async fecharNotificacoes() {
       this.dialog_notificacoes = false;
-      this.notificacoes = this.$store.state.notificacoes;
-      for (let aux in this.notificacoes) {
-        if (this.notificacoes[aux].lido === true) {
-          await this.$axios.put('/api/notificacoes/' + this.notificacoes[aux].id + '/lido')
+      for (let aux in this.$store.state.notificacoes) {
+        if (this.$store.state.notificacoes[aux].lido === true) {
+          await this.$axios.put('/api/notificacoes/' + this.$store.state.notificacoes[aux].id + '/lido')
             .then((response) => {}
             )
         }
       }
-      this.getNotificacoes()
+      this.$storeGetNotificacoes()
     }
   },
-  created() {
-    this.getNotificacoes()
+  async created() {
+    this.$store.commit("setEmailUser", this.$auth.user.sub)
     this.$globalOn('i-got-clicked', this.getNotificacoes);
+
   },
   components:{
     sidebar_admin,
-  }
+  },
 
 }
 </script>
