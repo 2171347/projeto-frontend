@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
     <v-row>
       <v-col>
         <v-card>
@@ -45,12 +40,8 @@ export default {
     return {
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // ------------------------
       valid: true,
       email:'',
@@ -94,6 +85,9 @@ export default {
         this.text = "Caso o email esteja associado a uma conta, irá receber um email com instruções para repor a sua palavra-chave."
         this.snackbar = true;
         setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
+        setTimeout(() => {
           this.$router.push('/');
         }, 2200);
       }
@@ -102,6 +96,7 @@ export default {
   components: {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
+    aux_snackbar,
   },
 }
 
