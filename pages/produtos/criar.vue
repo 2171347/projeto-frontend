@@ -1,6 +1,6 @@
 <template>
   <div>
-    <aux_snackbar v-bind:snackbar="snackbar" v-bind:text="text" v-bind:color="color"></aux_snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
 
     <!--TODO finalizar formulário com todos os dados do produto -->
 
@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import aux_snackbar from "../../components/aux_snackbar";
 export default {
   name: "criar",
   data: () =>{
@@ -24,25 +25,7 @@ export default {
   },
   methods:{
     submit(){
-      this.$axios.$post('/api/variantes', {
-        nome: this.nome,
-        referencia: "PR_"+this.nome,
-        emailCliente: this.emailCliente,
-        emailProjetista: "projetista1@projetista.com"
-      }).then(()=>{
-        this.color = 'indigo';
-        this.text = 'Sucesso';
-        this.snackbar = true;
-        setTimeout(() => {
-          this.$router.push('/home');
-        }, 3000);
 
-      }).catch(error =>{
-        console.log(error)
-        this.color = 'red';
-        this.text = 'ERRO';
-        this.snackbar = true;
-      })
     }
   }
 }

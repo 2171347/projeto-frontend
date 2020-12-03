@@ -1,19 +1,6 @@
 <template>
   <div>
-    <v-snackbar
-    v-model="snackbar"
-    :bottom="y === 'bottom'"
-    :color="color"
-    :left="x === 'left'"
-    :multi-line="mode === 'multi-line'"
-    :timeout="timeout"
-    :top="y === 'top'"
-    :vertical="mode === 'vertical'">
-    {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-  </v-snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
     <v-form ref="form" v-model="valid" lazy-validation>
       <p class="subtitle-1 text-center">Criar um novo projeto</p>
       <v-text-field
@@ -41,18 +28,18 @@
 </template>
 
 <script>
+import aux_snackbar from "../../components/aux_snackbar";
 export default {
 name: "novo",
+  components:{
+    aux_snackbar
+  },
   data: () =>{
     return{
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // ------------------------
       valid:true,
       nome: '',
@@ -76,6 +63,9 @@ name: "novo",
           this.text = "O email inserido não corresponde a nenhum cliente registado."
           this.snackbar = true;
           this.color = "error"
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           return null;
         }
       })
@@ -86,6 +76,9 @@ name: "novo",
           this.text = "O email inserido não corresponde a um email de um cliente. Por favor tente novamente."
           this.color = "error"
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           return null;
         }
       })
@@ -101,6 +94,9 @@ name: "novo",
         this.text = 'Projeto criado com sucesso.';
         this.snackbar = true;
         setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
+        setTimeout(() => {
           this.$router.push('/home');
         }, 1500);
       }).catch(error =>{
@@ -108,6 +104,9 @@ name: "novo",
         this.color = 'red';
         this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
       })
     }
   }

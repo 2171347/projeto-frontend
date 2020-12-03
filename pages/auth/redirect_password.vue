@@ -33,6 +33,7 @@
   </div>
 </template>
 <script>
+import aux_snackbar from "../../components/aux_snackbar";
 import {ValidationProvider, ValidationObserver} from "vee-validate";
 export default {
   layout: "before",

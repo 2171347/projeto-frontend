@@ -1,19 +1,6 @@
 <template>
   <div>
-    <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :color="color"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
     <!--  DIALOG para confirmação de "eliminar" e "disponibilizar"/"indiponibilizar"  -->
     <aux_dialog_confirmacao ref="confirm"/>
 
@@ -355,18 +342,14 @@
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import error from "@/layouts/error";
 import aux_dialog_confirmacao from "../../../components/aux_dialog_confirmacao";
-
+import aux_snackbar from "../../../components/aux_snackbar";
 export default {
   data: () => {
     return {
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 3000,
-      x: null,
-      y: 'top',
       // ------------------------
       caminhos: [
         {
@@ -471,6 +454,9 @@ export default {
         this.color = 'green';
         this.text = 'Ficheiro carregado com sucesso.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
         this.dialog_ficheiro = false;
         this.loading = true;
         this.getProjeto();
@@ -479,6 +465,9 @@ export default {
         this.color = 'error';
         this.text = 'Ocorreu um erro, ficheiro não carregado.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
       })
     },
     download(ficheiro) {
@@ -512,6 +501,9 @@ export default {
         this.color = 'error';
         this.text = 'Ocorreu um erro.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
         this.$router.push("/home");
       })
     },
@@ -529,6 +521,9 @@ export default {
           this.color = 'green';
           this.text = 'Observação alterada com sucesso.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.dialog_observacao = false;
           this.getProjeto();
         })
@@ -536,6 +531,9 @@ export default {
           this.color = 'error';
           this.text = 'Ocorreu um erro com a alteração da observação.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.dialog_observacao = false;
         })
     },
@@ -547,12 +545,18 @@ export default {
           this.color = 'green';
           this.text = 'Observação limpa com sucesso.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.getProjeto();
         })
         .catch(error => {
           this.color = 'error';
           this.text = 'Ocorreu um erro com a limpeza da observação.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
         })
 
     },
@@ -569,6 +573,9 @@ export default {
             this.color = 'green';
             this.text = 'O projeto foi aprovado.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
       }else{
@@ -588,6 +595,9 @@ export default {
             this.color = 'green';
             this.text = 'O projeto foi rejeitado.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
       } else {
@@ -606,6 +616,9 @@ export default {
             this.color = 'green';
             this.text = 'O Estrutura foi aprovada.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
 
@@ -626,6 +639,9 @@ export default {
             this.color = 'green';
             this.text = 'A Estrutura foi rejeitada.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
       } else {
@@ -646,6 +662,9 @@ export default {
             this.color = 'green';
             this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
       } else {
@@ -664,6 +683,9 @@ export default {
             this.color = 'green';
             this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
       } else {
@@ -682,11 +704,17 @@ export default {
             this.color = 'green';
             this.text = 'Edição do Projeto realizado com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
           })
           .catch(error => {
             this.color = 'error';
             this.text = 'Ocorreu um erro com a edição do projeto.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
           })
       }
       this.dialog_editar_projeto = false;
@@ -702,6 +730,9 @@ export default {
             this.color = 'green';
             this.text = 'O projeto foi eliminado com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
 
             setTimeout(() => {
               this.$router.push("/projetos");
@@ -721,6 +752,9 @@ export default {
             this.color = 'green';
             this.text = 'A Estrutura foi eliminada com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
             this.getProjeto();
           })
       } else {
@@ -737,6 +771,9 @@ export default {
         this.color = 'green lighten-1';
         this.text = 'Email enviado com sucesso.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
         this.dialog_email = false;
         this.subject = "";
         this.message = ""
@@ -745,6 +782,9 @@ export default {
         this.color = 'red darken-1';
         this.text = 'Ocorreu um erro ao enviar o email.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
       })
     }
     ,
@@ -768,6 +808,7 @@ export default {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
     aux_dialog_confirmacao,
+    aux_snackbar,
   },
 }
 
