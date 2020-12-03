@@ -14,6 +14,8 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
+    <!--  DIALOG para confirmação de "eliminar" e "disponibilizar"/"indiponibilizar"  -->
+    <aux_dialog_confirmacao ref="confirm"/>
 
     <!--    DIALOG para adicionar um ficheiro ao projeto          -->
     <v-dialog v-model="dialog_ficheiro" max-width="490">
@@ -352,6 +354,7 @@
 
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import error from "@/layouts/error";
+import aux_dialog_confirmacao from "../../../components/aux_dialog_confirmacao";
 
 export default {
   data: () => {
@@ -553,75 +556,119 @@ export default {
         })
 
     },
-    aprovarProjeto(){
-      this.loading = true;
-      this.loading_text = 'A carregar os seus dados...'
-      //TODO criar rota para aprovar um projeto
-      this.$axios.put('/api/projetos/aprove/'+this.projeto.referencia)
-      .then(() => {
-        this.color = 'green';
-        this.text = 'O projeto foi aprovado.';
-        this.snackbar = true;
-        this.getProjeto();
+    async aprovarProjeto() {
 
-      })
+      if (await this.$refs.confirm.open(
+        "Aprovar Projeto",
+        "Tem a certeza que quer aprovar este projeto?")
+      ) {
+        this.loading = true;
+        this.loading_text = 'A carregar os seus dados...'
+        this.$axios.put('/api/projetos/aprove/' + this.projeto.referencia)
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O projeto foi aprovado.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+      }else{
+        return null;
+      }
+
     },
-    rejeitarProjeto(){
-      this.loading = true;
-      this.loading_text = 'A carregar os seus dados...'
-      this.$axios.put('/api/projetos/reject/'+this.projeto.referencia)
-        .then(() => {
-          this.color = 'green';
-          this.text = 'O projeto foi rejeitado.';
-          this.snackbar = true;
-          this.getProjeto();
-        })
+    async rejeitarProjeto() {
+      if (await this.$refs.confirm.open(
+        "Rejeitar Projeto",
+        "Tem a certeza que quer rejeitar este projeto?")
+      ) {
+        this.loading = true;
+        this.loading_text = 'A carregar os seus dados...'
+        this.$axios.put('/api/projetos/reject/' + this.projeto.referencia)
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O projeto foi rejeitado.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+      } else {
+        return null;
+      }
     },
-    aprovarEstrutura(item){
-      this.loading = true;
-      this.loading_text = 'A carregar os seus dados...'
-      this.$axios.put('/api/projetos/'+this.projeto.referencia+'/aprove/'+item.referencia)
-        .then(() => {
-          this.color = 'green';
-          this.text = 'O Estrutura foi aprovada.';
-          this.snackbar = true;
-          this.getProjeto();
-        })
+    async aprovarEstrutura(item) {
+      if (await this.$refs.confirm.open(
+        "Aprovar Estrutura",
+        "Tem a certeza que quer aprovar esta estrutura?")
+      ) {
+        this.loading = true;
+        this.loading_text = 'A carregar os seus dados...'
+        this.$axios.put('/api/projetos/' + this.projeto.referencia + '/aprove/' + item.referencia)
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O Estrutura foi aprovada.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+
+      } else {
+        return null;
+      }
+
     },
-    rejeitarEstrutura(item){
-      this.loading = true;
-      this.loading_text = 'A carregar os seus dados...'
-      this.$axios.put('/api/projetos/'+this.projeto.referencia+'/reject/'+item.referencia)
-        .then(() => {
-          this.color = 'green';
-          this.text = 'O Estrutura foi rejeitada.';
-          this.snackbar = true;
-          this.getProjeto();
-        })
+    async rejeitarEstrutura(item) {
+      if (await this.$refs.confirm.open(
+        "Rejeitar Estrutura",
+        "Tem a certeza que quer rejeitar esta estrutura?")
+      ) {
+        this.loading = true;
+        this.loading_text = 'A carregar os seus dados...'
+        this.$axios.put('/api/projetos/' + this.projeto.referencia + '/reject/' + item.referencia)
+          .then(() => {
+            this.color = 'green';
+            this.text = 'A Estrutura foi rejeitada.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+      } else {
+        return null;
+      }
     },
 
   //#############################################Funções para o projetista
-    disponibilizar(){
-      this.loading = true;
-      this.loading_text = 'A processar dados...'
-      this.$axios.put('/api/projetos/provide/'+this.projeto.referencia)
-        .then(() => {
-          this.color = 'green';
-          this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
-          this.snackbar = true;
-          this.getProjeto();
-        })
+    async disponibilizar() {
+      if (await this.$refs.confirm.open(
+        "Disponibilizar Projeto",
+        "Tem a certeza que quer disponibilizar este projeto?")
+      ) {
+        this.loading = true;
+        this.loading_text = 'A processar dados...'
+        this.$axios.put('/api/projetos/provide/' + this.projeto.referencia)
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O projeto foi disponibilizado ao cliente com sucesso.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+      } else {
+        return null;
+      }
     },
-    indisponibilizar(){
-      this.loading = true;
-      this.loading_text = 'A processar dados...'
-      this.$axios.put('/api/projetos/unavailable/'+this.projeto.referencia)
-        .then(() => {
-          this.color = 'green';
-          this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
-          this.snackbar = true;
-          this.getProjeto();
-        })
+    async indisponibilizar() {
+      if (await this.$refs.confirm.open(
+        "Indisponibilizar",
+        "Tem a certeza que quer indisponibilizar este projeto?")
+      ) {
+        this.loading = true;
+        this.loading_text = 'A processar dados...'
+        this.$axios.put('/api/projetos/unavailable/' + this.projeto.referencia)
+          .then(() => {
+            this.color = 'green';
+            this.text = 'O projeto foi indisponibilizado ao cliente com sucesso.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+      } else {
+        return null;
+      }
     },
     editarProjeto(){
       if(this.$refs.observer_projeto.validate()){
@@ -645,56 +692,74 @@ export default {
       this.dialog_editar_projeto = false;
       this.getProjeto();
     },
-    eliminarProjeto(){
-      this.$axios.delete('/api/projetos/'+this.projeto.referencia+'/')
-      .then((response) => {
-        this.color = 'green';
-        this.text = 'O projeto foi eliminado com sucesso.';
-        this.snackbar = true;
+    async eliminarProjeto() {
+      if (await this.$refs.confirm.open(
+        "Eliminar Projeto",
+        "Tem a certeza que quer eliminar este projeto?")
+      ) {
+        this.$axios.delete('/api/projetos/' + this.projeto.referencia + '/')
+          .then((response) => {
+            this.color = 'green';
+            this.text = 'O projeto foi eliminado com sucesso.';
+            this.snackbar = true;
 
-        setTimeout(() => {
-          this.$router.push("/projetos");
-        }, 1500);
-      })
+            setTimeout(() => {
+              this.$router.push("/projetos");
+            }, 1500);
+          })
+      }else{
+        return null;
+      }
     },
-    eliminarEstrutura(item){
-      this.$axios.delete('/api/estruturas/'+item.referencia+'/')
-        .then((response) => {
-          this.color = 'green';
-          this.text = 'A Estrutura foi eliminada com sucesso.';
-          this.snackbar = true;
-          this.getProjeto();
-        })
-    },
-    sendEmail(){
+    async eliminarEstrutura(item) {
+      if (await this.$refs.confirm.open(
+        "Eliminar Estrutura",
+        "Tem a certeza que quer eliminar esta estrutura?")
+      ) {
+        this.$axios.delete('/api/estruturas/' + item.referencia + '/')
+          .then((response) => {
+            this.color = 'green';
+            this.text = 'A Estrutura foi eliminada com sucesso.';
+            this.snackbar = true;
+            this.getProjeto();
+          })
+      } else {
+        return null;
+      }
+    }
+    ,
+    sendEmail() {
       this.date = new Date();
-      this.$axios.post('/api/emails/'+this.projeto.emailProjetista+'/sendto/'+this.$auth.user.sub,{
-        subject: '[Projeto +] ['+this.projeto.referencia+'] '+this.subject,
-        message: '[Mensagem do cliente] \n '+this.message + '\n ['+this.date+']'
+      this.$axios.post('/api/emails/' + this.projeto.emailProjetista + '/sendto/' + this.$auth.user.sub, {
+        subject: '[Projeto +] [' + this.projeto.referencia + '] ' + this.subject,
+        message: '[Mensagem do cliente] \n ' + this.message + '\n [' + this.date + ']'
       }).then(() => {
-          this.color = 'green lighten-1';
-          this.text = 'Email enviado com sucesso.';
-          this.snackbar = true;
-          this.dialog_email = false;
-          this.subject = "";
-          this.message = ""
-      }).catch(error =>{
+        this.color = 'green lighten-1';
+        this.text = 'Email enviado com sucesso.';
+        this.snackbar = true;
+        this.dialog_email = false;
+        this.subject = "";
+        this.message = ""
+      }).catch(error => {
         console.log(error)
         this.color = 'red darken-1';
         this.text = 'Ocorreu um erro ao enviar o email.';
         this.snackbar = true;
       })
-    },
-    toDetalhesEstrutura (item){
-      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/'+item.referencia);
-    },
-    criarEstrutura(){
-      this.$router.push('/projetos/'+ this.projeto.referencia+'/estruturas/criar');
-    },
-    getTipoUtilizador(){
+    }
+    ,
+    toDetalhesEstrutura(item) {
+      this.$router.push('/projetos/' + this.projeto.referencia + '/estruturas/' + item.referencia);
+    }
+    ,
+    criarEstrutura() {
+      this.$router.push('/projetos/' + this.projeto.referencia + '/estruturas/criar');
+    }
+    ,
+    getTipoUtilizador() {
       this.tipo_utilizador = this.$auth.user.groups[0];
     }
-  },
+    },
   created() {
     this.getProjeto()
     this.getTipoUtilizador()
@@ -702,6 +767,7 @@ export default {
   components: {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
+    aux_dialog_confirmacao,
   },
 }
 
