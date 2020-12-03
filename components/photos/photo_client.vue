@@ -2,7 +2,7 @@
   <img
     class="photoCard"
     alt="Photo Client"
-    src="/cliente.jpg"
+    src="../../static/cliente.jpg"
   >
 </template>
 
