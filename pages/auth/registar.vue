@@ -1,11 +1,7 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
+
     <!--TODO refefinir as validações deste formulário-->
     <v-card>
       <v-card-title class="d-flex justify-center">Registo de Utilizador</v-card-title>
@@ -133,6 +129,7 @@
 <script>
 
 import { ValidationObserver, ValidationProvider } from "vee-validate";
+import aux_snackbar from "../../components/aux_snackbar";
 
 export default {
   name: "registar",
@@ -141,12 +138,8 @@ export default {
     valid: true,
     // ---- SNACKBAR INFO -----
     color: '',
-    mode: '',
     snackbar: false,
     text: '',
-    timeout: 4000,
-    x: null,
-    y: 'top',
     // ------------------------
     morada: '',
     nome: '',
@@ -262,16 +255,22 @@ export default {
             this.color = 'green';
             this.text = 'O seu registo foi feito com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
 
             this.sendEmail()
             setTimeout(() => {
               this.$router.push('/');
-            }, 3000);
+            }, 2000);
           })
           .catch(error => {
             this.color = 'error';
             this.text = 'Ocorreu um erro com o seu registo.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
           })
       }
     },
@@ -287,7 +286,8 @@ export default {
   },
   components: {
     ValidationObserver: ValidationObserver,
-    ValidationProvider: ValidationProvider
+    ValidationProvider: ValidationProvider,
+    aux_snackbar
   },
 
 

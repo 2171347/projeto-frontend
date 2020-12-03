@@ -7,7 +7,7 @@
         <v-col>
           <v-card>
             <v-btn @click="teste">Teste</v-btn>
-            <aux_dialog_confirmacao ref="confirm"/>
+              <aux_snackbar :text="text" :color="color" :snackbar="snackbar"/>
 
           </v-card>
         </v-col>
@@ -21,30 +21,35 @@
 <script>
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
 import aux_dialog_confirmacao from "./aux_dialog_confirmacao";
+import aux_snackbar from "./aux_snackbar";
 export default {
 name: "aux_home_projetista",
   data () {
     return {
       notificacoes:'',
+      text:'',
+      snackbar:'',
+      color:'',
     }
   },
   methods:{
-    async teste(){
-      if (await this.$refs.confirm.open(
-          "Confirm",
-          "Are you sure you want to delete this record?"
-        )
-      ) {
-        console.log("Aceitou")
-      }
+    teste(){
+      this.text="Olá";
+      this.color="red";
+      this.snackbar = true;
+      setTimeout(() => {
+        this.snackbar= false;
+      }, 200);
+
     },
 
 
   },
   components:{
     vcard_notificacoes_homepage,
-    aux_dialog_confirmacao
-  }
+    aux_dialog_confirmacao,
+    aux_snackbar
+  },
 }
 </script>
 

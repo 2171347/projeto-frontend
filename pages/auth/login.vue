@@ -1,11 +1,7 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>    <v-layout align-center justify-center>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
+    <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-12" style="margin-top: auto">
           <v-toolbar color="amber darken-1" dark flat>
@@ -45,11 +41,14 @@
 </template>
 
 <script>
-
+import aux_snackbar from "../../components/aux_snackbar";
 export default {
   name: "login",
   layout: "before",
   auth: false,
+  components:{
+    aux_snackbar
+  },
 
   data:function (){
     return {
@@ -63,12 +62,8 @@ export default {
       ],
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // -------------------------
 
       // ----------- DADOS A CARREGAR NA STORE -------
@@ -98,6 +93,9 @@ export default {
         this.color = 'red lighten-1';
         this.text = 'Dados de acesso inválidos. Por favor, tente novamente.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
       })
     },
     onReset() {
