@@ -201,7 +201,7 @@
               </div>
             </v-card-title>
             <v-card-text>
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
+              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search" :sort-by="['codigo']">
                 <template v-slot:item.actions="{ item }">
                   <v-btn x-small @click="chamarDialogEditar(item)">Editar</v-btn>
                   <v-btn x-small color="error" @click="eliminarVariante(item)">Eliminar</v-btn>
@@ -305,7 +305,7 @@ export default {
         formData.append('file', this.file)
       }
       return formData
-    }
+    },
   },
   methods: {
     upload() {
@@ -317,13 +317,29 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       })
-      promisse.then(() => {
+      promisse.then((response) => {
         this.color = 'green';
         this.text = 'Ficheiro carregado com sucesso.';
         this.snackbar = true;
         this.dialog_ficheiro = false;
         this.loading = true;
-        this.getProduto();
+        let formData = new FormData()
+        formData.append('idExcel', response.id)
+        formData.append('idProduto', this.produto.id)
+        let promisseRead = this.$axios.$post('/api/excel/read',formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        promisseRead.then(() => {
+          this.getProduto();
+        })
+        promisseRead.catch(() => {
+          this.color = 'error';
+          this.text = 'Ocorreu um erro, ficheiro não lido.';
+          this.snackbar = true;
+        })
+
       })
       promisse.catch(() => {
         this.color = 'error';
