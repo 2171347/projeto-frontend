@@ -20,8 +20,8 @@
 
 <script>
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
-import aux_dialog_confirmacao from "./aux_dialog_confirmacao";
-import aux_snackbar from "./aux_snackbar";
+import aux_dialog_confirmacao from "../aux_dialog_confirmacao";
+import aux_snackbar from "../aux_snackbar";
 export default {
 name: "aux_home_projetista",
   data () {

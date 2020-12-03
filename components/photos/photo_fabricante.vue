@@ -2,7 +2,7 @@
   <img
     class="photoCard"
     alt="Photo Client"
-    src="/tube-bender-2819137_640.jpg"
+    src="../../static/tube-bender-2819137_640.jpg"
   >
 </template>
 

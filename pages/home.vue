@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import layout_projetista from '@/components/aux_home_projetista'
-import layout_fabricante from '@/components/aux_home_fabricante'
-import layout_cliente from '@/components/aux_home_cliente'
-import layout_administrador from '@/components/aux_home_administrador'
+import layout_projetista from '../components/home/aux_home_projetista'
+import layout_fabricante from '../components/home/aux_home_fabricante'
+import layout_cliente from '../components/home/aux_home_cliente'
+import layout_administrador from '../components/home/aux_home_administrador'
 export default {
   name: "home",
   components:{

@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import VuetifyLogo from '@/components/logo_projeto.vue';
-import Photo_client from "@/components/photo_client";
-import Photo_projetista from "@/components/photo_projetista";
-import Photo_fabricante from "@/components/photo_fabricante";
+import VuetifyLogo from '../components/photos/logo_projeto.vue';
+import Photo_client from "../components/photos/photo_client";
+import Photo_projetista from "../components/photos/photo_projetista";
+import Photo_fabricante from "../components/photos/photo_fabricante";
 
 
 export default {
