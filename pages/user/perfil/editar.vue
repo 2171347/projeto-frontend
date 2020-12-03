@@ -1,13 +1,7 @@
 <template>
   <div>
     <v-btn @click="$router.go(-1)">Voltar</v-btn>
-    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
-
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
     <v-card style="margin-top: 10px">
       <v-card-text>
         <validation-observer ref="observer" v-slot="{ invalid }">
@@ -51,7 +45,7 @@
 
 <script>
 import {ValidationProvider, ValidationObserver} from "vee-validate";
-import aux_snackbar from "@/components/aux_snackbar";
+import aux_snackbar from "../../../components/aux_snackbar";
 
 export default {
 name: "editar",
@@ -73,12 +67,8 @@ name: "editar",
 
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // ------------------------
     }
   },
@@ -87,8 +77,12 @@ name: "editar",
       this.$axios.get('/api/users/'+this.email).then((response) => {
         if (response.data.value === true){
           this.text = "O email inserido já está a ser utilizado. Tente novamente."
-          this.snackbar = true;
           this.color = "error"
+          this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
+
           this.email = this.user.email
           return null;
         }else{
@@ -142,6 +136,9 @@ name: "editar",
             this.color = 'green';
             this.text = 'O seu registo foi feito com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
 
             setTimeout(() => {
               this.$router.go(-1)
@@ -151,6 +148,9 @@ name: "editar",
             this.color = 'error';
             this.text = 'Ocorreu um erro com o seu registo.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
           })
       }
     },

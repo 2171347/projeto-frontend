@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" :multi-line="mode === 'multi-line'" :timeout="timeout" :top="y === 'top'" :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
     <v-dialog v-model="dialog_password" max-width="490">
       <v-card>
         <v-card-title class="headline">
@@ -52,7 +47,7 @@
 </template>
 
 <script>
-import aux_snackbar from "@/components/aux_snackbar";
+import aux_snackbar from "../../../components/aux_snackbar";
 export default {
   name: "perfil",
   data: () => {
@@ -74,12 +69,8 @@ export default {
 
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // ------------------------
 
       passwordRules:[
@@ -135,17 +126,23 @@ export default {
         this.$axios.$put('/api/users/'+this.user.email+'/change_password', {
           password : this.new_password
         }).then((response) => {
-          this.snackbar = true;
           this.text = "Palavra-Chave alterada com sucesso."
           this.color = 'success';
+          this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
 
           this.cleanFields();
           this.dialog_password = false;
 
         }).catch(error =>{
-          this.snackbar = true;
           this.text = "Ocorreu um erro.Por favor tente novamente mais tarde.."
           this.color = 'error';
+          this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
         })
       }).catch(error =>{
         this.error_old = "A palavra-chave introduzida não coincide com a palavra-chave atual."
