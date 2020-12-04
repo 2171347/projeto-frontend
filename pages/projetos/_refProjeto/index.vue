@@ -170,7 +170,7 @@
             </v-toolbar>
             <v-card-text>
               <v-btn small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
-              <v-btn small color="error" @click="eliminarProjeto()">Eliminar</v-btn>
+              <v-btn small color="error" @click="eliminarProjeto()" v-if="this.projeto.estado !== 'APROVADO'">Eliminar</v-btn>
               <template v-if="this.projeto.visivelCliente === false">
                 <v-btn small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
               </template>

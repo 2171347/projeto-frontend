@@ -44,27 +44,32 @@ export default {
       search:'',
 
       cabecalhos_variantes: [
-      {
-        text: 'Produto',
-        align: 'start',
-        sortable: true,
-        value: 'produtoNome',
-      }, {
-        text: 'Variante',
-        align: 'start',
-        sortable: true,
-        value: 'nome',
-      }, {
-        text: 'Núm. Selecionados',
-        align: 'start',
-        sortable: true,
-        value: 'count',
-      },
+        {
+          text: 'Produto',
+          align: 'start',
+          sortable: true,
+          value: 'produtoNome',
+        }, {
+          text: 'Variante',
+          align: 'start',
+          sortable: true,
+          value: 'nome',
+        }, {
+          text: 'Data Encomenda',
+          align: 'start',
+          sortable: true,
+          value: 'dataEncomenda',
+        }, {
+          text: 'Núm. Selecionados',
+          align: 'start',
+          sortable: true,
+          value: 'count',
+        },
       ],
     }
   },
   methods :{
-    getVariantes(){
+    getVariantesSelecionadas(){
       this.$axios.$get('/api/variantes/fabricante/' + this.$auth.user.sub)
         .then((variantes) => {
           console.log(variantes)
@@ -73,7 +78,7 @@ export default {
     }
   },
   created() {
-    this.getVariantes()
+    this.getVariantesSelecionadas()
   },
   components:{
     vcard_notificacoes_homepage
