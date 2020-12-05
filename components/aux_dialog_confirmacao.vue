@@ -57,7 +57,6 @@ name: "aux_dialog_confirmacao",
     agree(){
       this.resolve(true);
       this.dialog = false;
-      this.$globalEmit('dialog_accepted')
     }
   }
 }

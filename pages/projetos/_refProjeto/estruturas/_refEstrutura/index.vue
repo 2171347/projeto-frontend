@@ -1,18 +1,6 @@
 <template>
   <div>
-    <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :color="color"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :timeout="timeout" :top="y === 'top'"
-      :vertical="mode === 'vertical'">
-      {{ text }}
-      <v-btn dark text @click="snackbar = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
 
     <!--    DIALOG para adicionar uma observação à estrutura           -->
     <v-dialog v-model="dialog_observacao" max-width="490">
@@ -353,12 +341,8 @@ export default {
 
       // ---- SNACKBAR INFO -----
       color: '',
-      mode: '',
       snackbar: false,
       text: '',
-      timeout: 4000,
-      x: null,
-      y: 'top',
       // ------------------------
 
       search:'',
@@ -526,6 +510,9 @@ export default {
           this.color = 'green';
           this.text = 'Observação alterada com sucesso.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.dialog_observacao = false;
           this.getEstrutura();
         })
@@ -533,6 +520,9 @@ export default {
           this.color = 'error';
           this.text = 'Ocorreu um erro com a alteração da observação.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.dialog_observacao = false;
         })
     },
@@ -544,12 +534,18 @@ export default {
           this.color = 'green';
           this.text = 'Observação limpa com sucesso.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.getEstrutura();
         })
         .catch(error => {
           this.color = 'error';
           this.text = 'Ocorreu um erro com a limpeza da observação.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
         })
 
     },
@@ -563,6 +559,9 @@ export default {
         this.color = 'green';
         this.text = 'Produto removido com sucesso.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
         this.getEstrutura()
       })
     },
@@ -585,6 +584,9 @@ export default {
           this.color = 'blue';
           this.text = 'Produtos simulados já adicionados.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
         }
       })
     },
@@ -602,11 +604,17 @@ export default {
             this.color = 'green';
             this.text = 'O seu registo foi feito com sucesso.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
           })
           .catch(error => {
             this.color = 'error';
             this.text = 'Ocorreu um erro com o seu registo.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
           })
       }
       this.dialog_editar_estrutura = false;
@@ -617,6 +625,9 @@ export default {
         this.color = 'green';
         this.text = 'A Estrutura foi eliminada com sucesso.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
 
         setTimeout(() => {
           this.$router.push("/projetos/"+this.projeto.referencia);

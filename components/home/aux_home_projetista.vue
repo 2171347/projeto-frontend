@@ -6,7 +6,8 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-dialog v-model="dialog_criar_projeto" max-width="500px">
+    <aux_dialog_criar_projeto ref="criarProjeto"/>
+<!--    <v-dialog v-model="dialog_criar_projeto" max-width="500px">
       <v-card>
         <v-card-title class="headline">
           Criar um novo projeto
@@ -42,7 +43,7 @@
         </validation-observer>
         </v-card-text>
       </v-card>
-    </v-dialog>
+    </v-dialog>-->
     <v-toolbar class="d-flex justify-center">
       <v-toolbar-title>Painel Geral do {{this.$auth.user.groups[0]}}</v-toolbar-title>
     </v-toolbar>
@@ -54,7 +55,7 @@
             <v-spacer></v-spacer>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on" @click="dialog_criar_projeto = true">
+                <v-btn icon v-bind="attrs" v-on="on" @click="criarProjeto">
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
@@ -85,7 +86,7 @@
 import aux_snackbar from "@/components/aux_snackbar";
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
-
+import aux_dialog_criar_projeto from "../aux_dialog_criar_projeto";
 
 export default {
 name: "aux_home_projetista",
@@ -162,6 +163,13 @@ name: "aux_home_projetista",
         this.snackbar = true;
       })
     },
+    async criarProjeto() {
+      if (
+        await this.$refs.criarProjeto.open()
+      ) {
+        this.getProjetos()
+      }
+    },
     getProjetos(){
       this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')
         .then((response) => {
@@ -178,6 +186,7 @@ name: "aux_home_projetista",
     vcard_notificacoes_homepage,
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
+    aux_dialog_criar_projeto
   }
 
 }

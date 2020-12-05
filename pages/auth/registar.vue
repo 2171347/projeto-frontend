@@ -6,32 +6,31 @@
     <v-card>
       <v-card-title class="d-flex justify-center">Registo de Utilizador</v-card-title>
       <v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
+        <validation-observer ref="observer" v-slot="{ invalid }">
+          <v-form @submit.prevent="submit">
           <validation-provider v-slot="{ errors }" name="Name" rules="alpha_spaces|required">
             <v-text-field
               prepend-inner-icon="mdi-account"
               v-model="nome"
-              :counter="30"
               :error-messages="errors"
-              :rules="nomeRules"
               label="Nome"
               required
             ></v-text-field>
           </validation-provider>
-          <v-text-field
-            prepend-inner-icon="mdi-at"
-            v-model="email"
-            :rules="emailRules"
-            :error-messages="errorsEmail"
-            label="E-mail"
-            required
-          ></v-text-field>
+          <validation-provider v-slot="{ errors }" name="Email" rules="email|required">
+            <v-text-field
+              prepend-inner-icon="mdi-at"
+              v-model="email"
+              :error-messages="errors"
+              label="E-mail"
+              required
+            ></v-text-field>
+          </validation-provider>
           <validation-provider v-slot="{ errors }" name="Password" rules="required|password:@confirm">
             <v-text-field
               label="Palavra-Chave:"
               v-model="password"
               :error-messages="errors"
-              :rules="passwordRules"
               type="password">
               required>
             </v-text-field>
@@ -61,24 +60,20 @@
               </validation-provider>
             </v-col>
             <v-col>
-              <validation-provider
-                v-slot="{ errors }"
-                name="Localidade"
-                rules="alpha_spaces"
-              >
+              <validation-provider v-slot="{ errors }" name="Localidade" rules="alpha_spaces">
                 <v-text-field
                   v-model="localidade"
                   :error-messages="errors"
                   label="Localidade:"
-                  @input="checkValidacaoMorada"
                 >
+<!--                  @input="checkValidacaoMorada"-->
                 </v-text-field>
               </validation-provider>
             </v-col>
           </v-row>
           <v-row>
             <v-col md="5">
-              <validation-provider v-slot="{ errors }" name="Nif" rules="length:9">
+              <validation-provider v-slot="{ errors }" name="Nif" rules="length:9|numeric">
                 <v-text-field
                   v-model="nif"
                   :error-messages="errors"
@@ -88,7 +83,7 @@
               </validation-provider>
             </v-col>
             <v-col>
-              <validation-provider v-slot="{ errors }" name="Contacto" rules="length:9">
+              <validation-provider v-slot="{ errors }" name="Contacto" rules="length:9|numeric">
                 <v-text-field
                   v-model="contacto"
                   prepend-inner-icon="mdi-phone"
@@ -101,16 +96,18 @@
           </v-row>
           <v-row>
             <v-col md="6">
-              <v-select
-                :items="tiposUtilizador"
-                :error-messages="errorsUserType"
-                v-model="userType"
-                label="Vou utilizar esta aplicação no papel de:"
-              ></v-select>
+              <validation-provider v-slot="{ errors }" name="TipoUtilizador" rules="required">
+                <v-select
+                  :items="tiposUtilizador"
+                  :error-messages="errorsUserType"
+                  v-model="userType"
+                  label="Vou utilizar esta aplicação no papel de:"
+                ></v-select>
+              </validation-provider>
             </v-col>
             <!--TODO adicionar um campo a explicar o tipo de utilizador-->
           </v-row>
-          <v-btn color="success" class="mr-4" @click="submit">Submeter</v-btn>
+          <v-btn color="success" class="mr-4" :disabled="invalid" @click="submit">Submeter</v-btn>
           <v-btn color="error" class="mr-4" @click="reset">
             Reset Formulário
           </v-btn>
@@ -121,6 +118,7 @@
             Cancelar
           </v-btn>
         </v-form>
+        </validation-observer>
       </v-card-text>
     </v-card>
   </div>
@@ -143,23 +141,12 @@ export default {
     // ------------------------
     morada: '',
     nome: '',
-    nomeRules: [
-      v => !!v || 'Nome é um campo obrigatório',
-      v => (v && v.length <= 30) || 'Nome deve ter até 30 caracteres',
-    ],
     email: '',
-    emailRules: [
-      v => !!v || 'Email é um campo obrigatório',
-      v => /.+@.+\..+/.test(v) || 'Email deve estar no formato: nome@exemplo.com',
-    ],
     nif:'',
     contacto:'',
     codigoPostal:'',
     localidade:'',
     password:'',
-    passwordRules:[
-      v => !!v || 'Palavra-Chave é um campo obrigatório',
-    ],
     passwordConfirmation:'',
     tiposUtilizador:['Cliente', 'Fabricante', 'Projetista'],
     userType:'',
@@ -170,25 +157,69 @@ export default {
     errorsPassword:'',
     date:'',
     moradaSending:'',
+    emailValido:'',
+    moradaValido:'',
   }),
 
   methods: {
-    checkEmailDisponivel(){
-      this.$axios.get('/api/users/'+this.email).then((response) => {
-          if (response.data.value == true){
-            this.errorsEmail="Email já está registado da plataforma."
-            return null;
-          }else{
-            this.errorsEmail='';
-          }
+    async checkEmailDisponivel() {
+      /*TODO apagar os console.log*/
+
+      await this.$axios.get('/api/users/' + this.email).then((response) => {
+        if (response.data.value === true) {
+          console.log("Email Não Valido")
+          this.emailValido = false;
+          this.errorsEmail = "Email já está registado da plataforma."
+          this.color = 'error';
+          this.text = 'Email já existe.';
+          this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar = false;
+          }, 2000);
+
+        } else {
+          console.log("Email Valido")
+          this.emailValido = true;
+          this.errorsEmail = '';
+          return 'OK';
+        }
       })
     },
     checkValidacaoMorada(){
-      if (!this.localidade.trim(" ")  ||  !this.morada.trim(' ') || !this.codigoPostal.trim(" ") ){
-        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
+      if(this.localidade.trim() && this.morada.trim() && this.codigoPostal.trim()){
+        this.moradaValido = true;
+        this.moradaSending = this.morada + ' | ' + this.codigoPostal + ' | ' + this.localidade;
+        console.log("Morada Valido")
         return null;
       }
-      this.errorsMorada = '';
+      if(!this.localidade.trim() && !this.morada.trim() && !this.codigoPostal.trim()){
+        this.moradaValido = true;
+        this.moradaSending = null;
+        console.log("Morada Valido")
+        return null;
+      }
+
+      if (!this.localidade.trim() && this.morada.trim() && this.codigoPostal.trim()){
+        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
+        this.moradaValido = false;
+        console.log("Morada Não Valido --> Localidade")
+        return null;
+      }
+      if (this.localidade.trim() && !this.morada.trim() && this.codigoPostal.trim()){
+        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
+        this.moradaValido = false;
+        console.log("Morada Não Valido --> Morada")
+        return null;
+      }
+      if (this.localidade.trim() && this.morada.trim() && !this.codigoPostal.trim()){
+        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
+        this.moradaValido = false;
+        console.log("Morada Não Valido --> Codigo Postal")
+        return null;
+      }
+        this.errorsMorada = '';
+        console.log("Morada Valido")
+        this.moradaValido = true;
     },
     getDate(){
       var currentDate = new Date();
@@ -206,40 +237,45 @@ export default {
       }).catch(error =>{
       })
     },
+    createUrl(){
+      console.log("Comecou a criar a url")
+      if (this.userType === 'Cliente') {
+        this.url = "/api/clientes/"
+      }
+      if (this.userType === 'Fabricante') {
+        this.url = "/api/fabricantes/"
+      }
+      if (this.userType === 'Projetista') {
+        this.url = "/api/projetistas/"
+      }
+      console.log("Acabou de criar a url")
+    },
 
-    submit () {
-      if (this.$refs.form.validate()) {
-        this.checkEmailDisponivel()
-        this.checkValidacaoMorada()
+    async submit() {
+      if (this.$refs.observer.validate()) {
 
-        // Verificar se o tipo de utilizador foi dado:
-        if (this.userType === ''){
-          this.errorsUserType = "Deve selecionar uma opção."
-          return null;
-        }else{
-          this.errorsUserType = '';
+        // ----- Verificar se o email já existe na BD ---------
+
+        await this.checkEmailDisponivel();
+        if(!this.emailValido){
+          return
         }
-
+        await this.checkValidacaoMorada()
+        if(!this.moradaValido){
+          return
+        }
         // Definir a rota com base no tipo de utilizador
-        if (this.userType === 'Cliente'){
-          this.url="/api/clientes/"
-        }if (this.userType === 'Fabricante'){
-          this.url="/api/fabricantes/"
-        }if (this.userType === 'Projetista'){
-          this.url="/api/projetistas/"
-        }
+        await this.createUrl()
 
-        // Definir os campos vazios a null
-        if (this.morada === ''){
-          this.moradaSending = null;
-        }else{
-          this.moradaSending = this.morada +' | '+  this.codigoPostal +' | '+ this.localidade;
-        }
 
-        if (this.contacto === ''){
+
+        console.log("Continuar...")
+
+
+        if (this.contacto === '') {
           this.contacto = null;
         }
-        if (this.nif === ''){
+        if (this.nif === '') {
           this.nif = null
         }
 
@@ -256,7 +292,7 @@ export default {
             this.text = 'O seu registo foi feito com sucesso.';
             this.snackbar = true;
             setTimeout(() => {
-              this.snackbar= false;
+              this.snackbar = false;
             }, 2000);
 
             this.sendEmail()
@@ -269,7 +305,7 @@ export default {
             this.text = 'Ocorreu um erro com o seu registo.';
             this.snackbar = true;
             setTimeout(() => {
-              this.snackbar= false;
+              this.snackbar = false;
             }, 2000);
           })
       }
