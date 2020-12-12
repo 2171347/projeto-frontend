@@ -65,7 +65,7 @@
             ></v-text-field>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template v-if="this.$auth.user.groups.includes('Projetista')" v-slot:activator="{ on, attrs }">
                 <v-btn icon v-bind="attrs" v-on="on" @click="dialog_criar_projeto = true">
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>

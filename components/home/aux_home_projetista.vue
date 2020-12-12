@@ -7,43 +7,6 @@
       </v-btn>
     </v-snackbar>
     <aux_dialog_criar_projeto ref="criarProjeto"/>
-<!--    <v-dialog v-model="dialog_criar_projeto" max-width="500px">
-      <v-card>
-        <v-card-title class="headline">
-          Criar um novo projeto
-        </v-card-title>
-        <v-card-text>
-        <validation-observer ref="observer" v-slot="{ invalid }">
-          <form @submit.prevent="submit">
-            <validation-provider v-slot="{ errors }" name="Nome" rules="required|max:30">
-            <v-text-field
-              v-model="nome"
-              :counter="30"
-              :rules="nomeRules"
-              label="Nome:"
-              required
-            ></v-text-field>
-            </validation-provider>
-            <validation-provider v-slot="{ errors }" name="Email" rules="required|email">
-              <v-text-field
-                v-model="emailCliente"
-                :counter="30"
-                :rules="emailClienteRules"
-                label="Email do cliente"
-                required
-              ></v-text-field>
-            </validation-provider>
-            <v-btn :disabled="invalid" color="success" small  @click="createProject">
-              Criar
-            </v-btn>
-            <v-btn color="error" small @click="closeDialogCriarProjeto">
-              Cancelar
-            </v-btn>
-          </form>
-        </validation-observer>
-        </v-card-text>
-      </v-card>
-    </v-dialog>-->
     <v-toolbar class="d-flex justify-center">
       <v-toolbar-title>Painel Geral do {{this.$auth.user.groups[0]}}</v-toolbar-title>
     </v-toolbar>

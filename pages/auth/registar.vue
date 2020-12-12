@@ -1,8 +1,26 @@
 <template>
   <div>
+    <v-dialog v-model="helpDialog" @keydown.esc="helpDialog = false" max-width="500px">
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          Ajuda - Tipos de utilizadores
+        </v-card-title>
+        <v-card-text style="margin-top: 10px;">
+          Esta aplicação pode ser utilizada por 3 tipos de utilizadores:<br>
+          &nbsp; - <b>Clientes:</b> cujo unico objetivo é estar em contacto com um projetista afim de seguir o processo de desenvolvimento do projeto.<br>
+          &nbsp; - <b>Projetistas:</b> têm acesso a uma plataforma onde podem fazer a gestão dos seus projetos, com a interação direta do cliente. Tem também acesso ao catálogo de produtos disponiveis para a construção do projeto.<br>
+          &nbsp; - <b>Fabricantes:</b> podem disponibilizar o seu catálogo de produtos para que os projetistas tenham conhecimento dos produtos disponiveis no mercado. Têm também a vantagem de, sempre que um produto seu for selecionado para um projeot aprovado, serem notificados com atencedência para a ocorrência de uma encomenda.
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="helpDialog = false">
+            Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
-
-    <!--TODO refefinir as validações deste formulário-->
     <v-card>
       <v-card-title class="d-flex justify-center">Registo de Utilizador</v-card-title>
       <v-card-text>
@@ -94,8 +112,8 @@
               </validation-provider>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col md="6">
+          <v-row align="center">
+            <v-col md="4">
               <validation-provider v-slot="{ errors }" name="TipoUtilizador" rules="required">
                 <v-select
                   :items="tiposUtilizador"
@@ -105,15 +123,11 @@
                 ></v-select>
               </validation-provider>
             </v-col>
-            <!--TODO adicionar um campo a explicar o tipo de utilizador-->
+            <v-col md="1">
+              <v-btn icon @click="helpDialog = true;"><v-icon small dense >mdi-help</v-icon></v-btn>
+            </v-col>
           </v-row>
           <v-btn color="success" class="mr-4" :disabled="invalid" @click="submit">Submeter</v-btn>
-          <v-btn color="error" class="mr-4" @click="reset">
-            Reset Formulário
-          </v-btn>
-          <v-btn color="warning" class="mr-4" @click="resetValidation">
-            Reset Validação
-          </v-btn>
           <v-btn color="error" class="mr-4" @click="cancel">
             Cancelar
           </v-btn>
@@ -159,6 +173,7 @@ export default {
     moradaSending:'',
     emailValido:'',
     moradaValido:'',
+    helpDialog:'',
   }),
 
   methods: {
@@ -178,7 +193,7 @@ export default {
           }, 2000);
 
         } else {
-          console.log("Email Valido")
+          console.log("Email Válido")
           this.emailValido = true;
           this.errorsEmail = '';
           return 'OK';
