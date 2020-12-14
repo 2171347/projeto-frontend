@@ -24,8 +24,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-row>
-      <v-col>
+    <v-toolbar>
+      <v-btn @click="$router.go(-1)">Voltar</v-btn>
+      <v-breadcrumbs :items="caminhos">
+        <template v-slot:divider>
+          <v-icon>mdi-chevron-right</v-icon>
+        </template>
+      </v-breadcrumbs>
+    </v-toolbar>
+    <v-row align="center" justify="center">
+      <v-col cols="6">
         <v-card>
           <v-card-title>Dados do Utilizador
           <v-spacer></v-spacer>
@@ -65,6 +73,18 @@ export default {
       rua:'',
       localidade:'',
       codigoPostal:'',
+      caminhos: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/home',
+        },
+        {
+          text:'Perfil',
+          disabled: true,
+          href: '/perfil',
+        },
+      ],
 
 
       // ---- SNACKBAR INFO -----

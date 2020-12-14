@@ -51,6 +51,7 @@
       app
       color= "#ADADAD"
       light
+      v-if="this.$auth.user.groups.includes('Administrador')"
     >
     <sidebar_admin v-if="this.$auth.user.groups.includes('Administrador')"/>
       <!--<v-list>
@@ -73,7 +74,7 @@
       </v-list>-->
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app color="amber darken-1">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="this.$auth.user.groups.includes('Administrador')"/>
       <v-btn icon to="/home">
         <v-icon>mdi-home</v-icon>
       </v-btn>

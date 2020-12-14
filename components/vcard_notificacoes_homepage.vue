@@ -1,13 +1,15 @@
 <template>
-  <v-card class="mx-auto" max-width="500" >
+  <v-card class="mx-auto" max-width="500"  min-height="150px">
       <v-toolbar>
         <v-toolbar-title>Notificações</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="setAllNotificacoesLidas" >
-              <v-icon>mdi-check-box-outline</v-icon>
-            </v-btn>
+            <div v-on="on">
+              <v-btn icon v-bind="attrs" v-on="on" @click="setAllNotificacoesLidas" :disabled="notificacoes.length === 0">
+                <v-icon>mdi-check-box-outline</v-icon>
+              </v-btn>
+            </div>
           </template>
           <span>Marcar todas as notificações como lidas.</span>
         </v-tooltip>
