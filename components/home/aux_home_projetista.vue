@@ -42,15 +42,20 @@
         <vcard_notificacoes_homepage/>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="4">
+        <aux_suporte_component/>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
-import aux_snackbar from "@/components/aux_snackbar";
-import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
+import aux_snackbar from "../aux_snackbar";
+import vcard_notificacoes_homepage from "../vcard_notificacoes_homepage";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import aux_dialog_criar_projeto from "../aux_dialog_criar_projeto";
-
+import aux_suporte_component from "../aux_suporte_component";
 export default {
 name: "aux_home_projetista",
 
@@ -149,7 +154,8 @@ name: "aux_home_projetista",
     vcard_notificacoes_homepage,
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
-    aux_dialog_criar_projeto
+    aux_dialog_criar_projeto,
+    aux_suporte_component
   }
 
 }

@@ -75,14 +75,22 @@
           <span>Registar novo pedido de suporte.</span>
         </v-tooltip>
       </v-toolbar>
-      <v-card-text>
-        <v-data-table :headers="headers" :items="pedidosSuporte">
-          <template v-slot:item.actions="{ item }">
-            <v-btn icon @click="toDetalhes(item)">
-              <v-icon>mdi-information-outline</v-icon></v-btn>
-          </template>
-        </v-data-table>
-      </v-card-text>
+      <template v-if="pedidosSuporte.length !== 0">
+        <v-card-text>
+          <v-data-table :headers="headers" :items="pedidosSuporte">
+            <template v-slot:item.actions="{ item }">
+              <v-btn icon @click="toDetalhes(item)">
+                <v-icon>mdi-information-outline</v-icon></v-btn>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </template>
+      <template v-if="pedidosSuporte.length === 0">
+        <v-card-text style="margin-top: 15px">
+          <p>Não fez nenhum pedido de suporte.</p>
+        </v-card-text>
+      </template>
+
     </v-card>
   </div>
 </template>
@@ -127,7 +135,7 @@ export default {
       if(this.$auth.user.groups[0] === 'Fabricante'){
         this.tiposPedidoSuporte = ['Novo tipo de material', 'Nova familia de material', 'Reportar um erro', 'Outro'];
       }
-      if(this.$auth.user.groups[0] === 'Fabricante'){
+      if(this.$auth.user.groups[0] === 'Projetista'){
         this.tiposPedidoSuporte = ['Erro em projeto', 'Reportar um erro', 'Outro'];
       }
     },

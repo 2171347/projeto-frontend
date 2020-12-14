@@ -28,13 +28,18 @@
           <vcard_notificacoes_homepage/>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="4">
+          <aux_suporte_component/>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import vcard_notificacoes_homepage from "@/components/vcard_notificacoes_homepage";
-
+import aux_suporte_component from "../aux_suporte_component";
 export default {
   name: "aux_home_projetista",
   data: () => {
@@ -81,7 +86,8 @@ export default {
     this.getVariantesSelecionadas()
   },
   components:{
-    vcard_notificacoes_homepage
+    vcard_notificacoes_homepage,
+    aux_suporte_component
   }
 }
 </script>
