@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app light>
     <v-app-bar :clipped-left="clipped" fixed app color="amber darken-1" style="max-width: 100%">
       <v-btn icon to="/">
         <v-icon>mdi-{{ `home` }}</v-icon>
@@ -15,15 +15,14 @@
         Entrar
       </v-btn>
     </v-app-bar>
-    <v-main style="background-color: #ebedef">
-      <v-container style="background-color: #ebedef">
+    <v-main style="background-color: #ffffff">
+      <v-container  style="background-color: #ffffff">
         <nuxt />
       </v-container>
     </v-main>
-    <v-footer>
-      Criado por Eduarda Ramos e Rafael Correia
+    <v-footer elevation="1">
+      <div class="font-weight-thin" style="font-size: 10px">Criado por Eduarda Ramos e Rafael Correia</div>
     </v-footer>
-    <!--TODO criar um footer com ligação para uma página de contacto-->
   </v-app>
 </template>
 

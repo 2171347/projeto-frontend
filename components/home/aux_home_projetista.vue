@@ -17,6 +17,16 @@
             <v-toolbar-title class="d-flex justify-center">Projetos</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <div v-on="on">
+                  <v-btn icon v-on="on" @click="toProjetos" :disabled="projetos.length === 0">
+                    <v-icon>mdi-view-list</v-icon>
+                  </v-btn>
+                </div>
+              </template>
+              <span>Listar todos os projetos</span>
+            </v-tooltip>
+            <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn icon v-bind="attrs" v-on="on" @click="criarProjeto">
                   <v-icon>mdi-plus</v-icon>
@@ -25,17 +35,24 @@
               <span>Criar um novo projeto.</span>
             </v-tooltip>
           </v-toolbar>
-          <v-card-text>
-            <v-data-table
-              :headers="headers"
-              :items="projetos"
-              class="elevation-1"
-            >
-              <template v-slot:item.actions="{ item }">
-                <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
-              </template>
-            </v-data-table>
-          </v-card-text>
+          <template v-if="projetos.length === 0" >
+            <v-card-text style="margin-top: 15px">
+              <p>De momento não tem projetos.</p>
+            </v-card-text>
+          </template>
+          <template v-if="projetos.length !== 0" >
+            <v-card-text>
+              <v-data-table
+                :headers="headers"
+                :items="projetos"
+                class="elevation-1"
+              >
+                <template v-slot:item.actions="{ item }">
+                  <v-btn x-small @click="toDetalhes(item)">Detalhes</v-btn>
+                </template>
+              </v-data-table>
+            </v-card-text>
+          </template>
         </v-card>
       </v-col>
       <v-col md="3">
@@ -43,7 +60,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="4">
+      <v-col md="4">
         <aux_suporte_component/>
       </v-col>
     </v-row>
@@ -130,6 +147,9 @@ name: "aux_home_projetista",
         this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
         this.snackbar = true;
       })
+    },
+    toProjetos(){
+      this.$router.push('/projetos');
     },
     async criarProjeto() {
       if (

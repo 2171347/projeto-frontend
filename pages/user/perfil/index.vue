@@ -1,6 +1,7 @@
 <template>
   <div>
     <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
+    <aux_editar_perfil v-if="dialog_editar_perfil"/>
     <v-dialog v-model="dialog_password" max-width="490">
       <v-card>
         <v-card-title class="headline">
@@ -37,7 +38,7 @@
         <v-card>
           <v-card-title>Dados do Utilizador
           <v-spacer></v-spacer>
-          <v-btn x-small to="/user/perfil/editar">Editar Perfil</v-btn>
+          <v-btn x-small @click.stop="dialog_editar_perfil = true">Editar Perfil</v-btn>
           <v-btn x-small @click.stop="dialog_password = true">Alterar Password</v-btn></v-card-title>
           <v-card-text>
             <p><b>Nome:</b> {{this.user.nome}}</p>
@@ -56,6 +57,8 @@
 
 <script>
 import aux_snackbar from "../../../components/aux_snackbar";
+import aux_editar_perfil from "../../../components/aux_editar_perfil";
+
 export default {
   name: "perfil",
   data: () => {
@@ -63,6 +66,7 @@ export default {
       user:'',
       // Dados para editar password:
       dialog_password: false,
+      dialog_editar_perfil: false,
       old_password:'',
       new_password:'',
       confirmation_password:'',
@@ -179,7 +183,8 @@ export default {
     this.getUser()
   },
   components:{
-    aux_snackbar
+    aux_snackbar,
+    aux_editar_perfil
   },
 
 

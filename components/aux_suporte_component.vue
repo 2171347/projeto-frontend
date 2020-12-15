@@ -51,12 +51,7 @@
         </v-card-text>
         <v-card-actions class="pt-3">
           <v-spacer></v-spacer>
-          <v-btn
-            color="grey"
-            text
-            class="body-2 font-weight-bold"
-            @click="dialog_detalhes = false"
-          >Fechar</v-btn>
+          <v-btn color="grey" text class="body-2 font-weight-bold" @click="dialog_detalhes = false">Fechar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

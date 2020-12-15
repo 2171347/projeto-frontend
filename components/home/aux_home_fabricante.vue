@@ -8,20 +8,27 @@
             <v-toolbar>
             <v-toolbar-title>Variantes Selecionadas</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-text-field
-                v-model="search"
-                label="Pesquisa"
-                hide-details
-                prepend-inner-icon="mdi-magnify"
-                class="shrink"
-              ></v-text-field>
+                <v-text-field
+                  v-if="variantes.length!== 0"
+                  v-model="search"
+                  label="Pesquisa"
+                  hide-details
+                  prepend-inner-icon="mdi-magnify"
+                  class="shrink"
+                ></v-text-field>
               <v-spacer></v-spacer>
             </v-toolbar>
-            <v-card-text>
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
-              </v-data-table>
-            </v-card-text>
-
+            <template>
+              <v-card-text style="margin-top: 15px">
+                <p>De momento não tem variantes selecionadas.</p>
+              </v-card-text>
+            </template>
+            <template v-if="variantes.length !== 0">
+              <v-card-text>
+                <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search">
+                </v-data-table>
+              </v-card-text>
+            </template>
           </v-card>
         </v-col>
         <v-col md="3">
@@ -77,7 +84,6 @@ export default {
     getVariantesSelecionadas(){
       this.$axios.$get('/api/variantes/fabricante/' + this.$auth.user.sub)
         .then((variantes) => {
-          console.log(variantes)
           this.variantes = variantes;
         })
     }

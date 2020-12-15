@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="500"  min-height="150px">
+  <v-card class="mx-auto" max-width="500"  min-height="150px" >
       <v-toolbar>
         <v-toolbar-title>Notificações</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -114,5 +114,17 @@ export default {
 </script>
 
 <style scoped>
+html {
+  overflow: hidden !important;
+}
 
+.v-card {
+  display: flex !important;
+  flex-direction: column;
+}
+
+.v-card__text {
+  flex-grow: 1;
+  overflow: auto;
+}
 </style>
