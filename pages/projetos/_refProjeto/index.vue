@@ -30,7 +30,6 @@
       </v-card>
     </v-dialog>
 
-
     <!--    DIALOG para adicionar uma observação ao projeto           -->
     <v-dialog v-model="dialog_observacao" max-width="490">
       <v-card>
@@ -82,6 +81,68 @@
     </v-dialog>
 <!--    FIM DO EDITAR PROJETO-->
 
+<!-- DIALOG PARA ADICIONAR ESTRUTURA-->
+    <v-dialog v-model="dialog_adicionar_estrutura" max-width="490">
+      <v-card style="margin-top: 10px">
+        <v-card-title>
+          Adicionar Estrutura
+        </v-card-title>
+      <v-card-text>
+        <validation-observer ref="observer_add_estrutura" v-slot="{ invalid }">
+          <validation-provider v-slot="{ errors }" name="Nome" rules="required|max:30">
+            <v-text-field
+              v-model="nome_estrutura"
+              :counter="30"
+              :error-messages="errors"
+              label="Nome:"
+              required
+            ></v-text-field>
+          </validation-provider>
+          <validation-provider v-slot="{ errors }" name="nVaos" rules="required|numeric">
+            <v-text-field
+              v-model="nVaos_estrutura"
+              :counter="30"
+              :error-messages="errors"
+              label="Número de vãos:"
+              required
+            ></v-text-field>
+          </validation-provider>
+          <validation-provider v-slot="{ errors }" name="comprimentoVaos" rules="required|numeric">
+            <v-text-field
+              v-model="comprimentoVaos_estrutura"
+              :counter="30"
+              :error-messages="errors"
+              label="Comprimento dos Vãos (metros):"
+              required
+            ></v-text-field>
+          </validation-provider>
+          <validation-provider v-slot="{ errors }" name="Sobrecarga" rules="required|numeric">
+            <v-text-field
+              v-model="sobrecarga_estrutura"
+              :counter="30"
+              :error-messages="errors"
+              label="Sobrecarga:"
+              required
+            ></v-text-field>
+          </validation-provider>
+          <validation-provider v-slot="{ errors }" name="TipoMaterial" rules="required">
+            <v-select :items="tiposMaterial" item-text="nome"  item-value="id" label="Tipo de Material:" v-model="tipoMaterialSelected"  :hint="tipoMaterialSelected.descricao" return-object>
+            </v-select>
+          </validation-provider>
+        </validation-observer>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="green darken-1" text @click="dialog_adicionar_estrutura = false">
+          Cancelar
+        </v-btn>
+        <v-btn color="green darken-1" text @click="adicionarEstrutura">
+          Criar
+        </v-btn>
+      </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!--    DIALOG para enviar um email ao projetista         -->
     <v-dialog v-model="dialog_email" max-width="490">
       <v-card>
@@ -106,6 +167,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
 <!-- LOADING-->
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
@@ -212,6 +274,7 @@
             <v-toolbar>
               <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">Estruturas</v-toolbar-title>
                 <v-text-field
+                  v-if="estruturas.length !== 0"
                   v-model="search"
                   label="Pesquisa"
                   hide-details
@@ -222,15 +285,15 @@
                 <v-spacer></v-spacer>
               <v-tooltip bottom v-if="(this.tipo_utilizador ==='Projetista' || this.tipo_utilizador ==='Administrador') && this.projeto.estado === 'ANALISE'">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" @click="criarEstrutura">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="dialog_adicionar_estrutura = true">
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </template>
                 <span>Criar um nova estrutura.</span>
               </v-tooltip>
             </v-toolbar>
-            <v-card-text v-if="tipo_utilizador !=='Cliente'">
-              <v-data-table :items="estruturas" :headers="cabecalhos_estruturas" :search="search">
+            <v-card-text v-if="tipo_utilizador !=='Cliente' && estruturas.length !== 0">
+              <v-data-table :items="estruturas" :headers="cabecalhos_estruturas" :search="search" no-results-text="Nenhuma Estrutura Encontrada">
                 <template v-slot:item.actions="{ item }">
                     <v-btn x-small @click="toDetalhesEstrutura(item)">Detalhes</v-btn>
                     <v-btn x-small color="error" @click="eliminarEstrutura(item)" v-if="item.estado === 'ANALISE' && tipo_utilizador ==='Projetista'">Eliminar</v-btn>
@@ -422,8 +485,17 @@ export default {
       nome:'',
       dialog_editar_projeto:false,
       dialog_ficheiro: false,
+      dialog_adicionar_estrutura: false,
 
       file: null,
+
+      valid:true,
+      tiposMaterial:[],
+      nome_estrutura:'',
+      nVaos_estrutura:'',
+      comprimentoVaos_estrutura:'',
+      sobrecarga_estrutura:'',
+      tipoMaterialSelected:'',
 
     }
   },
@@ -705,7 +777,7 @@ export default {
             this.text = 'Edição do Projeto realizado com sucesso.';
             this.snackbar = true;
             setTimeout(() => {
-              this.snackbar= false;
+              this.snackbar = false;
             }, 2000);
           })
           .catch(error => {
@@ -713,7 +785,7 @@ export default {
             this.text = 'Ocorreu um erro com a edição do projeto.';
             this.snackbar = true;
             setTimeout(() => {
-              this.snackbar= false;
+              this.snackbar = false;
             }, 2000);
           })
       }
@@ -731,14 +803,14 @@ export default {
             this.text = 'O projeto foi eliminado com sucesso.';
             this.snackbar = true;
             setTimeout(() => {
-              this.snackbar= false;
+              this.snackbar = false;
             }, 2000);
 
             setTimeout(() => {
               this.$router.push("/projetos");
             }, 1500);
           })
-      }else{
+      } else {
         return null;
       }
     },
@@ -753,15 +825,44 @@ export default {
             this.text = 'A Estrutura foi eliminada com sucesso.';
             this.snackbar = true;
             setTimeout(() => {
-              this.snackbar= false;
+              this.snackbar = false;
             }, 2000);
             this.getProjeto();
           })
       } else {
         return null;
       }
-    }
-    ,
+    },
+
+    adicionarEstrutura(){
+      if(this.$refs.observer_add_estrutura.validate()){
+        this.loading = true;
+        this.loading_text = 'A processar dados...'
+        this.$axios.$post('/api/estruturas/', {
+          idTipoMaterial: this.tipoMaterialSelected.id,
+          nome: this.nome_estrutura,
+          numeroVaos: this.nVaos_estrutura,
+          comprimentoVao: this.comprimentoVaos_estrutura,
+          sobrecarga: this.sobrecarga_estrutura
+
+        }).then((response)=>{
+          this.color = 'green lighten-1';
+          this.text = 'Estrutura foi criada com sucesso.';
+          this.snackbar = true;
+          this.dialog_adicionar_estrutura = false;
+          this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/add/'+response.referencia)
+          .then(()=>{
+            this.getProjeto();
+          })
+        }).catch(error =>{
+          console.log(error)
+          this.color = 'red';
+          this.text = 'Ocorreu um erro.';
+          this.snackbar = true;
+        })
+      }
+    },
+
     sendEmail() {
       this.date = new Date();
       this.$axios.post('/api/emails/' + this.projeto.emailProjetista + '/sendto/' + this.$auth.user.sub, {
@@ -772,7 +873,7 @@ export default {
         this.text = 'Email enviado com sucesso.';
         this.snackbar = true;
         setTimeout(() => {
-          this.snackbar= false;
+          this.snackbar = false;
         }, 2000);
         this.dialog_email = false;
         this.subject = "";
@@ -783,26 +884,31 @@ export default {
         this.text = 'Ocorreu um erro ao enviar o email.';
         this.snackbar = true;
         setTimeout(() => {
-          this.snackbar= false;
+          this.snackbar = false;
         }, 2000);
       })
-    }
-    ,
+    },
     toDetalhesEstrutura(item) {
       this.$router.push('/projetos/' + this.projeto.referencia + '/estruturas/' + item.referencia);
-    }
-    ,
-    criarEstrutura() {
-      this.$router.push('/projetos/' + this.projeto.referencia + '/estruturas/criar');
-    }
-    ,
+    },
     getTipoUtilizador() {
       this.tipo_utilizador = this.$auth.user.groups[0];
-    }
     },
+    getTiposMaterial() {
+      this.$axios.$get('/api/tipos_material/all')
+        .then((response) => {
+          this.tiposMaterial = response;
+
+        }).catch(error => {
+      })
+    },
+
+
+  },
   created() {
     this.getProjeto()
     this.getTipoUtilizador()
+    this.getTiposMaterial()
   },
   components: {
     ValidationObserver: ValidationObserver,
