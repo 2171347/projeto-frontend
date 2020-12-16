@@ -1,7 +1,7 @@
 <template>
   <div>
     <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
-    <v-dialog v-model="dialog_criar_pedido_suporte" max-width="800px" @keydown.esc="dialog_criar_pedido_suporte = false">
+    <v-dialog v-model="dialog_criar_pedido_suporte" max-width="800px" @keydown.esc="closeDialogCriar">
       <v-card>
         <v-card>
           <v-card-title class="headline">
@@ -25,7 +25,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="error" text @click="dialog_criar_pedido_suporte = false">
+            <v-btn color="error" text @click="closeDialogCriar">
               Cancelar
             </v-btn>
             <v-btn color="success" text  @click="sendPedido">
@@ -134,6 +134,11 @@ export default {
         this.tiposPedidoSuporte = ['Erro em projeto', 'Reportar um erro', 'Outro'];
       }
     },
+    closeDialogCriar(){
+      this.dialog_criar_pedido_suporte = false;
+      this.mensagem = '';
+      this.tipoPedido = '';
+    },
     toDetalhes(item){
       this.pedidoDetails = item;
       this.dialog_detalhes = true;
@@ -147,6 +152,7 @@ export default {
         this.text = "Pedido de suporte enviado com sucesso."
         this.color = 'success';
         this.snackbar = true;
+        this.closeDialogCriar()
         setTimeout(() => {
           this.snackbar= false;
         }, 2000);

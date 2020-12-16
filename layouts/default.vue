@@ -54,24 +54,7 @@
       v-if="this.$auth.user.groups.includes('Administrador')"
     >
     <sidebar_admin v-if="this.$auth.user.groups.includes('Administrador')"/>
-      <!--<v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-          :disabled="item.active"
-          style="height: 20px;"
-        >
-          <v-list-item-action class="black&#45;&#45;text">
-            <v-icon class="black&#45;&#45;text">{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title class="black&#45;&#45;text" v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>-->
+
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app color="amber darken-1">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="this.$auth.user.groups.includes('Administrador')"/>
@@ -158,80 +141,6 @@ export default {
         { text: 'Ação', value: 'action' },
       ],
 
-      items_cliente: [
-        {
-          icon: 'mdi-apps',
-          title: 'Consultar Projetos',
-          to: '/projetos/',
-        },
-
-      ],
-      items_projetista: [
-        {
-          icon: 'mdi-apps',
-          title: 'Consultar Projetos',
-          to: '/projetos/'
-        },
-        {
-          icon: 'mdi-plus-circle',
-          title: 'Criar Projeto',
-          to: '/projetos/criar'
-        },
-        {
-          icon: 'mdi-puzzle',
-          title: 'Simulador',
-          to: ''
-        }
-      ],
-      items_fabricante: [
-        {
-          icon: 'mdi-apps',
-          title: 'Produtos',
-          to: '/produtos/'
-        },
-        {
-          icon: 'mdi-plus-circle',
-          title: 'Criar Produto',
-          to: '/produtos/criar'
-        },
-      ],
-      items_admin: [
-        {
-          icon: 'mdi-apps',
-          title: 'Listar Projetos',
-          to: '/projetos/'
-        },
-        {
-          icon: 'mdi-account-box-multiples',
-          title: 'Listar Utilizadores',
-          to: ''
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'Listar Produtos',
-          to: '/produtos/'
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'Tipos Material',
-          to: ''
-        },
-        {
-          icon: 'mdi-plus-circle',
-          title: 'Tipos de Material',
-          to: '/tipo_material/criar'
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'Familias de Material',
-          to: ''
-        },
-        {
-          icon: 'mdi-plus-circle',
-          title: 'Criar Familia de Mat.',
-          to: '/tipo_material/criar'
-        },
-      ],
     }
   },
   methods:{
