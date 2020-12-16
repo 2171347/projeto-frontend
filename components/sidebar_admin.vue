@@ -1,27 +1,42 @@
 <template>
-    <v-card
-      class="mx-auto"
-      max-width="300"
-      tile
-    >
+    <v-card class="mx-auto" max-width="300" tile>
       <v-list flat>
-        <v-subheader>REPORTS</v-subheader>
-        <v-list-item-group
-          v-model="selectedItem"
-          color="primary"
-        >
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-          >
+        <v-subheader>Utilizadores</v-subheader>
+        <v-list-item-group color="primary">
+          <v-list-item>
             <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
+              <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title v-text="item.text"></v-list-item-title>
+              <v-list-item-title>Gerir Utilizadores</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
+        <v-divider></v-divider>
+        <v-subheader>Projetos</v-subheader>
+        <v-list-item-group color="primary">
+          <v-list-item to="/projetos">
+            <v-list-item-icon>
+              <v-icon>mdi-view-list</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Gerir Projetos</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+        <v-divider></v-divider>
+        <v-subheader>Produtos</v-subheader>
+        <v-list-item-group color="primary">
+          <v-list-item to="/projetos">
+            <v-list-item-icon>
+              <v-icon>mdi-view-list</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Gerir Produtos</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+        <v-divider></v-divider>
       </v-list>
     </v-card>
 </template>
