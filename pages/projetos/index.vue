@@ -37,34 +37,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-navigation-drawer
-      v-model="drawer"
-      :clipped="clipped"
-      fixed
-      app
-      color= "#ADADAD"
-      light
-    >
-    <v-checkbox v-model="checkboxAnalise" label="Projetos em analise" @click="filtrarProjetos"></v-checkbox>
-      <!--<v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-          :disabled="item.active"
-          style="height: 20px;"
-        >
-          <v-list-item-action class="black&#45;&#45;text">
-            <v-icon class="black&#45;&#45;text">{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title class="black&#45;&#45;text" v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>-->
-    </v-navigation-drawer>
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
@@ -153,7 +125,6 @@ export default {
 
       loading: true,
       loading_text:'',
-      aux_loading: false,
 
       headers: [
        {  text: 'Nome Projeto',
@@ -189,21 +160,18 @@ export default {
         this.$axios.$get('/api/clientes/'+this.$auth.user.sub+'/projetos')
           .then((response) => {
             this.projetos = response;
-            this.aux_loading = true;
           })
       }
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub+'/projetos')
           .then((response) => {
             this.projetos = response;
-            this.aux_loading = true;
           })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/projetos/all')
           .then((response) => {
             this.projetos = response;
-            this.aux_loading = true;
           })
       }
       setTimeout(() => {

@@ -3,7 +3,7 @@
       <v-list flat>
         <v-subheader>Utilizadores</v-subheader>
         <v-list-item-group color="primary">
-          <v-list-item>
+          <v-list-item to="/utilizadores/">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
