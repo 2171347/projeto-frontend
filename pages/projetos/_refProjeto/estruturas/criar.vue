@@ -100,14 +100,14 @@ export default {
           comprimentoVao: this.comprimentoVaos,
           sobrecarga: this.sobrecarga
 
-        }).then(()=>{
+        }).then((response)=>{
           console.log("2")
           this.color = 'green lighten-1';
           this.text = 'Estrutura foi criada com sucesso.';
           this.snackbar = true;
           setTimeout(() => {
             this.$router.go(-1)
-          }, 1500);
+          }, 1000);
 
         }).catch(error =>{
           console.log(error)
@@ -118,11 +118,12 @@ export default {
       }
 
     },
-    getTiposMaterial(){
-      this.$axios.$get('/api/tipos_material/all').then((response)=>{
-        this.tiposMaterial = response;
+    getTiposMaterial() {
+      this.$axios.$get('/api/tipos_material/all')
+        .then((response) => {
+          this.tiposMaterial = response;
 
-      }).catch( error =>{
+        }).catch(error => {
       })
     },
   },

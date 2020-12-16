@@ -92,6 +92,7 @@
                         multi-sort
                         show-select
                         hide-default-footer
+                        disable-pagination
                         no-data-text="Sem produtos para adicionar."
                       ></v-data-table>
                     </td>
@@ -203,16 +204,19 @@ export default {
       for (let i in this.selected) {
         this.$axios.$put('/api/estruturas/' + this.$route.params.refEstrutura + '/addVariante/' + this.selected[i].codigo)
         .then(()=> {
+          this.color = 'green';
+          this.text = 'Produtos adicionados.';
+          this.snackbar = true;
           console.log("Adicionado")
+          this.getProdutos();
         })
         .catch( error => {
           this.erro();
         })
       }
-      setTimeout(() => {
-        this.getProdutos();
-      }, 1000);
-
+      // setTimeout(() => {
+      //   this.getProdutos();
+      // }, 1000);
     },
   },
   erro (){

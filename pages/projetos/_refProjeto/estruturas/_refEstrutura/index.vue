@@ -265,6 +265,7 @@
                 Produtos
               </v-toolbar-title>
               <v-text-field
+                v-if="variantes.length !== 0"
                 v-model="search"
                 label="Pesquisa"
                 hide-details
