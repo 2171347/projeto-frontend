@@ -77,43 +77,6 @@
             <aux_suporte_component/>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col md="9">
-            <v-card>
-              <v-toolbar>
-                <v-toolbar-title>Minhas Variantes</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-text-field
-                  v-if="variantes.length!== 0"
-                  v-model="search"
-                  label="Pesquisa"
-                  hide-details
-                  prepend-inner-icon="mdi-magnify"
-                  class="shrink"
-                ></v-text-field>
-                <v-spacer></v-spacer>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <div v-on="on">
-                      <v-btn icon v-on="on" @click="toProjetos" :disabled="variantes.length === 0">
-                        <v-icon>mdi-view-list</v-icon>
-                      </v-btn>
-                    </div>
-                  </template>
-                  <span>Listar todos as variantes</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on" @click="criarProjeto">
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Criar uma nova variante.</span>
-                </v-tooltip>
-              </v-toolbar>
-            </v-card>
-          </v-col>
-        </v-row>
       </v-card-text>
     </v-card>
   </div>

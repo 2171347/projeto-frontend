@@ -25,6 +25,12 @@
                   required
                 ></v-text-field>
               </validation-provider>
+              <validation-provider v-slot="{ errors }" name="Tipo Material" rules="required">
+                <v-select :items="tiposMaterial" item-value="id" item-text="nome" v-model="tipoMaterialSelecionado" label="Tipo de Material:"></v-select>
+              </validation-provider>
+              <validation-provider v-slot="{ errors }" name="Familia Material" rules="required">
+                <v-select :items="familiasMaterial" item-value="id" item-text="nome" v-model="familiaMaterialSelecionado" label="Familia de Material:"></v-select>
+              </validation-provider>
               <v-btn :disabled="invalid" color="success" small @click="createProduto">
                 Criar
               </v-btn>
@@ -55,6 +61,10 @@ export default {
       dialog_criar_produto: false,
       nome:'',
       refFabricante:'',
+      tiposMaterial:'',
+      tipoMaterialSelecionado:'',
+      familiasMaterial:'',
+      familiaMaterialSelecionado:'',
     }
   },
   methods:{
@@ -67,44 +77,41 @@ export default {
       });
     },
     getTiposMaterial(){
-      this.$axios.$get('/api/tipos_material/')
+      this.$axios.$get('/api/tipos_material/all').then((response)=>{
+        this.tiposMaterial = response;
+      })
+    },
+    getFamiliasMaterial(){
+      this.$axios.$get('/api/familia_material/all').then((response)=>{
+        this.familiasMaterial = response;
+        console.log(response)
+      })
     },
     createProduto(){
       // Verificar se o email do cliente corresponde a um cliente:
-      this.$axios.$get('/api/clientes/'+this.emailCliente+'/iscliente').then((response) => {
-        if(response.value !== true){
-          this.text = "O email inserido não corresponde a um email de um cliente. Por favor tente novamente."
-          this.color = "error"
+      this.$axios.$post('/api/produtos/',{
+        referenciaFabricante: this.refFabricante,
+        nome: this.nome,
+        emailFabricante: this.$auth.user.sub,
+        idTipoMaterial: this.tipoMaterialSelecionado,
+        idFamiliaMaterial: this.familiaMaterialSelecionado,
+      }).then((response) => {
+          this.text = "Produto criado com sucesso"
+          this.color = "success"
           this.snackbar = true;
           setTimeout(() => {
             this.snackbar= false;
           }, 2000);
-          return null;
-        }
-      })
-
-      // Criar o novo projeto:
-      this.$axios.$post('/api/projetos', {
-        nome: this.nome,
-        referencia: "PR_"+this.nome,
-        emailCliente: this.emailCliente,
-        emailProjetista: this.$auth.user.sub
-      }).then(()=>{
-        this.color = 'green lighten-1';
-        this.text = 'Projeto criado com sucesso.';
+          this.dialog_criar_produto = false;
+      }).catch((error)=>{
+        this.text = "Erro ao criar produto."
+        this.color = "error"
         this.snackbar = true;
         setTimeout(() => {
           this.snackbar= false;
         }, 2000);
-        this.resolve(true);
-        this.dialog_criar_projeto = false;
-        this.cleanFields()
-
-      }).catch(error =>{
-        /*this.color = 'red';
-        this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
-        this.snackbar = true;*/
       })
+
     },
     cancel(){
       this.resolve(false);
@@ -118,7 +125,8 @@ export default {
     }
   },
   created() {
-
+    this.getTiposMaterial();
+    this.getFamiliasMaterial();
   },
   components:{
     ValidationObserver: ValidationObserver,
