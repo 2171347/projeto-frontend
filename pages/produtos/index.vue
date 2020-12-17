@@ -15,37 +15,46 @@
         <v-btn x-small to="/home">Página Inicial</v-btn>
       </div>
       <div v-else>
-        <v-text-field
-          v-model="search"
-          label="Pesquisa"
-          hide-details
-        ></v-text-field>
-        <template v-if="this.$auth.user.groups.includes('Fabricante')">
-          <v-data-table
-            :headers="headers_fabricante"
-            :items="produtos"
-            :search="search"
-            :items-per-page="5"
-            class="elevation-1"
-          >
-            <template v-slot:item.actions="{ item }">
-              <v-btn x-small @click="toVariantes(item)">Variantes</v-btn>
+        <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
+          Produtos
+        </v-toolbar>
+        <v-card>
+          <v-toolbar>
+            <v-text-field
+              v-model="search"
+              label="Pesquisa"
+              hide-details
+            ></v-text-field>
+          </v-toolbar>
+          <v-card-text>
+            <template v-if="this.$auth.user.groups.includes('Fabricante')">
+              <v-data-table
+                :headers="headers_fabricante"
+                :items="produtos"
+                :search="search"
+                :items-per-page="5"
+                class="elevation-1"
+              >
+                <template v-slot:item.actions="{ item }">
+                  <v-btn x-small @click="toVariantes(item)">Variantes</v-btn>
+                </template>
+              </v-data-table>
             </template>
-          </v-data-table>
-        </template>
-        <template v-if="this.$auth.user.groups.includes('Administrador')">
-          <v-data-table
-            :headers="headers"
-            :items="produtos"
-            :search="search"
-            :items-per-page="5"
-            class="elevation-1"
-          >
-            <template v-slot:item.actions="{ item }">
-              <v-btn x-small @click="toVariantes(item)">Variantes</v-btn>
+            <template v-if="this.$auth.user.groups.includes('Administrador')">
+              <v-data-table
+                :headers="headers"
+                :items="produtos"
+                :search="search"
+                :items-per-page="5"
+                class="elevation-1"
+              >
+                <template v-slot:item.actions="{ item }">
+                  <v-btn x-small @click="toVariantes(item)">Variantes</v-btn>
+                </template>
+              </v-data-table>
             </template>
-          </v-data-table>
-        </template>
+          </v-card-text>
+        </v-card>
       </div>
     </v-container>
   </div>

@@ -3,10 +3,10 @@
       <v-toolbar>
         <v-toolbar-title>Notificações</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-tooltip bottom>
+        <v-tooltip bottom  v-if="this.$store.state.num_notificacoes !== 0 ">
           <template v-slot:activator="{ on, attrs }">
             <div v-on="on">
-              <v-btn icon v-bind="attrs" v-on="on" @click="setAllNotificacoesLidas" :disabled="notificacoes.length === 0">
+              <v-btn icon v-bind="attrs" v-on="on" @click="setAllNotificacoesLidas">
                 <v-icon>mdi-check-box-outline</v-icon>
               </v-btn>
             </div>
@@ -67,7 +67,7 @@ export default {
   name: "vcard_notificacoes_homepage",
   data () {
     return {
-      notificacoes:'',
+      notificacoes:[],
       loading:false,
     }
   },

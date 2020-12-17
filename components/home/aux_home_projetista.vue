@@ -118,7 +118,7 @@ name: "aux_home_projetista",
     toDetalhes (item){
       this.$router.push('/projetos/'+item.referencia+'/');
     },
-    createProject(){
+   /* createProject(){
       // Verificar se o email do cliente corresponde a um cliente:
       this.$axios.$get('/api/clientes/'+this.emailCliente+'/iscliente').then((response) => {
         if(response.value !== true){
@@ -147,7 +147,7 @@ name: "aux_home_projetista",
         this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
         this.snackbar = true;
       })
-    },
+    },*/
     toProjetos(){
       this.$router.push('/projetos');
     },
