@@ -84,7 +84,6 @@ export default {
     getFamiliasMaterial(){
       this.$axios.$get('/api/familia_material/all').then((response)=>{
         this.familiasMaterial = response;
-        console.log(response)
       })
     },
     createProduto(){
@@ -102,6 +101,7 @@ export default {
           setTimeout(() => {
             this.snackbar= false;
           }, 2000);
+          this.cleanFields();
           this.dialog_criar_produto = false;
       }).catch((error)=>{
         this.text = "Erro ao criar produto."
@@ -115,12 +115,14 @@ export default {
     },
     cancel(){
       this.resolve(false);
-      this.dialog_criar_projeto = false;
+      this.dialog_criar_produto = false;
       this.cleanFields();
     },
     cleanFields(){
-      this.emailCliente = null;
+      this.refFabricante = null;
       this.nome = null;
+      this.familiaMaterialSelecionado = null;
+      this.tipoMaterialSelecionado = null;
       this.valid = true;
     }
   },

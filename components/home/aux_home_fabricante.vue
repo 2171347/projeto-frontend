@@ -44,7 +44,7 @@
                 <v-toolbar-title>Meus Produtos</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-text-field
-                  v-if="variantes.length!== 0"
+                  v-if="produtos.length!== 0"
                   v-model="search"
                   label="Pesquisa"
                   hide-details
@@ -71,6 +71,26 @@
                   <span>Criar um novo produto.</span>
                 </v-tooltip>
               </v-toolbar>
+              <v-card-text>
+                <template v-if="produtos.length === 0" >
+                  <v-card-text style="margin-top: 15px">
+                    <p>De momento não tem produtos.</p>
+                  </v-card-text>
+                </template>
+                <template v-if="produtos.length !== 0" >
+                  <v-card-text>
+                    <v-data-table
+                      :headers="cabecalhos_produtos"
+                      :items="produtos"
+                      class="elevation-1"
+                    >
+                      <template v-slot:item.actions="{ item }">
+                        <v-btn icon @click="toDetalhes(item)"><v-icon>mdi-information</v-icon></v-btn>
+                      </template>
+                    </v-data-table>
+                  </v-card-text>
+                </template>
+              </v-card-text>
             </v-card>
           </v-col>
           <v-col md="3">
@@ -118,6 +138,34 @@ export default {
           value: 'count',
         },
       ],
+      cabecalhos_produtos: [
+        {
+          text: 'Referencia',
+          align: 'start',
+          sortable: true,
+          value: 'referenciaFabricante',
+        }, {
+          text: 'Nome',
+          align: 'start',
+          sortable: true,
+          value: 'nome',
+        }, {
+          text: 'Tipo Material',
+          align: 'start',
+          sortable: true,
+          value: 'nomeTipoMaterial',
+        }, {
+          text: 'Familia Material',
+          align: 'start',
+          sortable: true,
+          value: 'nomeFamiliaMaterial',
+        },
+        {
+          text: 'Detalhes',
+          value: 'actions',
+        },
+      ],
+
     }
   },
   methods :{
@@ -142,11 +190,14 @@ export default {
       ) {
         this.getProjetos()
       }
+    },
+    toDetalhes(item){
+      this.$router.push('/produtos/'+item.id+'/variantes');
     }
   },
   created() {
     this.getVariantesSelecionadas()
-    this.getProdutos()
+    this.getProdutos();
   },
   components:{
     vcard_notificacoes_homepage,
