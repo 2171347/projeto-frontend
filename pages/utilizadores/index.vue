@@ -1,6 +1,7 @@
 <template>
   <div>
     <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
+    <aux_criar_admin ref="criarAdminDialog"/>
     <v-dialog @keydown.esc="dialogInfoUser = false" v-model="dialogInfoUser" max-width="500px">
       <v-card>
         <v-toolbar>
@@ -54,6 +55,17 @@
           </v-text-field>
           <v-spacer></v-spacer>
           <v-select :items="filtro_estado" v-model="estadoSelecionado" @change="filtrarPorEstado" label="Estado" style="margin-top: 31px"></v-select>
+          <v-spacer></v-spacer>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-btn icon v-on="on" @click="criarAdmin" >
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </div>
+            </template>
+            <span>Criar administrador</span>
+          </v-tooltip>
         </v-toolbar>
         <v-card-text>
           <v-data-table :items="users"  :headers="cabecalhos" :search="search">
@@ -98,6 +110,7 @@
 <script>
 import aux_dialog_confirmacao from "../../components/aux_dialog_confirmacao";
 import aux_snackbar from "../../components/aux_snackbar";
+import aux_criar_admin from "../../components/aux_criar_admin";
 export default {
   name: "index",
   data: () => {
@@ -109,6 +122,7 @@ export default {
       // ------------------------
       loading:true,
       detalhesUser:'',
+      dialogCriarAdmin: false,
       loading_text:'',
       users:[],
       search:'',
@@ -134,6 +148,13 @@ export default {
       this.$axios.get('/api/administradores/' + this.$auth.user.sub).then((response)=>{
         this.detalhesUser = response.data;
       })
+    },
+    async criarAdmin() {
+      if (
+        await this.$refs.criarAdminDialog.open()
+      ) {
+        this.getUsers()
+      }
     },
     getUsers(){
       this.$axios.get('/api/users/all').then((response)=>{
@@ -245,7 +266,8 @@ export default {
   },
   components: {
     aux_dialog_confirmacao,
-    aux_snackbar
+    aux_snackbar,
+    aux_criar_admin,
   }
 }
 </script>
