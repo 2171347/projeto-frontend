@@ -162,7 +162,7 @@
             Cancelar
           </v-btn>
           <v-btn color="green darken-1" text @click="sendEmail">
-            Guardar
+            Enviar
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -406,6 +406,7 @@ import {ValidationObserver, ValidationProvider} from "vee-validate";
 import error from "@/layouts/error";
 import aux_dialog_confirmacao from "../../../components/aux_dialog_confirmacao";
 import aux_snackbar from "../../../components/aux_snackbar";
+
 export default {
   data: () => {
     return {
@@ -865,16 +866,13 @@ export default {
 
     sendEmail() {
       this.date = new Date();
-      this.$axios.post('/api/emails/' + this.projeto.emailProjetista + '/sendto/' + this.$auth.user.sub, {
+      this.$axios.post('/api/emails/' + this.$auth.user.sub + '/sendto/' + this.projeto.emailProjetista, {
         subject: '[Projeto +] [' + this.projeto.referencia + '] ' + this.subject,
         message: '[Mensagem do cliente] \n ' + this.message + '\n [' + this.date + ']'
       }).then(() => {
         this.color = 'green lighten-1';
         this.text = 'Email enviado com sucesso.';
         this.snackbar = true;
-        setTimeout(() => {
-          this.snackbar = false;
-        }, 2000);
         this.dialog_email = false;
         this.subject = "";
         this.message = ""
@@ -883,9 +881,6 @@ export default {
         this.color = 'red darken-1';
         this.text = 'Ocorreu um erro ao enviar o email.';
         this.snackbar = true;
-        setTimeout(() => {
-          this.snackbar = false;
-        }, 2000);
       })
     },
     toDetalhesEstrutura(item) {

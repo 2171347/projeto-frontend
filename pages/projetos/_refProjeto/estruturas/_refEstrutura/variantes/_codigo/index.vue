@@ -87,7 +87,55 @@
               <p><b>Peso próprio:</b> {{ variante.pp }} </p>
               <p><b>Tensão de cedência (Σ):</b> {{ variante.sigmaC }}</p>
               <p><b>Modo Elástico Positivo:</b> {{ variante.weff_p }}</p>
-              <p><b>Modo Elástico Negativo:</b> {{ variante.weff_n  }}</p>
+              <p><b>Modo Elástico Negativo:</b> {{ variante.weff_n }}</p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col md="3">
+          <v-card>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                MCR_P
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <div v-on="on">
+                    <v-icon>mdi-information</v-icon>
+                  </div>
+                </template>
+                <span>Movimentos Criticos Positivos</span>
+              </v-tooltip>
+            </v-toolbar>
+            <v-card-text>
+              <v-data-table :items="mcr_p" :headers="cabecalhos_mcr" hide-default-footer hide-default-header>
+
+              </v-data-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col md="3">
+          <v-card>
+            <v-toolbar>
+              <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                MCR_N
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <div v-on="on">
+                    <v-icon>mdi-information</v-icon>
+                  </div>
+                </template>
+                <span>Movimentos Criticos Negativos</span>
+              </v-tooltip>
+            </v-toolbar>
+            <v-card-text>
+              <v-data-table :items="mcr_n" :headers="cabecalhos_mcr" hide-default-footer hide-default-header>
+
+              </v-data-table>
             </v-card-text>
           </v-card>
         </v-col>
@@ -109,21 +157,36 @@ export default {
       y: 'top',
       // ------------------------
 
-      email_app:'noreply@projeto.com',
-      email_assunto:'[Projeto +]',
+      email_app: 'noreply@projeto.com',
+      email_assunto: '[Projeto +]',
       dialog_observacao: false,
       dialog_email: false,
       produto: "",
-      estrutura:"",
-      variante:"",
-      fabricante:"",
-      subject:'',
-      message:'',
-      observacao:'',
-      date:'',
+      estrutura: "",
+      variante: "",
+      fabricante: "",
+      subject: '',
+      message: '',
+      observacao: '',
+      date: '',
+      mcr_p: [],
+      mcr_n: [],
+
+      cabecalhos_mcr: [{
+        text: '',
+        align: 'start',
+        sortable: false,
+        value: 'key',
+      }, {
+        text: '',
+        align: 'start',
+        sortable: false,
+        value: 'value',
+      },
+      ],
 
       loading: true,
-      loading_text:'',
+      loading_text: '',
 
       caminhos: [
         {
@@ -132,17 +195,17 @@ export default {
           href: '/projetos/',
         },
         {
-          text:'',
+          text: '',
           disabled: false,
           href: 'breadcrumbs_link_1',
         },
         {
-          text:'',
+          text: '',
           disabled: false,
           href: 'breadcrumbs_link_1',
         },
         {
-          text:'',
+          text: '',
           disabled: true,
           href: 'breadcrumbs_link_1',
         },
@@ -170,20 +233,28 @@ export default {
       this.$axios.$get('/api/variantes/'+this.$route.params.codigo)
         .then((variante) => {
           this.variante = variante;
+          this.mcr_p = this.textSplit(variante.mcr_p)
+          this.mcr_n = this.textSplit(variante.mcr_n)
           this.getProduto(variante.produtoID);
         })
+    },
+    textSplit(text){
+      let mcr = [];
+      text = text.trim("")
+      let split1 = text.split(',');
+      for(let par of split1) {
+        let split2 = par.split(":")
+        if (split2[0] !== ""){
+          let aux = {key: split2[0], value: split2[1]}
+          mcr.push(aux)
+        }
+      }
+      return mcr;
     },
     getEstrutura(){
       this.$axios.$get('/api/estruturas/'+this.$route.params.refEstrutura)
         .then((estrutura) => {
           this.estrutura = estrutura;
-        })
-    },
-    getFabricante(email){
-      //TODO é forbidden
-      this.$axios.$get('/api/fabricantes/'+email)
-        .then((fabricante) => {
-          this.fabricante = fabricante;
         })
     },
     sendEmail(){
