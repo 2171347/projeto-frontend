@@ -199,7 +199,7 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
-                    <v-btn icon v-on="on" @click.stop="dialog_editar_projeto=true" >
+                    <v-btn icon v-on="on" v-if="tipo_utilizador !== 'Cliente' && projeto.estado !== 'APROVADO'" @click.stop="dialog_editar_projeto=true" >
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                   </div>
