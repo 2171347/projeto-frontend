@@ -168,7 +168,12 @@ export default {
     },
     getPedidosSuporte(){
       this.$axios.$get('/api/support_message/send_by/'+this.$auth.user.sub).then((response)=>{
-        this.pedidosSuporte = response;
+       // this.pedidosSuporte = response;
+        for (let aux in response) {
+          if (response[aux].hasOwnProperty(answeredAt)) {
+            this.pedidosSuporte.push(response[aux]);
+          }
+        }
       })
     }
   },
