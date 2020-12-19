@@ -35,16 +35,13 @@
               <validation-provider v-slot="{ errors }" name="NIF" rules="numeric|length:9">
                 <v-text-field label="NIF:" :error-messages="errors" v-model="user.numContribuinte"></v-text-field>
               </validation-provider>
-              <v-text-field label="Rua:" :error-messages="errorsMorada" v-model="rua"></v-text-field>
-              <v-text-field label="Código-Postal:" v-model="codigoPostal"></v-text-field>
-              <v-text-field label="Localidade:" v-model="localidade"></v-text-field>
-
+              <v-text-field label="Morada:" v-model="user.morada"></v-text-field>
 
               <div class="d-flex justify-center align-center">
-                <v-btn class="mr-4" small type="submit" color="success" :disabled="invalid">
+                <v-btn class="mr-4" small @click="checkEmailDisponivel" color="success" :disabled="invalid">
                   Guardar
                 </v-btn>
-                <v-btn small color="error">Cancelar</v-btn>
+                <v-btn small color="error" @click="cancel">Cancelar</v-btn>
               </div>
             </form>
           </validation-observer>
@@ -63,18 +60,12 @@ export default {
 
   data: () => {
     return {
-      display: true,
+      emailValid:false,
+      display: false,
       user:'',
       user_dados_originais:'',
-      rua:'',
-      codigoPostal:'',
-      localidade:'',
-      auxiliarMorada:'',
-      errorsMorada:'',
-      errorsNif:'',
-      errorsContacto:'',
+      morada:'',
       email:'',
-      moradaSending:'',
 
       // ---- SNACKBAR INFO -----
       color: '',
@@ -85,123 +76,111 @@ export default {
   },
   methods:{
     checkEmailDisponivel(){
-      this.$axios.get('/api/users/'+this.email).then((response) => {
-        if (response.data.value === true){
-          this.text = "O email inserido já está a ser utilizado. Tente novamente."
-          this.color = "error"
-          this.snackbar = true;
-          setTimeout(() => {
-            this.snackbar= false;
-          }, 2000);
+      if (this.user.email !== this.email) {
+        console.log("é diferente")
+        this.$axios.get('/api/users/'+this.email).then((response) => {
+          if (response.data.value === true){
+            this.text = "O email inserido já está a ser utilizado. Tente novamente."
+            this.color = "error"
+            this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
+            this.email = this.user.email
+            return false;
+          }else{
+            this.submit();
+          }
+        })
+      } else {
+        this.submit()
+      }
 
-          this.email = this.user.email
-          return null;
-        }else{
-          this.errorsEmail='';
-        }
-      })
     },
-    submit () {
-      if(this.$refs.observer.validate()){
-        //Validar os campos
-
-        if (!this.localidade || !this.rua|| !this.codigoPostal) {
-          this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-          return null;
-        }
-        if(this.errorsMorada !== ""){
-          this.errorsMorada = '';
-        }
-
-        //Validar o email
-        if(this.user.email != this.email){
-          this.checkEmailDisponivel();
-        }
+    open() {
+      this.display = true;
+      this.valid = true
+      return new Promise((resolve, reject) => {
+        this.resolve = resolve;
+        this.reject = reject;
+      });
+    },
+    cancel(){
+      this.resolve(false);
+      this.display = false;
+    },
+    submit() {
+      if (this.$refs.observer.validate()) {
 
         // Definir a rota com base no tipo de utilizador
-        if (this.$auth.user.groups.includes('Cliente')){
-          this.url="/api/clientes/"
-        }if (this.$auth.user.groups.includes('Fabricante')){
-          this.url="/api/fabricantes/"
-        }if (this.$auth.user.groups.includes('Projetista')){
-          this.url="/api/projetistas/"
+          if (this.$auth.user.groups.includes('Cliente')) {
+            this.url = "/api/clientes/"
+          }
+          if (this.$auth.user.groups.includes('Fabricante')) {
+            this.url = "/api/fabricantes/"
+          }
+          if (this.$auth.user.groups.includes('Projetista')) {
+            this.url = "/api/projetistas/"
+          }
+
+          //Enviar os dados para o update do utilizador
+          this.$axios.$put(this.url + this.user.email, {
+            nome: this.user.nome,
+            email: this.email,
+            password: this.user.password,
+            morada: this.user.morada,
+            contactoTelefonico: this.user.contactoTelefonico,
+            numContribuinte: this.user.numContribuinte,
+          })
+            .then(() => {
+              this.color = 'green';
+              this.text = 'O seu registo foi feito com sucesso.';
+              this.snackbar = true;
+              setTimeout(() => {
+                this.snackbar = false;
+              }, 2000);
+              this.resolve(true);
+              this.display = false;
+              this.getUser()
+            })
+            .catch(error => {
+              this.color = 'error';
+              this.text = 'Ocorreu um erro com o seu registo.';
+              this.snackbar = true;
+              setTimeout(() => {
+                this.snackbar = false;
+              }, 2000);
+            })
         }
 
-        //Concatenar a morada:
-        if (this.rua === ''){
-          this.moradaSending = null;
-        }else{
-          this.moradaSending = this.rua +' | '+  this.codigoPostal +' | '+ this.localidade;
-        }
-
-        //Enviar os dados para o update do utilizador
-        this.$axios.$put(this.url + this.user.email, {
-          nome: this.user.nome,
-          email: this.email,
-          password: this.user.password,
-          morada: this.moradaSending,
-          contactoTelefonico: this.user.contacto,
-          numContribuinte: this.user.nif,
-        })
-          .then(() => {
-            this.color = 'green';
-            this.text = 'O seu registo foi feito com sucesso.';
-            this.snackbar = true;
-            setTimeout(() => {
-              this.snackbar= false;
-            }, 2000);
-
-            setTimeout(() => {
-              this.$router.go(-1)
-            }, 1500);
-          })
-          .catch(error => {
-            this.color = 'error';
-            this.text = 'Ocorreu um erro com o seu registo.';
-            this.snackbar = true;
-            setTimeout(() => {
-              this.snackbar= false;
-            }, 2000);
-          })
-      }
-    },
-
-    splitMorada(){
-      this.auxiliarMorada = this.user.morada.split('|');
-      this.rua = this.auxiliarMorada[0];
-      this.codigoPostal = this.auxiliarMorada[1];
-      this.localidade = this.auxiliarMorada[2];
     },
     getUser(){
       if (this.$auth.user.groups.includes('Cliente')){
         this.$axios.$get('/api/clientes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.email = utilizador.email;
-          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.email = utilizador.email;
-          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.email = utilizador.email;
-          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
           this.email = utilizador.email;
-          this.splitMorada();
         })
       }
     },
+
   },
   created() {
     this.getUser()

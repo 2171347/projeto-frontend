@@ -1,7 +1,7 @@
 <template>
   <div>
     <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
-    <aux_editar_perfil v-if="dialog_editar_perfil"/>
+    <aux_editar_perfil ref="editarPerfil"/>
     <v-dialog v-model="dialog_password" max-width="490">
       <v-card>
         <v-card-title class="headline">
@@ -38,16 +38,19 @@
         <v-card>
           <v-card-title>Dados do Utilizador
           <v-spacer></v-spacer>
-          <v-btn x-small @click.stop="dialog_editar_perfil = true">Editar Perfil</v-btn>
+          <v-btn x-small @click="editarPerfil">Editar Perfil</v-btn>
           <v-btn x-small @click.stop="dialog_password = true">Alterar Password</v-btn></v-card-title>
-          <v-card-text>
-            <p><b>Nome:</b> {{this.user.nome}}</p>
-            <p><b>Email:</b> {{this.user.email}}</p>
-            <p><b>Rua:</b> {{this.rua}}</p>
-            <p><b>Código Postal:</b> {{this.codigoPostal}}</p>
-            <p><b>Localidade:</b> {{this.localidade}}</p>
-            <p><b>NIF:</b> {{this.user.numContribuinte}}</p>
-            <p><b>Telefone/Telemóvel:</b> {{this.user.contactoTelefonico}}</p>
+          <v-card-text v-if="this.$auth.user.groups.includes('Administrador')">
+<!--            TODO: rota para ter os dados do admin-->
+            <p><b>Nome:</b> {{user.nome}}</p>
+            <p><b>Email:</b> {{user.email}}</p>
+          </v-card-text>
+          <v-card-text v-else>
+            <p><b>Nome:</b> {{user.nome}}</p>
+            <p><b>Email:</b> {{user.email}}</p>
+            <p><b>Morada:</b> {{user.morada}}</p>
+            <p><b>NIF:</b> {{user.numContribuinte}}</p>
+            <p><b>Telefone/Telemóvel:</b> {{user.contactoTelefonico}}</p>
           </v-card-text>
         </v-card>
       </v-col>
@@ -90,7 +93,6 @@ export default {
         },
       ],
 
-
       // ---- SNACKBAR INFO -----
       color: '',
       snackbar: false,
@@ -113,20 +115,24 @@ export default {
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.splitMorada();
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.splitMorada();
         })
+      }
+    },
+    async editarPerfil() {
+      if (
+        await this.$refs.editarPerfil.open()
+      ) {
+        this.getUser()
       }
     },
     cleanFields(){
@@ -171,12 +177,6 @@ export default {
       }).catch(error =>{
         this.error_old = "A palavra-chave introduzida não coincide com a palavra-chave atual."
       })
-    },
-    splitMorada(){
-      this.auxiliarMorada = this.user.morada.split('|');
-      this.rua = this.auxiliarMorada[0];
-      this.codigoPostal = this.auxiliarMorada[1];
-      this.localidade = this.auxiliarMorada[2];
     },
   },
   mounted() {

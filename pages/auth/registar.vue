@@ -67,7 +67,7 @@
             prepend-inner-icon="mdi-map-marker"
             v-model="morada"
             label="Morada:"
-            :error-messages="errorsMorada"
+            :error-messages="errors"
             :counter="80"
           ></v-text-field>
           </validation-provider>
