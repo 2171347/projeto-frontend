@@ -603,15 +603,16 @@ export default {
         })
           .then(() => {
             this.color = 'green';
-            this.text = 'O seu registo foi feito com sucesso.';
+            this.text = 'Dados da estrutura editados com sucesso..';
             this.snackbar = true;
+            this.getEstrutura()
             setTimeout(() => {
               this.snackbar= false;
             }, 2000);
           })
           .catch(error => {
             this.color = 'error';
-            this.text = 'Ocorreu um erro com o seu registo.';
+            this.text = 'Ocorreu um erro.';
             this.snackbar = true;
             setTimeout(() => {
               this.snackbar= false;
