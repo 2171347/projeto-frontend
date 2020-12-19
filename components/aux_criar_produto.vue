@@ -102,11 +102,13 @@ export default {
             this.snackbar= false;
           }, 2000);
           this.cleanFields();
+          this.resolve(true);
           this.dialog_criar_produto = false;
       }).catch((error)=>{
         this.text = "Erro ao criar produto."
         this.color = "error"
         this.snackbar = true;
+        this.resolve(false);
         setTimeout(() => {
           this.snackbar= false;
         }, 2000);

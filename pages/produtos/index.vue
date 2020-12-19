@@ -49,7 +49,14 @@
                 class="elevation-1"
               >
                 <template v-slot:item.actions="{ item }">
-                  <v-btn x-small @click="toVariantes(item)">Variantes</v-btn>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn v-on="on"  icon @click="toVariantes(item)">
+                        <v-icon>mdi-alpha-v-circle</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Detalhes do produtos e variantes</span>
+                  </v-tooltip>
                 </template>
               </v-data-table>
             </template>
@@ -72,6 +79,7 @@ export default {
 
       loading: true,
       loading_text: '',
+      user:'',
 
       headers_fabricante: [
         {text: 'Nome', align: 'start', sortable: true, value: 'nome',},
@@ -96,6 +104,7 @@ export default {
       this.$router.push('/produtos/' + item.id + '/variantes/');
     },
     getProdutos() {
+      this.user  = this.$auth.user.groups[0];
       this.loading = true;
       this.loading_text = "A arrumar produtos..."
       if (this.$auth.user.groups.includes('Fabricante')) {

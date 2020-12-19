@@ -96,6 +96,7 @@
                   <v-chip  class="ma-2" text-color="white" color="red">Em Espera...</v-chip>
                 </div>
             </template>
+
             </v-data-table>
           </v-card-text>
         </v-card>

@@ -188,7 +188,7 @@ export default {
       if (
         await this.$refs.criarProdutoDialog.open()
       ) {
-        this.getProjetos()
+        this.getProdutos()
       }
     },
     toDetalhes(item){

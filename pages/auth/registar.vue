@@ -53,7 +53,7 @@
               required>
             </v-text-field>
           </validation-provider>
-          <validation-provider v-slot="{  errors}" name="confirm" rules="required">
+          <validation-provider v-slot="{ errors }" name="confirm" rules="required">
             <v-text-field
               label="Confirmação da Palavra-Chave:"
               v-model="passwordConfirmation"
@@ -62,14 +62,14 @@
               type="password">
             </v-text-field>
           </validation-provider>
-          <validation-provider v-slot="{ errors }" name="Morada" rules="required">
-          <v-text-field
-            prepend-inner-icon="mdi-map-marker"
-            v-model="morada"
-            label="Morada:"
-            :error-messages="errors"
-            :counter="80"
-          ></v-text-field>
+          <validation-provider v-slot="{ errors }" name="Morada" >
+            <v-text-field
+              prepend-inner-icon="mdi-map-marker"
+              v-model="morada"
+              label="Morada:"
+              :error-messages="errors"
+              :counter="80"
+            ></v-text-field>
           </validation-provider>
           <v-row>
             <v-col md="5">
@@ -99,7 +99,7 @@
               <validation-provider v-slot="{ errors }" name="TipoUtilizador" rules="required">
                 <v-select
                   :items="tiposUtilizador"
-                  :error-messages="errorsUserType"
+                  :error-messages="errors"
                   v-model="userType"
                   label="Vou utilizar esta aplicação no papel de:"
                 ></v-select>
@@ -109,7 +109,7 @@
               <v-btn icon @click="helpDialog = true;"><v-icon small dense >mdi-help</v-icon></v-btn>
             </v-col>
           </v-row>
-          <v-btn color="success" class="mr-4" :disabled="invalid" @click="submit">Submeter</v-btn>
+          <v-btn color="success" class="mr-4" @click="submit" :disabled="invalid" >Submeter</v-btn>
           <v-btn color="error" class="mr-4" @click="cancel">
             Cancelar
           </v-btn>
@@ -140,16 +140,11 @@ export default {
     email: '',
     nif:'',
     contacto:'',
-    codigoPostal:'',
-    localidade:'',
     password:'',
     passwordConfirmation:'',
     tiposUtilizador:['Cliente', 'Fabricante', 'Projetista'],
     userType:'',
     url:'',
-    errorsEmail:'',
-    errorsUserType:'',
-    errorsPassword:'',
     date:'',
     emailValido:'',
     helpDialog:'',
