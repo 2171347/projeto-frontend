@@ -19,7 +19,7 @@
                     class="text--primary"
                     v-text="item.texto"
                   ></v-list-item-subtitle>
-                  <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                  <v-list-item-subtitle v-text="item.data"></v-list-item-subtitle>
                 </v-list-item-content>
 
                 <v-list-item-action>
@@ -122,6 +122,7 @@ export default {
       title: 'Projeto+',
       selected:'',
 
+
       // ---- SNACKBAR INFO -----
       dialog_notificacoes:false,
       color: '',
@@ -144,6 +145,7 @@ export default {
     }
   },
   methods:{
+
     start(){
       this.notificacoes = JSON.parse(JSON.stringify(this.$store.state.notificacoes))
       this.numNotificacoes = JSON.parse(JSON.stringify(this.$store.state.num_notificacoes))
@@ -187,7 +189,7 @@ export default {
   },
   async created() {
     this.$store.commit("setEmailUser", this.$auth.user.sub)
-    this.$globalOn('i-got-clicked', this.getNotificacoes);
+
 
   },
   components:{

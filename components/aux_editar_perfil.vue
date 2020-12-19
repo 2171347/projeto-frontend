@@ -20,14 +20,7 @@
                   required
                 ></v-text-field>
               </validation-provider>
-              <validation-provider v-slot="{ errors }" name="email" rules="required|email">
-                <v-text-field
-                  v-model="email"
-                  :error-messages="errors"
-                  label="Email:"
-                  required
-                ></v-text-field>
-              </validation-provider>
+
               <validation-provider v-slot="{ errors }" name="Contacto" rules="numeric|length:9">
                 <v-text-field :error-messages="errors" label="Telemóvel/Telefone:"
                               v-model="user.contactoTelefonico"></v-text-field>
@@ -38,7 +31,7 @@
               <v-text-field label="Morada:" v-model="user.morada"></v-text-field>
 
               <div class="d-flex justify-center align-center">
-                <v-btn class="mr-4" small @click="checkEmailDisponivel" color="success" :disabled="invalid">
+                <v-btn class="mr-4" small @click="submit" color="success" :disabled="invalid">
                   Guardar
                 </v-btn>
                 <v-btn small color="error" @click="cancel">Cancelar</v-btn>
@@ -75,28 +68,7 @@ export default {
     }
   },
   methods:{
-    checkEmailDisponivel(){
-      if (this.user.email !== this.email) {
-        console.log("é diferente")
-        this.$axios.get('/api/users/'+this.email).then((response) => {
-          if (response.data.value === true){
-            this.text = "O email inserido já está a ser utilizado. Tente novamente."
-            this.color = "error"
-            this.snackbar = true;
-            setTimeout(() => {
-              this.snackbar= false;
-            }, 2000);
-            this.email = this.user.email
-            return false;
-          }else{
-            this.submit();
-          }
-        })
-      } else {
-        this.submit()
-      }
 
-    },
     open() {
       this.display = true;
       this.valid = true
@@ -126,7 +98,7 @@ export default {
           //Enviar os dados para o update do utilizador
           this.$axios.$put(this.url + this.user.email, {
             nome: this.user.nome,
-            email: this.email,
+            email: this.user.email,
             password: this.user.password,
             morada: this.user.morada,
             contactoTelefonico: this.user.contactoTelefonico,
@@ -158,25 +130,21 @@ export default {
       if (this.$auth.user.groups.includes('Cliente')){
         this.$axios.$get('/api/clientes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.email = utilizador.email;
         })
       }
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.email = utilizador.email;
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.email = utilizador.email;
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
-          this.email = utilizador.email;
         })
       }
     },

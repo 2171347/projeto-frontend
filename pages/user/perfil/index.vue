@@ -180,7 +180,8 @@ export default {
     },
   },
   mounted() {
-    this.getUser()
+    this.getUser();
+    this.$globalOn('i-got-clicked', this.getNotificacoes);
   },
   components:{
     aux_snackbar,

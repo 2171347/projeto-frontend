@@ -332,7 +332,7 @@
   </div>
 </template>
 <script>
-
+import aux_snackbar from "../../../../../components/aux_snackbar";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 
 export default {
@@ -676,6 +676,7 @@ export default {
   components: {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
+    aux_snackbar,
   },
 }
 </script>

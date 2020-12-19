@@ -187,8 +187,6 @@
           </template>
         </v-breadcrumbs>
       </v-toolbar>
-
-
       <v-row>
         <!--      Dados Projeto-->
         <v-col md="6">
@@ -197,6 +195,17 @@
               <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
                 Dados do Projeto
               </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-btn icon v-on="on" @click.stop="dialog_editar_projeto=true" >
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
+                <span>Editar dados do projeto</span>
+              </v-tooltip>
             </v-toolbar>
             <v-card-text>
               <p><b>Referencia Projeto:</b> {{ projeto.referencia }}</p>
@@ -231,7 +240,6 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-btn small color="primary" @click.stop="dialog_editar_projeto=true">Editar</v-btn>
               <v-btn small color="error" @click="eliminarProjeto()" v-if="this.projeto.estado !== 'APROVADO'">Eliminar</v-btn>
               <template v-if="this.projeto.visivelCliente === false">
                 <v-btn small color="accent" @click="disponibilizar()">Disponibilizar</v-btn>
@@ -776,6 +784,7 @@ export default {
             this.color = 'green';
             this.text = 'Edição do Projeto realizado com sucesso.';
             this.snackbar = true;
+            this.getProjeto()
             setTimeout(() => {
               this.snackbar = false;
             }, 2000);

@@ -80,31 +80,33 @@ export default {
             this.snackbar= false;
           }, 2000);
           return null;
+        }else{
+          // Criar o novo projeto:
+          this.$axios.$post('/api/projetos', {
+            nome: this.nome,
+            referencia: "PR_"+this.nome,
+            emailCliente: this.emailCliente,
+            emailProjetista: this.$auth.user.sub
+          }).then(()=>{
+            this.color = 'green lighten-1';
+            this.text = 'Projeto criado com sucesso.';
+            this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar= false;
+            }, 2000);
+            this.resolve(true);
+            this.dialog_criar_projeto = false;
+            this.cleanFields()
+
+          }).catch(error =>{
+            /*this.color = 'red';
+            this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
+            this.snackbar = true;*/
+          })
         }
       })
 
-      // Criar o novo projeto:
-      this.$axios.$post('/api/projetos', {
-        nome: this.nome,
-        referencia: "PR_"+this.nome,
-        emailCliente: this.emailCliente,
-        emailProjetista: this.$auth.user.sub
-      }).then(()=>{
-        this.color = 'green lighten-1';
-        this.text = 'Projeto criado com sucesso.';
-        this.snackbar = true;
-        setTimeout(() => {
-          this.snackbar= false;
-        }, 2000);
-        this.resolve(true);
-        this.dialog_criar_projeto = false;
-        this.cleanFields()
 
-      }).catch(error =>{
-        /*this.color = 'red';
-        this.text = 'Ocorreu um erro na criação no projeto. Tente novamente.';
-        this.snackbar = true;*/
-      })
     },
     cancel(){
       this.resolve(false);
