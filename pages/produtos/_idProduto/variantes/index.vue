@@ -15,6 +15,8 @@
       </v-btn>
     </v-snackbar>
 
+    <aux_criar_variante ref="criarVarianteDialog"></aux_criar_variante>
+    <aux_dialog_confirmacao ref="confirm"/>
     <!--    DIALOG para adicionar um ficheiro ao projeto          -->
     <v-dialog v-model="dialog_ficheiro" max-width="490">
       <v-card>
@@ -40,7 +42,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
     <!--    DIALOG PARA EDITAR O PRODUTO-->
     <v-dialog v-model="dialog_editar_produto" max-width="490">
       <v-card style="margin-top: 10px">
@@ -79,7 +80,7 @@
     <v-dialog v-model="dialog_editar_variante" max-width="490">
       <v-card style="margin-top: 10px">
         <v-card-title>
-          Editar Variante {{aux_variante.codigo}}
+          Editar Variante {{aux_variante.nome}}
         </v-card-title>
         <v-card-text>
           <validation-observer ref="observer_variante" v-slot="{invalid}">
@@ -97,6 +98,7 @@
                 :counter="50"
                 :error-messages="errors"
                 label="Área:"
+                @change="calcularPP"
               ></v-text-field>
             </validation-provider>
             <validation-provider v-slot="{errors}" name="Tensão Cedência" rules="required|numeric">
@@ -111,6 +113,7 @@
               <v-text-field
                 v-model="aux_variante.pp"
                 :counter="50"
+                readonly
                 :error-messages="errors"
                 label="Peso Próprio:"
               ></v-text-field>
@@ -141,7 +144,70 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+  <!--    DIALOG PARA APRESENTAÇÂO DOS MCRS-->
+    <v-dialog v-model="dialog_mcrs" max-width="800">
+      <v-card style="margin-top: 10px">
+        <v-card-title>
+          Movimentos Criticos
+        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-card>
+                <v-toolbar>
+                  <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                    MCR_P
+                  </v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <div v-on="on">
+                        <v-icon>mdi-information</v-icon>
+                      </div>
+                    </template>
+                    <span>Movimentos Criticos Positivos</span>
+                  </v-tooltip>
+                </v-toolbar>
+                <v-card-text>
+                  <v-data-table :items="mcr_p" :headers="cabecalhos_mcr" hide-default-footer hide-default-header>
+                  </v-data-table>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col>
+              <v-card>
+                <v-toolbar>
+                  <v-toolbar-title class="d-flex justify-center" style="margin-right: 10px">
+                    MCR_N
+                  </v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <div v-on="on">
+                        <v-icon>mdi-information</v-icon>
+                      </div>
+                    </template>
+                    <span>Movimentos Criticos Negativos</span>
+                  </v-tooltip>
+                </v-toolbar>
+                <v-card-text>
+                  <v-data-table :items="mcr_n" :headers="cabecalhos_mcr" hide-default-footer hide-default-header>
+                  </v-data-table>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog_mcrs = false">
+            Sair
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
+<!-- Codigo Principal da página-->
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
@@ -167,7 +233,6 @@
         </v-col>
         <!--      Coluna Ações-->
         <v-col md="6">
-          <!--  Ações para o administrador  -->
           <v-card>
             <v-card-title>Ações</v-card-title>
             <v-card-text>
@@ -191,12 +256,10 @@
                 style="margin-left: 15px"
               ></v-text-field>
               <v-spacer></v-spacer>
-              <div class="d-flex justify-end" style="margin-right: 2px;"
-                   v-if="this.$auth.user.groups.includes('Fabricante') || this.$auth.user.groups.includes('Administrador')">
+              <div class="d-flex justify-end" style="margin-right: 2px">
                 <v-btn x-small @click="dialog_ficheiro = true">Carregar Ficheiro</v-btn>
               </div>
-              <div class="d-flex justify-end" style="margin-right: 2px;"
-                   v-if="this.$auth.user.groups.includes('Fabricante') || this.$auth.user.groups.includes('Administrador')">
+              <div class="d-flex justify-end" style="margin-right: 2px">
                 <v-btn x-small @click="criarVariante">Criar Variante</v-btn>
               </div>
             </v-card-title>
@@ -205,6 +268,7 @@
                 <template v-slot:item.actions="{ item }">
                   <v-btn x-small @click="chamarDialogEditar(item)">Editar</v-btn>
                   <v-btn x-small color="error" @click="eliminarVariante(item)">Eliminar</v-btn>
+                  <v-btn x-small color="primary" @click="apresentarMCR(item)">Mcr's</v-btn>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -217,6 +281,8 @@
 
 <script>
 import {ValidationObserver, ValidationProvider} from "vee-validate";
+import aux_criar_variante from "@/components/aux_criar_variante";
+import aux_dialog_confirmacao from "@/components/aux_dialog_confirmacao";
 
 export default {
   middleware: 'isFabricante',
@@ -292,6 +358,23 @@ export default {
 
       dialog_ficheiro: false,
       file: null,
+
+      dialog_mcrs: false,
+      cabecalhos_mcr: [{
+        text: '',
+        align: 'start',
+        sortable: false,
+        value: 'key',
+      }, {
+        text: '',
+        align: 'start',
+        sortable: false,
+        value: 'value',
+      },
+      ],
+      mcr_p: [],
+      mcr_n: [],
+
 
     }
   },
@@ -410,8 +493,12 @@ export default {
       this.aux_variante = JSON.parse(JSON.stringify(item))
       this.dialog_editar_variante = true
     },
-    criarVariante(){
-//TODO criar variante
+    async criarVariante() {
+      if (
+        await this.$refs.criarVarianteDialog.open()
+      ) {
+        this.getProduto()
+      }
     },
     editarVariante() {
       console.log(this.aux_variante)
@@ -422,7 +509,6 @@ export default {
           produtoID : this.aux_variante.produtoID,
           sigmaC: this.aux_variante.sigmaC,
           ar: this.aux_variante.ar,
-          pp: this.aux_variante.pp,
           weff_p: this.aux_variante.weff_p,
           weff_n: this.aux_variante.weff_n,
         })
@@ -441,9 +527,47 @@ export default {
       this.loading = true;
       this.getProduto();
     },
-    eliminarVariante(){
-      //todo eliminar variante
-    }
+    async eliminarVariante(item){
+      if(await this.$refs.confirm.open(
+        "Eliminar Variante",
+        "Tem a certeza que quer eliminar esta variante?")
+      ){
+        this.$axios.delete('/api/variantes/'+item.codigo+'/')
+        .then((response)=>{
+          this.color = 'green';
+          this.text = 'A Variante foi eliminada com sucesso.';
+          this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar = false;
+          }, 2000);
+          this.getProduto();
+        })
+      }else{
+        return null
+      }
+    },
+    calcularPP(){
+      let G = 78.5
+      this.aux_variante.pp = G * this.aux_variante.ar * Math.pow(10, -6)
+    },
+    apresentarMCR(item){
+      this.mcr_p = this.textSplit(item.mcr_p)
+      this.mcr_n = this.textSplit(item.mcr_n)
+      this.dialog_mcrs = true;
+    },
+    textSplit(text){
+      let mcr = [];
+      text = text.trim("")
+      let split1 = text.split(',');
+      for(let par of split1) {
+        let split2 = par.split(":")
+        if (split2[0] !== ""){
+          let aux = {key: split2[0], value: split2[1]}
+          mcr.push(aux)
+        }
+      }
+      return mcr;
+    },
   },
   created() {
     this.getProduto()
@@ -451,6 +575,8 @@ export default {
   components: {
     ValidationObserver: ValidationObserver,
     ValidationProvider: ValidationProvider,
+    aux_dialog_confirmacao,
+    aux_criar_variante,
   },
 }
 </script>

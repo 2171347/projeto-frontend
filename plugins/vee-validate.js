@@ -5,6 +5,7 @@ import {length} from "vee-validate/dist/rules";
 import {numeric} from "vee-validate/dist/rules";
 import {max} from "vee-validate/dist/rules";
 import {email} from "vee-validate/dist/rules";
+import {regex} from "vee-validate/dist/rules";
 
 extend("required", {
   ...required,
@@ -14,11 +15,18 @@ extend("alpha_spaces", {
   ...alpha_spaces,
   message: "Este campo apenas pode conter letras."
 });
+
+
+extend('numeroDecimal',{
+  validate(value){
+
+  }
+});
 extend('codigoPostal',  {
   validate(value){
-    if (value.includes("-") && value.length == 8){
+    if (value.includes("-") && value.length === 8){
       let res = value.split("-");
-      if (res[0].length == 4 && res[1].length == 3){
+      if (res[0].length === 4 && res[1].length === 3){
         if (res[0].match(/^[0-9]+$/) != null && res[1].match(/^[0-9]+$/) != null)
           return true
       }
