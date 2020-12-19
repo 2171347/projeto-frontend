@@ -149,6 +149,7 @@ export default {
         tipoPedido: this.tipoPedido,
         emailEmissor: this.$auth.user.sub
       }).then((response) => {
+        this.getPedidosSuporte()
         this.text = "Pedido de suporte enviado com sucesso."
         this.color = 'success';
         this.snackbar = true;

@@ -4,7 +4,6 @@ const EventBus = {
   install (Vue, options) {
     const VueEventBus = new Vue();
 
-
     Vue.prototype.$globalOn = function (event, handler) {
       VueEventBus.$on(event, handler)
     }

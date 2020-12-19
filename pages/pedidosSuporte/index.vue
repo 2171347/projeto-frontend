@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-dialog @keydown.esc="dialogInfoPedido = false" v-model="dialogInfoPedido" max-width="500px">
+   <v-dialog @keydown.esc="dialogInfoPedido = false" v-model="dialogInfoPedido" max-width="500px">
       <v-card>
         <v-toolbar>
           <v-toolbar-title>
             Informação do Pedido de Suporte
           </v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon v-bind="attrs" v-on="on" @click="dialogInfoPedido = false" >
+          <v-btn icon @click="dialogInfoPedido = false" >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
@@ -25,7 +25,6 @@
           <v-btn color="grey" text class="body-2 font-weight-bold" @click="dialogInfoPedido = false">Fechar</v-btn>
         </v-card-actions>
       </v-card>
-
     </v-dialog>
     <aux_snackbar :text="text" :snackbar="snackbar" :color="color"/>
     <aux_dialog_confirmacao ref="confirm"/>
@@ -44,7 +43,7 @@
           <v-toolbar >
             <v-toolbar-title>Todos os pedidos</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-select :items="filtroEstado" v-model="filtro" label="Filtrar por estado:" style="margin-top: 22px;" @change="aplicarFiltro"></v-select>
+            <v-select :disabled="pedidosSuporteAll.length === 0" :items="filtroEstado" v-model="filtro" label="Filtrar por estado:" style="margin-top: 22px;" @change="aplicarFiltro"></v-select>
             <v-spacer></v-spacer>
             <v-text-field
               v-model="search"
@@ -53,7 +52,6 @@
               prepend-inner-icon="mdi-magnify"
               class="shrink"
             ></v-text-field>
-
           </v-toolbar>
           <v-card-text>
             <v-data-table
@@ -74,7 +72,9 @@
                 </v-tooltip>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                      <v-btn v-on="on" v-if="item.acceptedAt === '' && item.answeredAt === ''" icon @click="takePedido(item)"><v-icon>mdi-briefcase-check</v-icon></v-btn>
+                      <v-btn v-on="on" v-if="item.acceptedAt === '' && item.answeredAt === ''" icon @click="takePedido(item)">
+                        <v-icon>mdi-briefcase-check</v-icon>
+                      </v-btn>
                   </template>
                   <span>Aceitar o pedido</span>
                 </v-tooltip>
@@ -87,13 +87,13 @@
               </template>
               <template v-slot:item.estado="{ item }">
                 <div v-if="item.acceptedAt !== '' && item.answeredAt === ''">
-                  <v-chip class="white--text" color="orange">Em Resolução</v-chip>
+                  <v-chip class="ma-2" text-color="white" color="orange">Em Resolução</v-chip>
                 </div>
                 <div v-if="item.answeredAt !== ''">
-                  <v-chip class="white--text"  color="green">Resolvido</v-chip>
+                  <v-chip class="ma-2"  text-color="white" color="green">Resolvido</v-chip>
                 </div>
                 <div v-if="item.acceptedAt === '' && item.answeredAt === ''">
-                  <v-chip  class="white--text" color="red">Em Espera...</v-chip>
+                  <v-chip  class="ma-2" text-color="white" color="red">Em Espera...</v-chip>
                 </div>
             </template>
             </v-data-table>
@@ -175,11 +175,17 @@ export default {
             this.color = "success"
             this.text = "Pedido concluido com sucesso."
             this.snackbar = true;
+
+            location.reload();
+
             setTimeout(() => {
               this.snackbar = false;
             }, 2000);
-            this.getPedidosSuporte()
+
           }).catch((error) => {
+          this.getPedidosSuporte()
+          this.filtro='Todos';
+          this.pedidosSuporte = this.pedidosSuporteAll;
           this.color = "error"
           this.text = "Ocorreu um erro."
           this.snackbar = true;
@@ -188,37 +194,11 @@ export default {
           }, 2000);
         })
       }
-
-
     },
     toDetalhes(item){
       this.infoPedido = item;
       this.dialogInfoPedido = true;
     },
-    /*async btnDelete(item) {
-      if (await this.$refs.confirm.open(
-        "Eliminar pedido de suporte",
-        "Tem a certeza que quer eliminar este pedido de suporte?")
-      ) {
-        this.$axios.$delete('api/support_message/' + item.id + '/accepted_by/' + this.$auth.user.sub)
-          .then((response) => {
-            this.color = "success"
-            this.text = "Pedido aceite com sucesso."
-            this.snackbar = true;
-            setTimeout(() => {
-              this.snackbar = false;
-            }, 2000);
-            this.getPedidosSuporte()
-          }).catch((error) => {
-          this.color = "error"
-          this.text = "Ocorreu um erro."
-          this.snackbar = true;
-          setTimeout(() => {
-            this.snackbar = false;
-          }, 2000);
-        })
-      }
-    },*/
     aplicarFiltro(){
       if(this.filtro === 'Todos'){
         this.pedidosSuporte = this.pedidosSuporteAll;
@@ -240,17 +220,22 @@ export default {
       ) {
         this.$axios.$put('api/support_message/' + item.id + '/accepted_by/' + this.$auth.user.sub)
           .then((response) => {
+
             this.color = "success"
             this.text = "Pedido aceite com sucesso."
             this.snackbar = true;
+            this.$forceUpdate()
+            location.reload();
             setTimeout(() => {
               this.snackbar = false;
             }, 2000);
-            this.getPedidosSuporte()
           }).catch((error) => {
           this.color = "error"
           this.text = "Ocorreu um erro."
           this.snackbar = true;
+          this.getPedidosSuporte()
+          this.filtro='Todos';
+          this.pedidosSuporte = this.pedidosSuporteAll;
           setTimeout(() => {
             this.snackbar = false;
           }, 2000);
@@ -265,7 +250,6 @@ export default {
   created() {
     this.getPedidosSuporte();
     this.filtro='Todos';
-
   }
 }
 </script>

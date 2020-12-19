@@ -21,14 +21,16 @@
                 ></v-text-field>
               </validation-provider>
 
-              <validation-provider v-slot="{ errors }" name="Contacto" rules="numeric|length:9">
-                <v-text-field :error-messages="errors" label="Telemóvel/Telefone:"
-                              v-model="user.contactoTelefonico"></v-text-field>
-              </validation-provider>
-              <validation-provider v-slot="{ errors }" name="NIF" rules="numeric|length:9">
-                <v-text-field label="NIF:" :error-messages="errors" v-model="user.numContribuinte"></v-text-field>
-              </validation-provider>
-              <v-text-field label="Morada:" v-model="user.morada"></v-text-field>
+              <div v-if="!admin">
+                <validation-provider v-slot="{ errors }" name="Contacto" rules="numeric|length:9">
+                  <v-text-field :error-messages="errors" label="Telemóvel/Telefone:"
+                                v-model="user.contactoTelefonico"></v-text-field>
+                </validation-provider>
+                <validation-provider v-slot="{ errors }" name="NIF" rules="numeric|length:9">
+                  <v-text-field label="NIF:" :error-messages="errors" v-model="user.numContribuinte"></v-text-field>
+                </validation-provider>
+                <v-text-field label="Morada:" v-model="user.morada"></v-text-field>
+              </div>
 
               <div class="d-flex justify-center align-center">
                 <v-btn class="mr-4" small @click="submit" color="success" :disabled="invalid">
@@ -59,6 +61,7 @@ export default {
       user_dados_originais:'',
       morada:'',
       email:'',
+      admin: false,
 
       // ---- SNACKBAR INFO -----
       color: '',
@@ -94,7 +97,35 @@ export default {
           if (this.$auth.user.groups.includes('Projetista')) {
             this.url = "/api/projetistas/"
           }
+          if (this.$auth.user.groups.includes('Administrador')) {
+            //Enviar os dados para o update do utilizador
+            this.$axios.$put('/api/administradores/' + this.user.email, {
+              nome: this.user.nome,
+              email: this.user.email,
 
+            })
+              .then(() => {
+                this.color = 'green';
+                this.text = 'Alteração feita com sucesso.';
+                this.snackbar = true;
+                setTimeout(() => {
+                  this.snackbar = false;
+                }, 2000);
+                this.resolve(true);
+                this.display = false;
+                this.getUser()
+                return;
+              })
+              .catch(error => {
+                this.color = 'error';
+                this.text = 'Ocorreu um erro.';
+                this.snackbar = true;
+                setTimeout(() => {
+                  this.snackbar = false;
+                }, 2000);
+              })
+          }
+        if (!this.$auth.user.groups.includes('Administrador')) {
           //Enviar os dados para o update do utilizador
           this.$axios.$put(this.url + this.user.email, {
             nome: this.user.nome,
@@ -106,7 +137,7 @@ export default {
           })
             .then(() => {
               this.color = 'green';
-              this.text = 'O seu registo foi feito com sucesso.';
+              this.text = 'Alteração feita com sucesso.';
               this.snackbar = true;
               setTimeout(() => {
                 this.snackbar = false;
@@ -117,12 +148,13 @@ export default {
             })
             .catch(error => {
               this.color = 'error';
-              this.text = 'Ocorreu um erro com o seu registo.';
+              this.text = 'Ocorreu um erro.';
               this.snackbar = true;
               setTimeout(() => {
                 this.snackbar = false;
               }, 2000);
             })
+        }
         }
 
     },
@@ -130,21 +162,25 @@ export default {
       if (this.$auth.user.groups.includes('Cliente')){
         this.$axios.$get('/api/clientes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.admin = false;
         })
       }
       if (this.$auth.user.groups.includes('Projetista')){
         this.$axios.$get('/api/projetistas/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.admin = false;
         })
       }
       if (this.$auth.user.groups.includes('Fabricante')){
         this.$axios.$get('/api/fabricantes/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.admin = false;
         })
       }
       if (this.$auth.user.groups.includes('Administrador')){
         this.$axios.$get('/api/administradores/'+this.$auth.user.sub).then((utilizador) => {
           this.user = utilizador;
+          this.admin = true;
         })
       }
     },
