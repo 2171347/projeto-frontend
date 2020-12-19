@@ -264,11 +264,16 @@
               </div>
             </v-card-title>
             <v-card-text>
-              <v-data-table :items="variantes" :headers="cabecalhos_variantes" :search="search" :sort-by="['codigo']">
+              <v-data-table
+                :items="variantes"
+                :headers="cabecalhos_variantes"
+                :search="search"
+                :sort-by="['nome']"
+                no-data-text="Nenhuma estrutura para apresentar">
                 <template v-slot:item.actions="{ item }">
                   <v-btn x-small @click="chamarDialogEditar(item)">Editar</v-btn>
                   <v-btn x-small color="error" @click="eliminarVariante(item)">Eliminar</v-btn>
-                  <v-btn x-small color="primary" @click="apresentarMCR(item)">Mcr's</v-btn>
+                  <v-btn x-small color="primary" @click="apresentarMCR(item)" v-if="item.mcr_p">Mcr's</v-btn>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -401,9 +406,6 @@ export default {
         }
       })
       promisse.then((response) => {
-        this.color = 'green';
-        this.text = 'Ficheiro carregado com sucesso.';
-        this.snackbar = true;
         this.dialog_ficheiro = false;
         this.loading = true;
         let formData = new FormData()
@@ -415,19 +417,33 @@ export default {
           }
         })
         promisseRead.then(() => {
+          this.color = 'green';
+          this.text = 'Ficheiro carregado com sucesso.';
+          this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.getProduto();
         })
         promisseRead.catch(() => {
           this.color = 'error';
-          this.text = 'Ocorreu um erro, ficheiro não lido.';
+          this.text = 'Dados não carregados, erro na formatação do ficheiro.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
+          this.loading = false;
         })
 
       })
       promisse.catch(() => {
         this.color = 'error';
-        this.text = 'Ocorreu um erro, ficheiro não carregado.';
+        this.text = 'Ocorreu um erro, ficheiro não lido.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar= false;
+        }, 2000);
+        this.loading = false;
       })
     },
     getProduto() {
@@ -485,7 +501,7 @@ export default {
           this.loading_text = "A enviar para nova página..."
 
           setTimeout(() => {
-            this.$router.push("/produtos/");
+            this.$router.push("/home");
           }, 1500);
         })
     },
