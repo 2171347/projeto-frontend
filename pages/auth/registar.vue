@@ -62,33 +62,15 @@
               type="password">
             </v-text-field>
           </validation-provider>
-
+          <validation-provider v-slot="{ errors }" name="Morada" rules="required">
           <v-text-field
             prepend-inner-icon="mdi-map-marker"
             v-model="morada"
             label="Morada:"
-            :error-messages="errorsMorada"
+            :error-messages="errors"
             :counter="80"
           ></v-text-field>
-          <v-row>
-            <v-col>
-              <validation-provider v-slot="{ errors }" name="CodigoPostal" rules="codigoPostal">
-                <v-text-field v-model="codigoPostal" :error-messages="errors" label="Código Postal:">
-                </v-text-field>
-              </validation-provider>
-            </v-col>
-            <v-col>
-              <validation-provider v-slot="{ errors }" name="Localidade" rules="alpha_spaces">
-                <v-text-field
-                  v-model="localidade"
-                  :error-messages="errors"
-                  label="Localidade:"
-                >
-<!--                  @input="checkValidacaoMorada"-->
-                </v-text-field>
-              </validation-provider>
-            </v-col>
-          </v-row>
+          </validation-provider>
           <v-row>
             <v-col md="5">
               <validation-provider v-slot="{ errors }" name="Nif" rules="length:9|numeric">
@@ -153,7 +135,7 @@ export default {
     snackbar: false,
     text: '',
     // ------------------------
-    morada: '',
+    morada:'',
     nome: '',
     email: '',
     nif:'',
@@ -165,24 +147,18 @@ export default {
     tiposUtilizador:['Cliente', 'Fabricante', 'Projetista'],
     userType:'',
     url:'',
-    errorsMorada:'',
     errorsEmail:'',
     errorsUserType:'',
     errorsPassword:'',
     date:'',
-    moradaSending:'',
     emailValido:'',
-    moradaValido:'',
     helpDialog:'',
   }),
 
   methods: {
     async checkEmailDisponivel() {
-      /*TODO apagar os console.log*/
-
       await this.$axios.get('/api/users/' + this.email).then((response) => {
         if (response.data.value === true) {
-          console.log("Email Não Valido")
           this.emailValido = false;
           this.errorsEmail = "Email já está registado da plataforma."
           this.color = 'error';
@@ -193,49 +169,13 @@ export default {
           }, 2000);
 
         } else {
-          console.log("Email Válido")
           this.emailValido = true;
           this.errorsEmail = '';
           return 'OK';
         }
       })
     },
-    checkValidacaoMorada(){
-      if(this.localidade.trim() && this.morada.trim() && this.codigoPostal.trim()){
-        this.moradaValido = true;
-        this.moradaSending = this.morada + ' | ' + this.codigoPostal + ' | ' + this.localidade;
-        console.log("Morada Valido")
-        return null;
-      }
-      if(!this.localidade.trim() && !this.morada.trim() && !this.codigoPostal.trim()){
-        this.moradaValido = true;
-        this.moradaSending = null;
-        console.log("Morada Valido")
-        return null;
-      }
 
-      if (!this.localidade.trim() && this.morada.trim() && this.codigoPostal.trim()){
-        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-        this.moradaValido = false;
-        console.log("Morada Não Valido --> Localidade")
-        return null;
-      }
-      if (this.localidade.trim() && !this.morada.trim() && this.codigoPostal.trim()){
-        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-        this.moradaValido = false;
-        console.log("Morada Não Valido --> Morada")
-        return null;
-      }
-      if (this.localidade.trim() && this.morada.trim() && !this.codigoPostal.trim()){
-        this.errorsMorada = "Morada não está completa. Deve preencher todos os campos (morada, código postal e localidade).";
-        this.moradaValido = false;
-        console.log("Morada Não Valido --> Codigo Postal")
-        return null;
-      }
-        this.errorsMorada = '';
-        console.log("Morada Valido")
-        this.moradaValido = true;
-    },
     getDate(){
       var currentDate = new Date();
       return currentDate;
@@ -253,7 +193,6 @@ export default {
       })
     },
     createUrl(){
-      console.log("Comecou a criar a url")
       if (this.userType === 'Cliente') {
         this.url = "/api/clientes/"
       }
@@ -263,7 +202,6 @@ export default {
       if (this.userType === 'Projetista') {
         this.url = "/api/projetistas/"
       }
-      console.log("Acabou de criar a url")
     },
 
     async submit() {
@@ -275,17 +213,8 @@ export default {
         if(!this.emailValido){
           return
         }
-        await this.checkValidacaoMorada()
-        if(!this.moradaValido){
-          return
-        }
         // Definir a rota com base no tipo de utilizador
         await this.createUrl()
-
-
-
-        console.log("Continuar...")
-
 
         if (this.contacto === '') {
           this.contacto = null;
@@ -298,7 +227,7 @@ export default {
           nome: this.nome,
           email: this.email,
           password: this.password,
-          morada: this.moradaSending,
+          morada: this.morada,
           contactoTelefonico: this.contacto,
           numContribuinte: this.nif,
         })

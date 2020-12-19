@@ -31,7 +31,7 @@
                   class="text--primary"
                   v-text="item.texto"
                 ></v-list-item-subtitle>
-                <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                <v-list-item-subtitle v-text="item.data"></v-list-item-subtitle>
               </v-list-item-content>
 
               <v-list-item-action>
@@ -72,12 +72,7 @@ export default {
     }
   },
   methods:{
-    async getNotificacoes() {
-      await this.$axios.get('/api/notificacoes/' + this.$auth.user.sub).then((notificacoes) => {
-        this.$store.commit("setNotificacoes",notificacoes.data);
-        this.$store.commit("setNumNotificacoes",notificacoes.data.length);
-      })
-    },
+
     async setNotificacaoLida(item) {
       this.loading = true;
       item.lido = true;
@@ -109,6 +104,7 @@ export default {
   },
   created() {
     this.$storeGetNotificacoes()
+
   },
 }
 </script>

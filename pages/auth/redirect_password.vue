@@ -102,4 +102,3 @@ export default {
 }
 
 </script>
-<!--TODO adicionar o loading-->

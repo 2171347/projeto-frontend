@@ -44,6 +44,8 @@
           <v-toolbar >
             <v-toolbar-title>Todos os pedidos</v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-select :items="filtroEstado" v-model="filtro" label="Filtrar por estado:" style="margin-top: 22px;" @change="aplicarFiltro"></v-select>
+            <v-spacer></v-spacer>
             <v-text-field
               v-model="search"
               label="Pesquisa"
@@ -51,12 +53,15 @@
               prepend-inner-icon="mdi-magnify"
               class="shrink"
             ></v-text-field>
+
           </v-toolbar>
           <v-card-text>
             <v-data-table
               :items="pedidosSuporte"
               :headers="headers"
               :search="search"
+              no-data-text="Não existem pedidos"
+              no-results-text="Não existem pedidos"
               :items-per-page="5"
               class="elevation-1"
             >
@@ -69,7 +74,7 @@
                 </v-tooltip>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                      <v-btn v-on="on" icon @click="takePedido(item)"><v-icon>mdi-briefcase-check</v-icon></v-btn>
+                      <v-btn v-on="on" v-if="item.acceptedAt === '' && item.answeredAt === ''" icon @click="takePedido(item)"><v-icon>mdi-briefcase-check</v-icon></v-btn>
                   </template>
                   <span>Aceitar o pedido</span>
                 </v-tooltip>
@@ -111,13 +116,19 @@ export default {
       text: '',
       // ------------------------
       pedidosSuporte:[],
+      filtroEstado:['Todos','Finalizados','Em espera', 'Em resolução'],
+      filtro:'',
+      pedidosSuporteFinalizados:[],
+      pedidosSuporteAll:[],
+      pedidosSuporteEmEspera:[],
+      pedidosSuporteEmProgresso:[],
       search:'',
       loading:true,
       loading_text:'',
       headers: [
         {  text: 'Tipo', sortable: true, value: 'tipoPedido'},
         {  text: 'Utilizador', sortable: true, value: 'emailEmissor'},
-        {  text: 'Taken by',sortable: true, value: 'responsavelEmissor'},
+        {  text: 'Taken by',sortable: true, value: 'emailResponsavel'},
         {  text: 'Estado',sortable: true, value: 'estado'},
         {  text: 'Ações', sortable: true,value: 'actions'},
 
@@ -131,8 +142,19 @@ export default {
       this.loading_text = "A organizar pedidos..."
       this.loading = true;
       this.$axios.$get('/api/support_message/all').then((response)=> {
+        this.pedidosSuporteAll = response;
         this.pedidosSuporte = response;
-        console.log(response)
+        for (let aux in response) {
+          if (response[aux].acceptedAt === '' && response[aux].answeredAt === '') {
+            this.pedidosSuporteEmEspera.push(response[aux]);
+          }
+          if ( response[aux].answeredAt !== '') {
+            this.pedidosSuporteFinalizados.push(response[aux]);
+          }
+          if ( response[aux].answeredAt === '' && response[aux].acceptedAt !== '' ) {
+            this.pedidosSuporteEmProgresso.push(response[aux]);
+          }
+        }
         this.loading = false;
       })
     },
@@ -197,6 +219,20 @@ export default {
         })
       }
     },*/
+    aplicarFiltro(){
+      if(this.filtro === 'Todos'){
+        this.pedidosSuporte = this.pedidosSuporteAll;
+      }
+      if(this.filtro === 'Finalizados'){
+        this.pedidosSuporte = this.pedidosSuporteFinalizados;
+      }
+      if(this.filtro === 'Em espera'){
+        this.pedidosSuporte = this.pedidosSuporteEmEspera;
+      }
+      if(this.filtro === 'Em resolução'){
+        this.pedidosSuporte = this.pedidosSuporteEmProgresso;
+      }
+    },
     async takePedido(item) {
       if (await this.$refs.confirm.open(
         "Aceitar pedido de suporte",
@@ -228,6 +264,8 @@ export default {
   },
   created() {
     this.getPedidosSuporte();
+    this.filtro='Todos';
+
   }
 }
 </script>
