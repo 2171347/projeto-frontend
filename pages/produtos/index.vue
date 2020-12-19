@@ -1,5 +1,7 @@
 <template>
   <div>
+    <aux_criar_familia_material ref="criarFamilia"/>
+    <aux_criar_tipo_material ref="criarTipo"/>
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
@@ -17,6 +19,11 @@
       <div v-else>
         <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
           Produtos
+        </v-toolbar>
+        <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
+          <v-btn small @click="criarTipo">Criar tipo de Material</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn small @click="criarFamilia">Criar Familia de Material</v-btn>
         </v-toolbar>
         <v-card>
           <v-toolbar>
@@ -68,6 +75,8 @@
 </template>
 
 <script>
+import aux_criar_tipo_material from "../../components/aux_criar_tipo_material";
+import aux_criar_familia_material from "../../components/aux_criar_familia_material";
 export default {
   middleware: 'isFabricante',
   name: "index",
@@ -124,9 +133,27 @@ export default {
       }, 500);
 
     },
+    async criarFamilia() {
+      if (
+        await this.$refs.criarFamilia.open()
+      ) {
+        this.getProdutos()
+      }
+    },
+    async criarTipo() {
+      if (
+        await this.$refs.criarTipo.open()
+      ) {
+        this.getProdutos()
+      }
+    },
   },
   created() {
     this.getProdutos()
+  },
+  components:{
+    aux_criar_familia_material,
+    aux_criar_tipo_material
   }
 }
 </script>
