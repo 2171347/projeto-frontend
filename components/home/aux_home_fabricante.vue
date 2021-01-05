@@ -11,7 +11,7 @@
                 <v-toolbar-title>Variantes Selecionadas</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-text-field
-                  v-if="variantes.length!== 0"
+                  v-if="variantes.length !== 0"
                   v-model="search"
                   label="Pesquisa"
                   hide-details
@@ -20,7 +20,7 @@
                 ></v-text-field>
                 <v-spacer></v-spacer>
               </v-toolbar>
-              <template>
+              <template v-if="variantes.length === 0">
                 <v-card-text style="margin-top: 15px">
                   <p>De momento não tem variantes selecionadas.</p>
                 </v-card-text>

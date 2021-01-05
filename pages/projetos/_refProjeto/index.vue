@@ -855,20 +855,31 @@ export default {
           comprimentoVao: this.comprimentoVaos_estrutura,
           sobrecarga: this.sobrecarga_estrutura
 
-        }).then((response)=>{
+        }).then((response) => {
+          this.tipoMaterialSelected.id = null;
+          this.nome_estrutura = null;
+          this.nVaos_estrutura = null;
+          this.comprimentoVaos_estrutura = null;
+          this.sobrecarga_estrutura = null;
           this.color = 'green lighten-1';
           this.text = 'Estrutura foi criada com sucesso.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar = false;
+          }, 2000);
           this.dialog_adicionar_estrutura = false;
-          this.$axios.$put('/api/projetos/'+this.projeto.referencia+'/add/'+response.referencia)
-          .then(()=>{
-            this.getProjeto();
-          })
-        }).catch(error =>{
+          this.$axios.$put('/api/projetos/' + this.projeto.referencia + '/add/' + response.referencia)
+            .then(() => {
+              this.getProjeto();
+            })
+        }).catch(error => {
           console.log(error)
           this.color = 'red';
           this.text = 'Ocorreu um erro.';
           this.snackbar = true;
+          setTimeout(() => {
+            this.snackbar = false;
+          }, 2000);
         })
       }
     },
@@ -882,6 +893,9 @@ export default {
         this.color = 'green lighten-1';
         this.text = 'Email enviado com sucesso.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar = false;
+        }, 2000);
         this.dialog_email = false;
         this.subject = "";
         this.message = ""
@@ -890,6 +904,9 @@ export default {
         this.color = 'red darken-1';
         this.text = 'Ocorreu um erro ao enviar o email.';
         this.snackbar = true;
+        setTimeout(() => {
+          this.snackbar = false;
+        }, 2000);
       })
     },
     toDetalhesEstrutura(item) {

@@ -92,7 +92,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="mcr_p.length !== 0 && mcr_n.length !== 0">
         <v-col md="3">
           <v-card>
             <v-toolbar>

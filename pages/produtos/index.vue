@@ -1,7 +1,7 @@
 <template>
   <div>
-    <aux_criar_familia_material ref="criarFamilia"/>
-    <aux_criar_tipo_material ref="criarTipo"/>
+      <aux_criar_familia_material ref="criarFamilia"/>
+      <aux_criar_tipo_material ref="criarTipo"/>
     <v-container v-if="loading" fluid fill-height style="background-color: rgba(255, 255, 255, 0.5);">
       <v-layout column justify-center align-center fill-height>
         <v-progress-circular indeterminate color="loading" :size="70" :width="7" style="margin-right: 10px">
@@ -18,9 +18,12 @@
       </div>
       <div v-else>
         <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
-          Produtos
+          <v-toolbar-title>
+            Produtos
+          </v-toolbar-title>
         </v-toolbar>
-        <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
+        <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;"
+                   v-if="this.$auth.user.groups.includes('Administrador')">
           <v-btn small @click="criarTipo">Criar tipo de Material</v-btn>
           <v-spacer></v-spacer>
           <v-btn small @click="criarFamilia">Criar Familia de Material</v-btn>
@@ -68,6 +71,38 @@
               </v-data-table>
             </template>
           </v-card-text>
+          <v-row v-if="this.$auth.user.groups.includes('Administrador')">
+            <v-col>
+              <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
+                <v-toolbar-title>
+                  Tipo de Materiais
+                </v-toolbar-title>
+              </v-toolbar>
+              <v-card-text>
+                <v-data-table
+                  :headers="headers_tipos"
+                  :items="tipos"
+                  :items-per-page="5"
+                  class="elevation-1"
+                ></v-data-table>
+              </v-card-text>
+            </v-col>
+            <v-col>
+              <v-toolbar class="d-flex justify-center align-center" style="margin-bottom: 20px;">
+                <v-toolbar-title>
+                  Familia de Materiais
+                </v-toolbar-title>
+              </v-toolbar>
+              <v-card-text>
+                <v-data-table
+                  :headers="headers_familias"
+                  :items="familias"
+                  :items-per-page="5"
+                  class="elevation-1"
+                ></v-data-table>
+              </v-card-text>
+            </v-col>
+          </v-row>
         </v-card>
       </div>
     </v-container>
@@ -89,6 +124,8 @@ export default {
       loading: true,
       loading_text: '',
       user:'',
+      familias:[],
+      tipos:[],
 
       headers_fabricante: [
         {text: 'Nome', align: 'start', sortable: true, value: 'nome',},
@@ -105,6 +142,13 @@ export default {
         {text: 'Tipo Material', sortable: true, value: 'nomeTipoMaterial'},
         {text: 'Familia Material', sortable: true, value: 'nomeFamiliaMaterial'},
         {text: 'Ações', sortable: true, value: 'actions'},
+      ],
+      headers_tipos: [
+        {text: 'Nome', align: 'center', sortable: true, value: 'nome',},
+        {text: 'Descrição', align: 'start', sortable: true, value: 'descricao',},
+      ],
+      headers_familias: [
+        {text: 'Nome', align: 'center', sortable: true, value: 'nome',},
       ],
     }
   },
@@ -147,9 +191,28 @@ export default {
         this.getProdutos()
       }
     },
+    getTiposMaterial() {
+      this.$axios.$get('/api/tipos_material/all')
+        .then((response) => {
+          this.tipos = response;
+
+        }).catch(error => {
+      })
+    },
+    getFamiliasMaterial() {
+      this.$axios.$get('/api/familia_material/all')
+        .then((response) => {
+          console.log(response)
+          this.familias = response;
+
+        }).catch(error => {
+      })
+    },
   },
   created() {
     this.getProdutos()
+    this.getFamiliasMaterial()
+    this.getTiposMaterial()
   },
   components:{
     aux_criar_familia_material,

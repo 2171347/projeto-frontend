@@ -182,14 +182,12 @@ export default {
       this.caminhos[2].text = this.$route.params.refEstrutura;
       this.caminhos[2].href = '/projetos/'+this.$route.params.refProjeto+'/estruturas/'+this.$route.params.refEstrutura;
     },
-    //TODO - fazer o pedido dos produtos com as suas variantes
     getProdutos() {
       this.loading = true;
       this.loading_text = "A construir catálogo..."
       this.$axios.$get('/api/produtos/'+this.$route.params.refEstrutura+'/with_variantes')
         .then((response) => {
           this.produtos = response;
-          console.log(this.produtos)
           this.loading = false;
         })
 
@@ -197,7 +195,6 @@ export default {
         this.loading = false;
         this.selected = [];
       }, 500);
-
     },
     adicionarProdutos(){
       this.loading = true;
@@ -207,22 +204,24 @@ export default {
           this.color = 'green';
           this.text = 'Produtos adicionados.';
           this.snackbar = true;
-          console.log("Adicionado")
+          setTimeout(() => {
+            this.snackbar= false;
+          }, 2000);
           this.getProdutos();
         })
         .catch( error => {
           this.erro();
         })
       }
-      // setTimeout(() => {
-      //   this.getProdutos();
-      // }, 1000);
     },
   },
   erro (){
     this.color = 'error';
     this.text = 'Ocorreu um erro.';
     this.snackbar = true;
+    setTimeout(() => {
+      this.snackbar= false;
+    }, 2000);
     this.getProdutos();
   },
   created() {

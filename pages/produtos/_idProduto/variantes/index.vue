@@ -237,7 +237,7 @@
             <v-card-title>Ações</v-card-title>
             <v-card-text>
               <v-btn small color="primary" @click.stop="dialog_editar_produto = true">Editar</v-btn>
-              <v-btn small color="error" @click="eliminarProduto">Eliminar</v-btn>
+              <v-btn small color="error" :disabled="variantes.length !== 0" @click="eliminarProduto">Eliminar</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
@@ -272,7 +272,7 @@
                 no-data-text="Nenhuma estrutura para apresentar">
                 <template v-slot:item.actions="{ item }">
                   <v-btn x-small @click="chamarDialogEditar(item)">Editar</v-btn>
-                  <v-btn x-small color="error" @click="eliminarVariante(item)">Eliminar</v-btn>
+                  <v-btn x-small color="error" @click="eliminarVariante(item)" v-if="item.count === 0">Eliminar</v-btn>
                   <v-btn x-small color="primary" @click="apresentarMCR(item)" v-if="item.mcr_p">Mcr's</v-btn>
                 </template>
               </v-data-table>
@@ -532,16 +532,22 @@ export default {
             this.color = 'green';
             this.text = 'Edição do Produto realizado com sucesso.';
             this.snackbar = true;
+            this.getProduto();
+            setTimeout(() => {
+              this.snackbar = false;
+            }, 2000);
           })
           .catch(error => {
             this.color = 'error';
             this.text = 'Ocorreu um erro com a edição do produto.';
             this.snackbar = true;
+            setTimeout(() => {
+              this.snackbar = false;
+            }, 2000);
           })
       }
       this.dialog_editar_variante = false;
       this.loading = true;
-      this.getProduto();
     },
     async eliminarVariante(item){
       if(await this.$refs.confirm.open(
